@@ -138,7 +138,13 @@ public sealed class MonteCarloSimulator
             {
                 ReturnOverride = (year, asset) =>
                 {
-                    double[] w = weights[asset.Asset.Name];
+                    // Assets created by the engine at run time (e.g. surplus ISA, cash) are weighted by kind.
+                    if (!weights.TryGetValue(asset.Asset.Name, out double[]? w))
+                    {
+                        w = WeightsFor(asset, index, n);
+                        weights[asset.Asset.Name] = w;
+                    }
+
                     decimal ret = 0m;
                     for (int i = 0; i < n; i++)
                     {
