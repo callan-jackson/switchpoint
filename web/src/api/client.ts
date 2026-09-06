@@ -1,5 +1,5 @@
 import type { ProblemDetails } from './types'
-import { getAccessToken, notifyUnauthorized } from './token'
+import { clearSession, getAccessToken } from '@/features/auth/authStore'
 
 export const API_BASE_URL = '/api/v1'
 
@@ -29,7 +29,7 @@ export class ApiError extends Error {
   /** Field-level validation failures keyed by (camelCase) field name. */
   readonly errors?: Record<string, string[]>
 
-  constructor(status: number, problem: ProblemDetails) {
+  constructor(status: number, problem: ProblemDetails = {}) {
     const title = problem.title ?? defaultTitle(status)
     super(problem.detail ? `${title}: ${problem.detail}` : title)
     this.name = 'ApiError'
@@ -43,11 +43,15 @@ export class ApiError extends Error {
   }
 
   get isValidation(): boolean {
-    return this.status === 400 && this.errors !== undefined
+    return this.errors !== undefined && (this.status === 400 || this.status === 422)
   }
 
   get isUnauthorized(): boolean {
     return this.status === 401
+  }
+
+  get isForbidden(): boolean {
+    return this.status === 403
   }
 
   get isNotFound(): boolean {
@@ -65,7 +69,17 @@ export function isApiError(error: unknown): error is ApiError {
 }
 
 export function isAbortError(error: unknown): boolean {
-  return error instanceof DOMException && error.name === 'AbortError'
+  return (
+    (error instanceof DOMException && error.name === 'AbortError') ||
+    (error instanceof Error && error.name === 'AbortError')
+  )
+}
+
+/** Human-readable message for any thrown value (ApiError, Error, or unknown). */
+export function errorMessage(error: unknown, fallback = 'Something went wrong.'): string {
+  if (isApiError(error)) return error.detail ?? error.title
+  if (error instanceof Error && error.message) return error.message
+  return fallback
 }
 
 function defaultTitle(status: number): string {
@@ -108,6 +122,16 @@ export function buildQuery(query: QueryParams | undefined): string {
   return s ? `?${s}` : ''
 }
 
+/** Absolute request URL: relative API paths resolve against the page origin (fetch in Node needs this). */
+export function resolveUrl(path: string, query?: QueryParams): string {
+  if (/^https?:\/\//i.test(path)) return `${path}${buildQuery(query)}`
+  const relative = path.startsWith(API_BASE_URL)
+    ? path
+    : `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`
+  const origin = typeof location !== 'undefined' ? location.origin : 'http://localhost'
+  return `${origin}${relative}${buildQuery(query)}`
+}
+
 async function parseProblem(response: Response): Promise<ProblemDetails> {
   const contentType = response.headers.get('content-type') ?? ''
   if (contentType.includes('json')) {
@@ -121,28 +145,25 @@ async function parseProblem(response: Response): Promise<ProblemDetails> {
   return { status: response.status, title: response.statusText || undefined }
 }
 
-/**
- * Typed fetch wrapper. Resolves with the parsed JSON body (or `undefined` for 204),
- * rejects with `ApiError` for non-2xx responses and network failures, and re-throws
- * `AbortError` untouched so callers can ignore cancelled requests.
- */
-export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, query, headers = {}, signal } = options
-  const url = `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}${buildQuery(query)}`
-
-  const init: RequestInit = { method, signal, headers: { Accept: 'application/json', ...headers } }
+function buildInit(options: RequestOptions, accept: string): RequestInit {
+  const { method = 'GET', body, headers = {}, signal } = options
+  const finalHeaders: Record<string, string> = { Accept: accept, ...headers }
   const token = getAccessToken()
-  if (token) (init.headers as Record<string, string>).Authorization = `Bearer ${token}`
+  if (token) finalHeaders.Authorization = `Bearer ${token}`
 
+  const init: RequestInit = { method, signal, headers: finalHeaders }
   if (body !== undefined) {
     if (body instanceof FormData || body instanceof Blob) {
       init.body = body
     } else {
-      ;(init.headers as Record<string, string>)['Content-Type'] = 'application/json'
+      finalHeaders['Content-Type'] = 'application/json'
       init.body = JSON.stringify(body)
     }
   }
+  return init
+}
 
+async function send(url: string, init: RequestInit): Promise<Response> {
   let response: Response
   try {
     response = await fetch(url, init)
@@ -156,25 +177,53 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   if (!response.ok) {
     const problem = await parseProblem(response)
-    if (response.status === 401 && token) notifyUnauthorized()
+    // A 401 while we hold a token means the session expired or was revoked: drop it so
+    // RequireAuth redirects to the sign-in page. A 401 with no token is a failed sign-in.
+    if (response.status === 401 && getAccessToken()) clearSession()
     throw new ApiError(response.status, problem)
   }
+  return response
+}
 
+/**
+ * Typed fetch wrapper. Resolves with the parsed JSON body (or `undefined` for 204),
+ * rejects with `ApiError` for non-2xx responses and network failures, and re-throws
+ * `AbortError` untouched so callers can ignore cancelled requests.
+ */
+export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const response = await send(resolveUrl(path, options.query), buildInit(options, 'application/json'))
   if (response.status === 204 || response.headers.get('content-length') === '0') {
     return undefined as T
   }
-  return (await response.json()) as T
+  const text = await response.text()
+  return (text ? JSON.parse(text) : undefined) as T
 }
 
-export const api = {
-  get: <T>(path: string, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-    request<T>(path, { ...options, method: 'GET' }),
-  post: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-    request<T>(path, { ...options, method: 'POST', body }),
-  put: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-    request<T>(path, { ...options, method: 'PUT', body }),
-  patch: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-    request<T>(path, { ...options, method: 'PATCH', body }),
-  delete: <T = void>(path: string, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-    request<T>(path, { ...options, method: 'DELETE' }),
+/** Fetch a binary resource (report download) with the bearer token attached. */
+export async function download(
+  path: string,
+  options: Omit<RequestOptions, 'method' | 'body'> = {},
+): Promise<Blob> {
+  const response = await send(resolveUrl(path, options.query), buildInit(options, '*/*'))
+  return response.blob()
 }
+
+type Options = Omit<RequestOptions, 'method' | 'body'>
+
+export function get<T>(path: string, options?: Options): Promise<T> {
+  return request<T>(path, { ...options, method: 'GET' })
+}
+
+export function post<T>(path: string, body?: unknown, options?: Options): Promise<T> {
+  return request<T>(path, { ...options, method: 'POST', body })
+}
+
+export function put<T>(path: string, body?: unknown, options?: Options): Promise<T> {
+  return request<T>(path, { ...options, method: 'PUT', body })
+}
+
+export function del<T = void>(path: string, options?: Options): Promise<T> {
+  return request<T>(path, { ...options, method: 'DELETE' })
+}
+
+export const api = { get, post, put, del, download, request }

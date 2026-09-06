@@ -1,12 +1,15 @@
 /**
- * Hand-written DTO shapes mirroring docs/ARCHITECTURE.md (sections 2 and 5).
+ * Hand-written DTO shapes mirroring docs/api/CONTRACT.md (v1). Names and fields match the
+ * contract one-to-one so that page code reads the same as the API documentation.
  *
- * Conventions (same as the API):
- * - identifiers are GUID strings, money is GBP as a number, rates are FRACTIONS (0.05 = 5%);
- * - percentages appear only in fields suffixed `Pct`;
- * - dates are ISO strings: `DateOnly` as 'yyyy-MM-dd', timestamps suffixed `Utc` as ISO 8601.
+ * Conventions:
+ * - identifiers are GUID strings; money is a GBP number;
+ * - a field whose name ends in `Pct` is a PERCENTAGE (0.25 means 0.25%). The API converts to
+ *   fractions at its boundary, the UI never does arithmetic on them beyond display;
+ * - dates are ISO 'yyyy-MM-dd'; timestamps suffixed `Utc` are ISO 8601 UTC strings.
  *
- * When `npm run gen:api` becomes available this file should re-export from `./generated/schema`.
+ * When `npm run gen:api` is wired to docs/api/openapi.json this file should re-export from
+ * `./generated/schema` instead; keep the exported names stable so pages do not change.
  */
 
 // ---------------------------------------------------------------------------
@@ -17,7 +20,7 @@ export interface PagedResult<T> {
   items: T[]
   page: number
   pageSize: number
-  totalCount: number
+  total: number
 }
 
 /** RFC 9457 problem details as emitted by ASP.NET Core. */
@@ -28,26 +31,20 @@ export interface ProblemDetails {
   detail?: string
   instance?: string
   traceId?: string
-  /** Validation failures keyed by field (ASP.NET `ValidationProblemDetails`). */
+  /** Validation failures keyed by field name (ASP.NET `ValidationProblemDetails`). */
   errors?: Record<string, string[]>
 }
 
-export interface PageQuery {
-  page?: number
-  pageSize?: number
-  search?: string
-  sort?: string
-}
-
 // ---------------------------------------------------------------------------
-// Auth and tenancy
+// Auth
 // ---------------------------------------------------------------------------
 
 export type UserRole = 'Adviser' | 'Paraplanner' | 'Compliance' | 'FirmAdmin' | 'PlatformAdmin'
 
-export interface AuthUser {
+export interface UserDto {
   id: string
   displayName: string
+  email: string
   role: UserRole
   firmId: string
   firmName: string
@@ -61,62 +58,94 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string
   expiresAtUtc: string
-  user: AuthUser
+  user: UserDto
 }
 
 // ---------------------------------------------------------------------------
-// Clients and schemes
+// Clients
 // ---------------------------------------------------------------------------
 
 export type Sex = 'Male' | 'Female'
 export type TaxRegime = 'RestOfUk' | 'Scotland'
 export type HealthStatus = 'Standard' | 'Enhanced'
+export type MaritalStatus =
+  | 'Single'
+  | 'Married'
+  | 'CivilPartnership'
+  | 'Divorced'
+  | 'Widowed'
+  | 'Cohabiting'
+export type EmploymentStatus = 'Employed' | 'SelfEmployed' | 'Retired' | 'NotWorking' | 'Director'
 export type ExternalSource = 'Manual' | 'Intelliflo' | 'Xplan' | 'TruePotential' | 'Origo'
+
+export interface AddressDto {
+  line1?: string
+  line2?: string
+  town?: string
+  county?: string
+  postcode?: string
+  country?: string
+}
+
+export interface StatePensionDto {
+  forecastWeeklyAmount?: number
+  qualifyingYears?: number
+}
+
+export interface ExternalReferenceDto {
+  source: ExternalSource
+  externalId?: string
+}
 
 export interface ClientSummary {
   id: string
+  fullName: string
+  dateOfBirth: string
+  age: number
+  email?: string
+  riskProfile: number
+  schemeCount: number
+  totalPensionValue: number
+  updatedAtUtc: string
+}
+
+export interface ClientWrite {
   title?: string
   firstName: string
   lastName: string
   dateOfBirth: string
-  adviserName: string
-  riskProfile: number
-  schemeCount: number
-  /** Sum of current values across the client's schemes. */
-  totalPensionValue: number
-  openAnalyses: number
-  lastActivityUtc: string
-  externalSource: ExternalSource
-}
-
-export interface StatePensionForecast {
-  weeklyAmount: number
-  qualifyingYears: number
-}
-
-export interface ClientDetail extends ClientSummary {
   sex: Sex
-  /** Masked at rest; only the last three characters are ever returned. */
-  nationalInsuranceNumberMasked: string
   email?: string
   phone?: string
-  addressLine1?: string
-  addressLine2?: string
-  town?: string
-  postcode?: string
-  maritalStatus?: string
-  employmentStatus?: string
-  annualSalary?: number
+  address?: AddressDto
+  maritalStatus: MaritalStatus
+  employmentStatus: EmploymentStatus
+  annualSalary: number
   targetRetirementAge: number
   taxRegime: TaxRegime
+  /** 1 (lowest) to 7 (highest). */
+  riskProfile: number
   health: HealthStatus
-  smoker: boolean
-  statePension?: StatePensionForecast
-  externalRef?: string
-  schemes: Scheme[]
+  isSmoker: boolean
+  statePension: StatePensionDto
+  /** Write-only; stored masked. */
+  nationalInsuranceNumber?: string
+}
+
+export interface ClientDetail extends Omit<ClientWrite, 'nationalInsuranceNumber'> {
+  id: string
+  fullName: string
+  age: number
+  nationalInsuranceNumberMasked?: string
+  externalReference: ExternalReferenceDto
+  schemes: SchemeDto[]
   createdAtUtc: string
   updatedAtUtc: string
 }
+
+// ---------------------------------------------------------------------------
+// Schemes
+// ---------------------------------------------------------------------------
 
 export type SchemeType =
   | 'PersonalPension'
@@ -133,127 +162,191 @@ export type SchemeType =
   | 'DrawdownPlan'
 
 export type ContributionPayer = 'Member' | 'Employer' | 'ThirdParty'
-export type ContributionFrequency = 'Monthly' | 'Quarterly' | 'Annually' | 'Single'
+export type Frequency = 'Single' | 'Annually' | 'Quarterly' | 'Monthly'
 
-export interface Contribution {
+export interface ContributionDto {
   payer: ContributionPayer
   amount: number
-  frequency: ContributionFrequency
-  escalationRate: number
+  frequency: Frequency
+  escalationPct: number
   isGrossOfTaxRelief: boolean
+  startMonth?: number
+  endMonth?: number
 }
 
-export interface Holding {
-  fundId?: string
-  isin?: string
+export interface HoldingDto {
   name: string
-  /** Fraction of the scheme; holdings sum to 1. */
-  weight: number
+  weightPct: number
+  isin?: string
+  fundId?: string
+  ocfPct?: number
 }
 
-export interface SchemeGuarantees {
-  guaranteedAnnuityRate?: number
-  guaranteedGrowthRate?: number
+export interface GuaranteesDto {
+  guaranteedAnnuityRatePct?: number
+  guaranteedGrowthRatePct?: number
   protectedTaxFreeCashPct?: number
   protectedPensionAge?: number
   withProfits: boolean
-  marketValueReductionPct?: number
-  loyaltyBonusPct?: number
+  marketValueReductionPct: number
+  terminalBonus: number
+  loyaltyBonusPct: number
 }
 
-export interface Scheme {
-  id: string
-  clientId: string
-  schemeType: SchemeType
+export type IndexBasis = 'None' | 'Fixed' | 'Cpi' | 'Rpi' | 'LpiCpi' | 'LpiRpi' | 'Section148'
+
+export interface IndexRuleDto {
+  basis: IndexBasis
+  ratePct: number
+  capPct?: number
+  floorPct?: number
+}
+
+export interface DbTrancheDto {
+  name: string
+  accruedAnnualPension: number
+  revaluation: IndexRuleDto
+  escalation: IndexRuleDto
+  isGmp: boolean
+}
+
+export type SchemeFundingStatus = 'FullyFunded' | 'Deficit' | 'PensionProtectionFund'
+
+export interface DefinedBenefitDto {
+  dateOfLeaving: string
+  normalRetirementAge: number
+  cetvGuaranteeExpiry: string
+  tranches: DbTrancheDto[]
+  spousePensionPct: number
+  guaranteePeriodYears: number
+  /** £ lump sum per £1 of pension given up. */
+  pclsCommutationFactor: number
+  maxPclsPct: number
+  earlyRetirementReductionPct: number
+  earliestUnreducedAge?: number
+  bridgingPensionAnnual: number
+  fundingStatus: SchemeFundingStatus
+}
+
+export interface SchemeWrite {
+  type: SchemeType
   providerId?: string
-  providerName?: string
   productName: string
   policyNumber?: string
   currentValue: number
   transferValue: number
   valuationDate: string
-  contributions: Contribution[]
-  charges: ChargeSchedule
-  holdings: Holding[]
-  guarantees: SchemeGuarantees
-  exitPenalty?: ExitPenaltySchedule
-  selectedRetirementAge: number
-  /** True when any guarantee flag is set; such schemes are always 'Refer' in a switch. */
-  hasSafeguardedBenefits: boolean
+  startDate?: string
+  charges: ChargeScheduleDto
+  guarantees: GuaranteesDto
+  selectedRetirementAge?: number
+  inDrawdown: boolean
+  contributions: ContributionDto[]
+  holdings: HoldingDto[]
+  definedBenefit?: DefinedBenefitDto
 }
+
+export interface SchemeDto extends SchemeWrite {
+  id: string
+  clientId: string
+  providerName?: string
+  netTransferValue: number
+  weightedOcfPct?: number
+  createdAtUtc: string
+  updatedAtUtc: string
+}
+
+/** A scheme supplied inline to a stateless calculation (no persisted id). */
+export type InlineSchemeWrite = SchemeWrite & { name: string }
 
 // ---------------------------------------------------------------------------
-// Charge model (architecture 2.4)
+// Charge model (shared by schemes and products)
 // ---------------------------------------------------------------------------
 
-export type TierMode = 'Marginal' | 'WholeOfFund'
+export type TieredChargeMode = 'Marginal' | 'WholeOfFund'
 
-export interface TierBand {
-  /** Upper bound of the band in GBP; null = unbounded. */
-  upTo: number | null
-  annualRate: number
+export interface TierBandDto {
+  /** Upper bound of the band in GBP; omitted = unbounded. */
+  upTo?: number
+  annualRatePct: number
 }
 
-export interface TieredCharge {
-  mode: TierMode
-  bands: TierBand[]
+export interface TieredChargeDto {
+  mode: TieredChargeMode
+  bands: TierBandDto[]
 }
 
-export type Indexation = 'None' | 'Cpi' | 'Fixed'
+export type IndexationBasis = 'None' | 'Cpi' | 'Fixed'
 
-export interface FixedCharge {
+export interface IndexationDto {
+  basis: IndexationBasis
+  ratePct: number
+}
+
+export type FixedChargeScope = 'Wrapper' | 'Drawdown' | 'Sipp'
+
+export interface FixedChargeDto {
   amount: number
-  frequency: ContributionFrequency
-  indexation: Indexation
-  indexationRate?: number
-  appliesTo: 'Wrapper' | 'Drawdown' | 'Sipp'
+  frequency: Frequency
+  indexation: IndexationDto
+  appliesTo: FixedChargeScope
+  description?: string
 }
 
-export type FundChargeBasis =
-  | { kind: 'Explicit'; ocf: number }
-  | { kind: 'FromHoldings' }
-  | { kind: 'None' }
+export type FundChargeKind = 'None' | 'Explicit' | 'FromHoldings'
 
-export interface AdviserCharge {
+export interface FundChargeDto {
+  kind: FundChargeKind
+  ocfPct?: number
+}
+
+export interface AdviserChargesDto {
   initialPct: number
   initialAmount: number
   ongoingPct: number
   ongoingAmount: number
 }
 
-export interface DealingCharges {
+export interface DealingChargesDto {
   fundDealAmount: number
   etfDealAmount: number
-  expectedDealsPerYear: number
+  expectedFundDealsPerYear: number
+  expectedEtfDealsPerYear: number
 }
 
-export interface ExitPenaltyStep {
-  untilYearsFromStart: number
-  pct: number
+export interface SwitchChargeDto {
+  amountPerSwitch: number
+  expectedSwitchesPerYear: number
+}
+
+export interface ExitPenaltyBandDto {
+  untilYearsFromStart?: number
+  ratePct: number
   amount: number
 }
 
-export type ExitPenaltySchedule = ExitPenaltyStep[]
-
-export interface LargeFundDiscount {
-  threshold: number
-  rebatePct: number
+export interface ExitPenaltyDto {
+  bands: ExitPenaltyBandDto[]
 }
 
-export interface ChargeSchedule {
-  platformCharge?: TieredCharge
-  productCharge?: TieredCharge
-  fixedCharges: FixedCharge[]
-  fundCharge: FundChargeBasis
-  transactionCosts?: number
-  adviserCharges: AdviserCharge
-  dealingCharges?: DealingCharges
-  switchCharge?: number
-  expectedSwitchesPerYear?: number
-  exitPenalty?: ExitPenaltySchedule
-  bidOfferSpreadPct?: number
-  allocationRatePct?: number
-  largeFundDiscounts?: LargeFundDiscount[]
+export interface LargeFundDiscountDto {
+  threshold: number
+  rebateRatePct: number
+}
+
+export interface ChargeScheduleDto {
+  platformCharge?: TieredChargeDto
+  productCharge?: TieredChargeDto
+  fixedCharges: FixedChargeDto[]
+  fundCharge: FundChargeDto
+  transactionCostsPct: number
+  adviserCharges: AdviserChargesDto
+  dealingCharges: DealingChargesDto
+  switchCharge: SwitchChargeDto
+  exitPenalty: ExitPenaltyDto
+  bidOfferSpreadPct: number
+  allocationRatePct: number
+  largeFundDiscounts: LargeFundDiscountDto[]
 }
 
 // ---------------------------------------------------------------------------
@@ -262,345 +355,782 @@ export interface ChargeSchedule {
 
 export type ProviderKind = 'Platform' | 'Insurer' | 'SippOperator' | 'FundManager' | 'Mps'
 export type DataQuality = 'Verified' | 'Indicative' | 'Placeholder'
+export type FundUniverse = 'WholeOfMarket' | 'Restricted'
 export type WrapperType = 'Sipp' | 'PersonalPension' | 'Isa' | 'Gia' | 'Bond' | 'Drawdown'
 
-export interface Provider {
+export interface ProviderDto {
   id: string
   name: string
-  fcaFirmReferenceNumber?: string
   kind: ProviderKind
+  fcaFirmReferenceNumber?: string
   website?: string
 }
 
-export interface Product {
+export interface ProductSummary {
   id: string
   providerId: string
   providerName: string
   name: string
-  wrapperTypes: WrapperType[]
+  wrapperTypes: string[]
   minimumInvestment: number
-  minimumRegularContribution: number
-  chargeSchedule: ChargeSchedule
   allowsFamilyLinking: boolean
-  availableFundUniverse: 'WholeOfMarket' | 'Restricted'
+  fundUniverse: FundUniverse
+  dataQuality: DataQuality
+  effectiveChargePctAt100k: number
+  effectiveChargePctAt500k: number
+  currentChargeVersion: number
+  asAt: string
+  sourceUrl?: string
+}
+
+export interface ProductChargeVersionDto {
+  version: number
   effectiveFrom: string
   effectiveTo?: string
-  version: number
-  sourceUrl?: string
   asAt: string
+  sourceUrl?: string
   dataQuality: DataQuality
+  charges: ChargeScheduleDto
 }
 
-export type FundType =
-  | 'Oeic'
-  | 'UnitTrust'
-  | 'Etf'
-  | 'InvestmentTrust'
-  | 'ModelPortfolio'
-  | 'Cash'
-
-export interface AssetAllocation {
-  equity: number
-  fixedInterest: number
-  property: number
-  cash: number
-  alternatives: number
+export interface ProductDetail extends ProductSummary {
+  chargeVersions: ProductChargeVersionDto[]
 }
 
-export interface Fund {
+export type FundType = 'Oeic' | 'UnitTrust' | 'Etf' | 'InvestmentTrust' | 'ModelPortfolio' | 'Cash'
+
+export interface AssetAllocationDto {
+  equityPct: number
+  fixedInterestPct: number
+  propertyPct: number
+  cashPct: number
+  alternativesPct: number
+}
+
+export interface FundStatisticsDto {
+  return1YPct?: number
+  return3YPct?: number
+  return5YPct?: number
+  volatility3YPct?: number
+  sharpe3Y?: number
+  maxDrawdown3YPct?: number
+  yieldPct?: number
+  morningstarRating?: number
+  medalistRating?: string
+}
+
+export interface FundDto {
   id: string
   isin: string
   sedol?: string
   name: string
   shareClass?: string
   managerName: string
-  fundType: FundType
+  type: FundType
   iaSector?: string
   morningstarCategory?: string
-  ocf: number
-  transactionCosts: number
-  assetAllocation: AssetAllocation
-  srri: number
-  volatility3Y?: number
-  sharpe3Y?: number
-  return1Y?: number
-  return3Y?: number
-  return5Y?: number
-  yield?: number
-  maxDrawdown3Y?: number
-  morningstarRating?: number
-  medalistRating?: string
-  priceDate?: string
+  ocfPct: number
+  transactionCostsPct: number
+  assetAllocation: AssetAllocationDto
+  srri?: number
+  statistics: FundStatisticsDto
   price?: number
+  priceDate?: string
   factsheetUrl?: string
   sourceUrl?: string
-  asAt: string
+  asAt?: string
+}
+
+export interface ModelPortfolioHoldingDto {
+  fundId: string
+  isin: string
+  name: string
+  weightPct: number
+  ocfPct: number
+}
+
+export interface ModelPortfolioDto {
+  id: string
+  providerId: string
+  providerName: string
+  name: string
+  riskLevel: number
+  mpsFeePct: number
+  blendedOcfPct: number
+  totalInvestmentChargePct: number
+  holdings: ModelPortfolioHoldingDto[]
 }
 
 // ---------------------------------------------------------------------------
-// Assumptions
+// Assumption sets
 // ---------------------------------------------------------------------------
 
 export type ProjectionBasis = 'Nominal' | 'Real'
 
-export interface AssumptionSet {
+export interface MarketInputsDto {
+  giltYieldUpTo5Pct: number
+  giltYield5To10Pct: number
+  giltYield10To15Pct: number
+  giltYieldOver15Pct: number
+  tvcAnnuityRateRpiLinkedPct: number
+  tvcAnnuityRateLevelPct: number
+  cobs13YPct: number
+  asAt: string
+}
+
+export interface AssumptionSetDto {
   id: string
   firmId?: string
   name: string
   isFcaStandard: boolean
   version: number
-  growthLower: number
-  growthIntermediate: number
-  growthHigher: number
-  inflation: number
-  earningsGrowth: number
-  chargeInflation: number
-  preRetirementDiscountRate: number
-  annuityInterestRate: number
-  annuityExpenseLoading: number
+  growthLowerPct: number
+  growthIntermediatePct: number
+  growthHigherPct: number
+  inflationPct: number
+  earningsGrowthPct: number
+  rpiInflationPct: number
+  chargeInflationPct: number
+  preRetirementProductChargePct: number
+  annuityExpenseLoadingPct: number
+  spouseAgeGapYears: number
   mortalityBasis: string
-  statePensionIncrease: number
+  statePensionIncreasePct: number
   taxYear: string
   projectionBasis: ProjectionBasis
-  asAt: string
+  marketInputs: MarketInputsDto
+}
+
+export type AssumptionSetWrite = Omit<AssumptionSetDto, 'id' | 'firmId' | 'isFcaStandard' | 'version'>
+
+export interface AssumptionSetCopyRequest {
+  name: string
 }
 
 // ---------------------------------------------------------------------------
-// Pension switch analysis
+// Stateless calculations
 // ---------------------------------------------------------------------------
 
-export type AnalysisStatus = 'Draft' | 'Calculated' | 'Locked'
+export type CedingSchemeRef = { schemeId: string } | { inline: InlineSchemeWrite }
 
-export interface AssumptionOverride {
-  key: string
-  value: number
-  reason?: string
+export interface PensionSwitchOverrides {
+  growthIntermediatePct?: number
+  inflationPct?: number
+  growthLowerPct?: number
+  growthHigherPct?: number
 }
 
-export interface PensionSwitchRequest {
-  clientId: string
-  cedingSchemeIds: string[]
+export interface PensionSwitchCalcRequest {
+  /** When given, the server loads schemes by id; otherwise inline schemes are used. */
+  clientId?: string
+  cedingSchemes: CedingSchemeRef[]
   proposedProductId: string
-  proposedProductVersion?: number
-  proposedHoldings: Holding[]
-  proposedAdviserCharges: AdviserCharge
+  proposedProductChargeVersion?: number
+  proposedHoldings: HoldingDto[]
+  proposedModelPortfolioId?: string
+  proposedAdviserCharges: AdviserChargesDto
   retirementAge: number
-  assumptionSetId: string
-  overrides?: AssumptionOverride[]
+  assumptionSetId?: string
+  overrides?: PensionSwitchOverrides
+  /** Default true: ceding contributions continue into the new product. */
+  redirectContributions: boolean
 }
 
-export type SwitchVerdict = 'Retain' | 'Consider' | 'SwitchCandidate' | 'Refer'
-
-export interface RiyFigures {
-  /** COBS 13 Annex 4 3.1R: product, platform and fund charges only. */
-  productRiy: number
-  /** COBS 13 Annex 4 3.2R: every charge including adviser charges. */
-  totalRiy: number
-  /** Growth rate used for the projection (the intermediate rate). */
-  growthRate: number
-}
-
-export interface ProjectionYear {
-  year: number
-  age: number
-  contributionsToDate: number
-  valueBeforeCharges: number
-  valueAfterProductCharges: number
-  valueAfterAllCharges: number
-  /** Real (today's money) value after all charges. */
-  valueAfterAllChargesReal: number
-  chargesToDate: number
-}
-
-export interface CriticalYieldFigures {
-  /** Growth the receiving product must earn before charges to match the ceding scheme(s). */
-  criticalYield: number
-  /** Assumed growth minus critical yield; positive means the switch is expected to be ahead. */
-  headroom: number
+export interface CriticalYieldAtRateDto {
+  growthPct: number
+  existingValueAtRetirement: number
+  receivingValueAtRetirement: number
+  criticalYieldPct: number
+  criticalYieldRealPct: number
+  headroomPct: number
   projectedGain: number
   breakEvenYear?: number
   converged: boolean
-  iterations: number
 }
 
-export interface CedingSchemeResult {
-  schemeId: string
-  schemeName: string
-  transferValue: number
+export interface EffectOfChargesRowDto {
+  year: number
+  paymentsToDate: number
+  beforeCharges: number
+  planAndInvestmentChargesOnly: number
+  afterAllCharges: number
+  effectOfDeductionsToDate: number
+}
+
+export interface TotalChargesDto {
+  platform: number
+  product: number
+  fund: number
+  transaction: number
+  adviserInitial: number
+  adviserOngoing: number
+  fixed: number
+  dealing: number
+  switch: number
+  discounts: number
+  allocationAndSpread: number
   exitPenalty: number
-  projectedValueAtRetirement: number
-  riy: RiyFigures
+  total: number
+}
+
+export interface RiyDto {
+  growthPct: number
+  productRiyPct: number
+  totalRiyPct: number
+  rateAfterProductChargesPct: number
+  rateAfterAllChargesPct: number
+  valueBeforeCharges: number
+  valueAfterProductCharges: number
+  valueAfterAllCharges: number
+  productSentence: string
+  totalSentence: string
+  effectOfCharges: EffectOfChargesRowDto[]
+  totalCharges: TotalChargesDto
+}
+
+export type SwitchVerdict = 'SwitchCandidate' | 'Consider' | 'Retain' | 'Refer'
+
+export interface PensionSwitchSchemeResultDto {
+  name: string
+  currentValue: number
+  netTransferValue: number
+  projectedValueIfRetained: number
+  riyIfRetained: RiyDto
+  riyIfSwitched: RiyDto
+  criticalYieldAlonePct: number
+  guaranteesFlagged: boolean
   verdict: SwitchVerdict
-  guaranteeFlags: string[]
-  projections: ProjectionYear[]
 }
 
-export interface PensionSwitchResult {
-  analysisId?: string
-  status: AnalysisStatus
-  calculatedAtUtc: string
-  assumptionSetName: string
-  assumptionSetVersion: number
-  engineVersion: string
-  retirementAge: number
-  /** Critical yield at the lower, intermediate and higher COBS 13 rates. */
-  criticalYield: {
-    lower: CriticalYieldFigures
-    intermediate: CriticalYieldFigures
-    higher: CriticalYieldFigures
-  }
-  existingValueAtRetirement: number
-  proposedValueAtRetirement: number
-  proposed: {
-    productId: string
-    productName: string
-    startValue: number
-    riy: RiyFigures
-    projections: ProjectionYear[]
-  }
-  cedingSchemes: CedingSchemeResult[]
+export interface PensionSwitchChartPointDto {
+  year: number
+  existingValue: number
+  receivingValue: number
+}
+
+export interface AssumptionSetRefDto {
+  id: string
+  name: string
+  version: number
+}
+
+export interface PensionSwitchResultDto {
+  totalNetTransferValue: number
+  initialAdviserCharge: number
+  anyGuaranteesFlagged: boolean
   warnings: string[]
+  lower: CriticalYieldAtRateDto
+  intermediate: CriticalYieldAtRateDto
+  higher: CriticalYieldAtRateDto
+  receivingRiy: RiyDto
+  schemes: PensionSwitchSchemeResultDto[]
+  /** Intermediate rate, yearly, real terms. */
+  chart: PensionSwitchChartPointDto[]
+  engineVersion: string
+  calculatedAtUtc: string
+  assumptionSet: AssumptionSetRefDto
 }
 
-// ---------------------------------------------------------------------------
-// DB transfer analysis
-// ---------------------------------------------------------------------------
+export interface RiyCalcRequest {
+  startValue: number
+  months: number
+  growthPct: number
+  charges: ChargeScheduleDto
+  weightedOcfPct?: number
+  contributions: ContributionDto[]
+}
 
-export interface DbTransferRequest {
-  clientId: string
-  dbSchemeId: string
+export interface DbTransferCalcRequest {
+  clientId?: string
+  dbSchemeId?: string
+  inline?: InlineSchemeWrite
   proposedProductId: string
-  proposedHoldings: Holding[]
-  transferDate: string
-  assumptionSetId: string
-  adviserChargeBasis: 'Fixed' | 'Contingent'
+  proposedHoldings: HoldingDto[]
+  proposedAdviserCharges: AdviserChargesDto
+  aptaGrowthPct: number
+  planEndAge: number
+  initialAdviceFee: number
+  workplaceDefaultChargePct?: number
+  assumptionSetId?: string
+  transferDate?: string
 }
 
-export interface IncomeComparisonRow {
+export interface TvcTrancheDto {
+  name: string
+  accruedAnnualPension: number
+  revaluationRatePct: number
+  yearsRevalued: number
+  pensionAtRetirement: number
+  escalationInPaymentPct: number
+  annuityInterestRatePct: number
+  annuityPricePerPound: number
+  annuityCost: number
+  isGmp: boolean
+}
+
+export interface TvcDto {
+  cashEquivalentTransferValue: number
+  estimatedReplacementCost: number
+  difference: number
+  retirementAgeUsed: number
+  termYears: number
+  giltYieldUsedPct: number
+  discountRateUsedPct: number
+  annuityCostAtRetirement: number
+  pensionAtRetirement: number
+  wording: string
+  notes: string[]
+  tranches: TvcTrancheDto[]
+}
+
+export interface DbCriticalYieldsDto {
+  typeAAnnuityMatchPct: number
+  typeBPclsAndReducedPensionPct: number
+  drawdownHurdleRatePct: number
+  schemePcls: number
+  residualPensionAfterPcls: number
+  converged: boolean
+}
+
+export interface IncomeComparisonRowDto {
   age: number
-  schemePensionReal: number
+  schemeIncomeNominal: number
+  schemeIncomeReal: number
   drawdownIncomeReal: number
   residualFundReal: number
   schemeDeathBenefitReal: number
 }
 
-export interface DbTransferResult {
-  analysisId?: string
-  status: AnalysisStatus
-  calculatedAtUtc: string
-  cetv: number
-  cetvGuaranteeExpiryDate?: string
-  revaluedPensionAtNra: number
-  normalRetirementAge: number
-  /** Transfer Value Comparator: estimated cost of buying the scheme benefits from an insurer. */
-  tvc: number
-  tvcShortfall: number
-  giltYieldUsed: number
-  criticalYields: {
-    typeA: CriticalYieldFigures
-    typeB: CriticalYieldFigures
-    drawdownHurdle: CriticalYieldFigures
-  }
-  pclsOption: {
-    schemePcls: number
-    residualPension: number
-    commutationFactor: number
-  }
-  incomeComparison: IncomeComparisonRow[]
-  stressTests: Array<{ name: string; firstShortfallAge?: number; fundAtNra: number }>
-  adviceFeePaybackMonths: number
-  warnings: string[]
+export interface StressTestDto {
+  name: string
+  sustainableRealIncome: number
+  change: number
 }
 
-// ---------------------------------------------------------------------------
-// Cashflow
-// ---------------------------------------------------------------------------
+export interface DbTransferSummaryDto {
+  initialAdviceFee: number
+  revaluedMonthlyIncome: number
+  paybackMonths: number
+  firstYearChargesProposed: number
+  ongoingAnnualChargesProposed: number
+  firstYearChargesCeding: number
+  firstYearChargesWorkplaceDefault?: number
+}
 
-export interface CashflowRow {
+export interface DbTransferResultDto {
+  tvc: TvcDto
+  criticalYields: DbCriticalYieldsDto
+  sustainableRealIncomeFromTransfer: number
+  incomeComparison: IncomeComparisonRowDto[]
+  stressTests: StressTestDto[]
+  summary: DbTransferSummaryDto
+  lifeExpectancyAtRetirement: number
+  warnings: string[]
+  engineVersion: string
+  calculatedAtUtc: string
+}
+
+export interface PersonDto {
+  name: string
+  dateOfBirth: string
+  sex: Sex
+  taxRegime: TaxRegime
+  retirementAge: number
+  statePensionForecastWeekly?: number
+  statePensionQualifyingYears?: number
+  mpaaTriggered: boolean
+}
+
+export type CashflowIncomeKind =
+  | 'Employment'
+  | 'SelfEmployment'
+  | 'Rental'
+  | 'DefinedBenefitPension'
+  | 'Annuity'
+  | 'StatePension'
+  | 'Other'
+
+export interface CashflowIncomeDto {
+  name: string
+  kind: CashflowIncomeKind
+  annualAmount: number
+  fromAge: number
+  toAge?: number
+  growthPct: number
+  isTaxable: boolean
+  personIndex: number
+}
+
+export interface CashflowExpenseDto {
+  name: string
+  annualAmount: number
+  fromAge: number
+  toAge?: number
+}
+
+export type CashflowAssetKind =
+  | 'UncrystallisedPension'
+  | 'Drawdown'
+  | 'Isa'
+  | 'GeneralInvestmentAccount'
+  | 'Cash'
+  | 'Property'
+  | 'OnshoreBond'
+
+export interface CashflowAssetDto {
+  name: string
+  kind: CashflowAssetKind
+  value: number
+  growthPct: number
+  charges: ChargeScheduleDto
+  schemeId?: string
+  costBasis: number
+  annualContribution: number
+  employerContribution: number
+  salarySacrifice: boolean
+  personIndex: number
+  allocation?: AssetAllocationDto
+}
+
+export interface CashflowEventDto {
+  name: string
+  atAge: number
+  amount: number
+}
+
+export type CrystallisationStrategy = 'PclsUpFront' | 'PhasedUfpls' | 'PhasedDrawdown'
+export type DrawdownRule = 'GapFill' | 'FixedAmount' | 'PercentOfPot'
+
+export interface CashflowStrategyDto {
+  withdrawalOrder: string[]
+  crystallisation: CrystallisationStrategy
+  drawdownRule: DrawdownRule
+  drawdownParameter: number
+  reinvestSurplusIntoIsa: boolean
+  annuityPurchaseAge?: number
+}
+
+export interface CashflowOverrides {
+  inflationPct?: number
+  earningsGrowthPct?: number
+  statePensionIncreasePct?: number
+}
+
+export interface CashflowCalcRequest {
+  clientId?: string
+  person: PersonDto
+  partner?: PersonDto
+  planEndAge: number
+  incomes: CashflowIncomeDto[]
+  expenses: CashflowExpenseDto[]
+  assets: CashflowAssetDto[]
+  events: CashflowEventDto[]
+  strategy: CashflowStrategyDto
+  assumptionSetId?: string
+  overrides?: CashflowOverrides
+}
+
+export interface StochasticCalcRequest extends CashflowCalcRequest {
+  seed?: string
+  paths?: number
+}
+
+export interface CashflowAssetRowDto {
+  name: string
+  kind: CashflowAssetKind
+  value: number
+  valueReal: number
+}
+
+export interface CashflowRowDto {
   year: number
-  taxYear: string
   age: number
   partnerAge?: number
-  grossIncome: number
-  incomeBySource: Record<string, number>
+  employmentIncome: number
+  statePensionIncome: number
+  dbPensionIncome: number
+  otherIncome: number
+  pensionWithdrawalsTaxable: number
+  taxFreeCash: number
+  isaWithdrawals: number
+  giaWithdrawals: number
+  cashWithdrawals: number
   incomeTax: number
   nationalInsurance: number
+  capitalGainsTax: number
   netIncome: number
+  netIncomeReal: number
   expenses: number
   surplus: number
   shortfall: number
-  assetValues: Record<string, number>
+  contributions: number
+  assets: CashflowAssetRowDto[]
   totalAssets: number
-  remainingLumpSumAllowance: number
+  totalAssetsReal: number
   warnings: string[]
 }
 
-export type Percentile = 5 | 10 | 25 | 50 | 75 | 90 | 95
-
-export interface PercentileRow {
-  year: number
-  age: number
-  totalAssets: Record<Percentile, number>
-  netIncome: Record<Percentile, number>
+export interface CashflowResultDto {
+  rows: CashflowRowDto[]
+  firstShortfallAge?: number
+  totalIncomeTax: number
+  totalShortfall: number
+  legacyAtEnd: number
+  legacyAtEndReal: number
+  lumpSumAllowanceUsed: number
+  succeeds: boolean
+  sustainableSpend: number
+  engineVersion: string
+  calculatedAtUtc: string
 }
 
-export interface CashflowResult {
-  planId?: string
-  calculatedAtUtc: string
-  planEndAge: number
-  rows: CashflowRow[]
-  firstShortfallAge?: number
-  totalTaxPaid: number
-  sustainableRealIncome: number
-  legacyAtPlanEnd: number
-  stochastic?: {
-    seed: number
-    paths: number
-    successProbability: number
-    percentiles: PercentileRow[]
-    worstDecileShortfallAge?: number
-    conservativenessCheckPassed: boolean
-  }
+export interface PercentileRowDto {
+  year: number
+  age: number
+  p5: number
+  p10: number
+  p25: number
+  p50: number
+  p75: number
+  p90: number
+  p95: number
+}
+
+export interface ConservativenessDto {
+  deterministicAssetsAtEnd: number
+  medianAssetsAtEnd: number
+  medianIsNoLessConservative: boolean
+}
+
+export interface StochasticResultDto {
+  seed: string
+  paths: number
+  probabilityOfSuccess: number
+  totalAssetsReal: PercentileRowDto[]
+  netIncomeReal: PercentileRowDto[]
+  medianShortfallAge?: number
+  worstDecileShortfallAge?: number
+  conservativeness: ConservativenessDto
+  meanLegacyReal: number
+  engineVersion: string
+}
+
+export interface TaxCalcRequest {
+  taxYear?: string
+  regime: TaxRegime
+  earnedIncome: number
+  pensionIncome: number
+  otherIncome: number
+  savingsInterest: number
+  dividends: number
+  grossPensionContributions: number
+  reliefAtSourceContributions: number
+  subjectToNi: boolean
+}
+
+export interface TaxLineDto {
+  category: string
+  band: string
+  amount: number
+  ratePct: number
+  tax: number
+}
+
+export interface TaxComputationDto {
+  taxYear: string
+  regime: TaxRegime
+  adjustedNetIncome: number
+  personalAllowance: number
+  taxableIncome: number
+  incomeTax: number
+  nationalInsurance: number
+  totalDeductions: number
+  marginalRatePct: number
+  lines: TaxLineDto[]
 }
 
 // ---------------------------------------------------------------------------
-// Reports and audit
+// Persisted analyses
+// ---------------------------------------------------------------------------
+
+export type AnalysisKind = 'PensionSwitch' | 'DbTransfer' | 'Cashflow'
+export type AnalysisStatus = 'Draft' | 'Calculated' | 'Locked'
+
+export interface AnalysisSummary {
+  id: string
+  kind: AnalysisKind
+  title: string
+  status: AnalysisStatus
+  version: number
+  calculatedAtUtc?: string
+  updatedAtUtc: string
+  createdBy: string
+}
+
+/** Audit and versioning fields shared by every persisted analysis. */
+export interface AnalysisEnvelope {
+  id: string
+  firmId: string
+  status: AnalysisStatus
+  version: number
+  resultHash?: string
+  calculatedAtUtc?: string
+  engineVersion?: string
+  createdAtUtc: string
+  updatedAtUtc: string
+  createdBy: string
+}
+
+export interface PensionSwitchAnalysisWrite {
+  clientId: string
+  title: string
+  retirementAge: number
+  cedingSchemeIds: string[]
+  proposedProductId?: string
+  proposedProductChargeVersion?: number
+  proposedHoldings: HoldingDto[]
+  proposedModelPortfolioId?: string
+  proposedAdviserCharges: AdviserChargesDto
+  assumptionSetId: string
+  overrides?: PensionSwitchOverrides
+  rationale?: string
+}
+
+export interface PensionSwitchAnalysisDto extends PensionSwitchAnalysisWrite, AnalysisEnvelope {
+  result?: PensionSwitchResultDto
+}
+
+export type ChargeBasis = 'NonContingent' | 'Contingent'
+
+export interface DbTransferAnalysisWrite {
+  clientId: string
+  dbSchemeId: string
+  transferDate: string
+  planEndAge: number
+  proposedProductId?: string
+  proposedProductChargeVersion?: number
+  proposedHoldings: HoldingDto[]
+  proposedAdviserCharges: AdviserChargesDto
+  aptaGrowthPct?: number
+  chargeBasis: ChargeBasis
+  contingentChargingCarveOut?: string
+  workplaceSchemeProductId?: string
+  assumptionSetId: string
+  overrides?: PensionSwitchOverrides
+}
+
+export interface DbTransferAnalysisDto extends DbTransferAnalysisWrite, AnalysisEnvelope {
+  result?: DbTransferResultDto
+}
+
+export interface CashflowPlanWrite {
+  clientId: string
+  partnerClientId?: string
+  title: string
+  planEndAge: number
+  incomes: CashflowIncomeDto[]
+  expenses: CashflowExpenseDto[]
+  assets: CashflowAssetDto[]
+  events: CashflowEventDto[]
+  strategy: CashflowStrategyDto
+  stochasticSeed?: string
+  stochasticPaths: number
+  assumptionSetId: string
+  overrides?: CashflowOverrides
+}
+
+export interface CashflowPlanDto extends CashflowPlanWrite, AnalysisEnvelope {
+  result?: CashflowResultDto
+  stochasticResult?: StochasticResultDto
+}
+
+// ---------------------------------------------------------------------------
+// Reports
 // ---------------------------------------------------------------------------
 
 export type ReportKind = 'Suitability' | 'PensionSwitch' | 'DbTransfer' | 'Cashflow' | 'FundComparison'
 export type ReportFormat = 'Pdf' | 'Docx' | 'Json'
 
-export interface Report {
-  id: string
+export interface ReportCreateRequest {
   analysisId: string
-  clientId: string
-  clientName: string
   kind: ReportKind
   format: ReportFormat
-  generatedAtUtc: string
-  generatedBy: string
-  sha256: string
-  templateVersion: string
-  sizeBytes: number
 }
 
-export interface AuditEvent {
+export interface ReportDto {
   id: string
-  firmId: string
-  userId: string
-  userDisplayName: string
+  clientId: string
+  analysisId: string
+  analysisVersion: number
+  analysisResultHash: string
+  kind: ReportKind
+  format: ReportFormat
+  templateVersion: string
+  generatedBy: string
+  sha256: string
+  sizeBytes: number
+  generatedAtUtc: string
+  downloadUrl: string
+}
+
+// ---------------------------------------------------------------------------
+// Audit, integrations, health
+// ---------------------------------------------------------------------------
+
+export interface AuditEventDto {
+  id: string
+  sequence: number
+  userId?: string
+  userName?: string
   occurredAtUtc: string
   entityType: string
-  entityId: string
+  entityId?: string
   action: string
   payload: Record<string, unknown>
   previousHash: string
   hash: string
 }
 
-export interface AuditVerification {
-  verified: boolean
+export interface AuditVerifyResult {
+  isValid: boolean
+  firstBrokenIndex: number
+  reason?: string
   eventsChecked: number
-  firstBrokenEventId?: string
-  checkedAtUtc: string
+}
+
+export type IntegrationConnector = 'Intelliflo' | 'Xplan' | 'TruePotential' | 'OrigoHub' | 'Morningstar'
+export type IntegrationMode = 'Live' | 'Sandbox' | 'Disabled'
+
+export interface IntegrationDto {
+  connector: IntegrationConnector
+  configured: boolean
+  mode: IntegrationMode
+  lastSyncUtc?: string
+}
+
+export interface IntegrationImportRequest {
+  externalClientId?: string
+}
+
+export interface IntegrationImportResult {
+  imported: number
+  updated: number
+  skipped: number
+  messages: string[]
+}
+
+export interface MorningstarSyncResult {
+  fundsUpdated: number
+  messages: string[]
+}
+
+export interface HealthCheckDto {
+  name: string
+  status: string
+  description?: string
+}
+
+export interface HealthResponse {
+  status: 'Healthy' | 'Degraded' | 'Unhealthy'
+  checks: HealthCheckDto[]
 }
