@@ -1,0 +1,104 @@
+{
+  "taxYear": "2026/27",
+  "startsOn": "2026-04-06",
+  "endsOn": "2027-04-05",
+  "verifiedOn": "2026-09-06",
+  "incomeTax": {
+    "personalAllowance": 12570,
+    "personalAllowanceTaperThreshold": 100000,
+    "personalAllowanceTaperRate": 0.5,
+    "restOfUk": {
+      "source": "https://www.gov.uk/income-tax-rates",
+      "bands": [
+        { "name": "Basic", "upTo": 37700, "rate": 0.20 },
+        { "name": "Higher", "upTo": 112570, "rate": 0.40 },
+        { "name": "Additional", "upTo": null, "rate": 0.45 }
+      ]
+    },
+    "scotland": {
+      "source": "https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/",
+      "bands": [
+        { "name": "Starter", "upTo": 3967, "rate": 0.19 },
+        { "name": "Basic", "upTo": 16956, "rate": 0.20 },
+        { "name": "Intermediate", "upTo": 31092, "rate": 0.21 },
+        { "name": "Higher", "upTo": 62430, "rate": 0.42 },
+        { "name": "Advanced", "upTo": 112570, "rate": 0.45 },
+        { "name": "Top", "upTo": null, "rate": 0.48 }
+      ],
+      "note": "Band widths are taxable income above the personal allowance: starter to £16,537 gross, basic to £29,526, intermediate to £43,662, higher to £75,000, advanced to £125,140."
+    },
+    "savings": {
+      "startingRateBand": 5000,
+      "personalSavingsAllowance": { "basic": 1000, "higher": 500, "additional": 0 },
+      "ratesFrom2027": { "basic": 0.22, "higher": 0.42, "additional": 0.47 },
+      "source": "https://www.gov.uk/apply-tax-free-interest-on-savings"
+    },
+    "dividends": {
+      "allowance": 500,
+      "rates": { "basic": 0.1075, "higher": 0.3575, "additional": 0.3935 },
+      "source": "https://www.gov.uk/tax-on-dividends"
+    },
+    "emergencyTaxCode": "1257L"
+  },
+  "nationalInsurance": {
+    "source": "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027",
+    "class1Employee": {
+      "primaryThresholdAnnual": 12570,
+      "upperEarningsLimitAnnual": 50270,
+      "mainRate": 0.08,
+      "additionalRate": 0.02
+    },
+    "class1Employer": { "secondaryThresholdAnnual": 5000, "rate": 0.15, "employmentAllowance": 10500 }
+  },
+  "capitalGains": {
+    "annualExemptAmount": 3000,
+    "basicRate": 0.18,
+    "higherRate": 0.24,
+    "source": "https://www.gov.uk/capital-gains-tax/rates"
+  },
+  "pensions": {
+    "annualAllowance": 60000,
+    "moneyPurchaseAnnualAllowance": 10000,
+    "taperedAnnualAllowance": { "thresholdIncome": 200000, "adjustedIncome": 260000, "reductionRate": 0.5, "minimum": 10000 },
+    "carryForwardYears": 3,
+    "basicAmountRelievable": 3600,
+    "lumpSumAllowance": 268275,
+    "lumpSumAndDeathBenefitAllowance": 1073100,
+    "taxFreeCashFraction": 0.25,
+    "normalMinimumPensionAge": { "current": 55, "rising": 57, "risingOn": "2028-04-06" },
+    "reliefAtSourceBasicRate": 0.20,
+    "sources": [
+      "https://www.gov.uk/tax-on-your-private-pension/annual-allowance",
+      "https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm056510",
+      "https://www.gov.uk/guidance/pension-schemes-work-out-your-tapered-annual-allowance",
+      "https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm171000",
+      "https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm172000"
+    ]
+  },
+  "statePension": {
+    "fullNewStatePensionWeekly": 241.30,
+    "basicStatePensionWeekly": 184.90,
+    "qualifyingYearsForFull": 35,
+    "minimumQualifyingYears": 10,
+    "upratingApplied": 0.048,
+    "source": "https://www.gov.uk/new-state-pension/what-youll-get",
+    "statePensionAgeTimetable": {
+      "source": "https://www.gov.uk/government/publications/state-pension-age-timetable/state-pension-age-timetable",
+      "rules": [
+        { "bornOnOrAfter": null, "bornBefore": "1960-04-06", "age": 66 },
+        { "bornOnOrAfter": "1960-04-06", "bornBefore": "1961-03-06", "phased": "66 years plus one month per month of birth after 6 April 1960, 67 for those born 6 March 1961 onwards" },
+        { "bornOnOrAfter": "1961-03-06", "bornBefore": "1977-04-06", "age": 67 },
+        { "bornOnOrAfter": "1977-04-06", "bornBefore": "1978-03-06", "phased": "67 years plus one month per month of birth after 6 April 1977" },
+        { "bornOnOrAfter": "1978-04-06", "bornBefore": null, "age": 68 }
+      ]
+    }
+  },
+  "isa": { "overall": 20000, "lifetime": 4000, "junior": 9000, "cashIsaLimitFrom2027UnderSixtyFive": 12000, "source": "https://www.gov.uk/individual-savings-accounts" },
+  "announcedChanges": [
+    { "effective": "2027-04-06", "change": "Unused pension funds and most death benefits enter the estate for inheritance tax (Finance Act 2026).", "source": "https://www.gov.uk/government/publications/inheritance-tax-on-pensions-technical-note/technical-note-inheritance-tax-on-pensions" },
+    { "effective": "2027-04-06", "change": "Savings and property income tax rates rise to 22% / 42% / 47%.", "source": "https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-and-dividend-income/change-to-tax-rates-for-property-savings-and-dividend-income-technical-note" },
+    { "effective": "2027-04-06", "change": "Cash ISA limit £12,000 for under-65s within the £20,000 overall limit.", "source": "https://www.gov.uk/government/publications/fiscal-events-2026-factsheets/isa-reform-2027-anti-circumvention-rules-factsheet" },
+    { "effective": "2028-04-06", "change": "Normal minimum pension age rises from 55 to 57.", "source": "https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm062210" },
+    { "effective": "2029-04-06", "change": "Employer and employee NICs on salary-sacrificed employer pension contributions above £2,000 a year.", "source": "https://www.legislation.gov.uk/ukpga/2026/15/2026-04-29" }
+  ]
+}
