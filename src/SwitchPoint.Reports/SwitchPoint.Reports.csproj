@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\SwitchPoint.Application\SwitchPoint.Application.csproj" />
+    <ProjectReference Include="..\SwitchPoint.Domain\SwitchPoint.Domain.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="QuestPDF" />
+    <PackageReference Include="DocumentFormat.OpenXml" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

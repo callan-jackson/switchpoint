@@ -1,0 +1,41 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+coverage/
+*.trx
+publish/
+artifacts/
+
+# Node / web
+node_modules/
+web/dist/
+web/coverage/
+*.tsbuildinfo
+
+# Local secrets & env
+.env
+.env.*
+!.env.example
+*.local
+appsettings.Local.json
+appsettings.*.Local.json
+local.settings.json
+.azure/
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+.DS_Store
+Thumbs.db
+
+# Generated
+*.db
+*.db-shm
+*.db-wal
+/tmp/

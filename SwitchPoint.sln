@@ -1,0 +1,106 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{085C4360-4F66-4BF6-97B5-0D3A693AA6D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Api", "src\SwitchPoint.Api\SwitchPoint.Api.csproj", "{E3AF9706-E8F0-431D-B856-C3D657E62DE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Application", "src\SwitchPoint.Application\SwitchPoint.Application.csproj", "{5EF347AD-98FC-464C-80BD-8A02BF4F201D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Calculation", "src\SwitchPoint.Calculation\SwitchPoint.Calculation.csproj", "{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Domain", "src\SwitchPoint.Domain\SwitchPoint.Domain.csproj", "{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Infrastructure", "src\SwitchPoint.Infrastructure\SwitchPoint.Infrastructure.csproj", "{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Reports", "src\SwitchPoint.Reports\SwitchPoint.Reports.csproj", "{C5FFB817-4058-44C9-B9E1-90320134696C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{466CB8F3-0B12-4E2D-A3F9-DCE51493B399}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Api.Tests", "tests\SwitchPoint.Api.Tests\SwitchPoint.Api.Tests.csproj", "{5B0F8172-1E93-4C78-905A-369CB809CC5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Application.Tests", "tests\SwitchPoint.Application.Tests\SwitchPoint.Application.Tests.csproj", "{4EFA88B3-0667-4257-9465-A556D40BA032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Calculation.Tests", "tests\SwitchPoint.Calculation.Tests\SwitchPoint.Calculation.Tests.csproj", "{41862877-793F-43BD-9F9B-7544302FDCB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Domain.Tests", "tests\SwitchPoint.Domain.Tests\SwitchPoint.Domain.Tests.csproj", "{43FA2164-A4BE-4F17-84EC-36B828F36454}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Infrastructure.Tests", "tests\SwitchPoint.Infrastructure.Tests\SwitchPoint.Infrastructure.Tests.csproj", "{02999818-CB2B-464A-8415-03244417BC76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchPoint.Reports.Tests", "tests\SwitchPoint.Reports.Tests\SwitchPoint.Reports.Tests.csproj", "{4377043A-7B76-4A29-B8CF-6C7342557ACD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3AF9706-E8F0-431D-B856-C3D657E62DE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3AF9706-E8F0-431D-B856-C3D657E62DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3AF9706-E8F0-431D-B856-C3D657E62DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3AF9706-E8F0-431D-B856-C3D657E62DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EF347AD-98FC-464C-80BD-8A02BF4F201D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EF347AD-98FC-464C-80BD-8A02BF4F201D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EF347AD-98FC-464C-80BD-8A02BF4F201D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EF347AD-98FC-464C-80BD-8A02BF4F201D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5FFB817-4058-44C9-B9E1-90320134696C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5FFB817-4058-44C9-B9E1-90320134696C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5FFB817-4058-44C9-B9E1-90320134696C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5FFB817-4058-44C9-B9E1-90320134696C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B0F8172-1E93-4C78-905A-369CB809CC5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B0F8172-1E93-4C78-905A-369CB809CC5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B0F8172-1E93-4C78-905A-369CB809CC5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B0F8172-1E93-4C78-905A-369CB809CC5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EFA88B3-0667-4257-9465-A556D40BA032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EFA88B3-0667-4257-9465-A556D40BA032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EFA88B3-0667-4257-9465-A556D40BA032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EFA88B3-0667-4257-9465-A556D40BA032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41862877-793F-43BD-9F9B-7544302FDCB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41862877-793F-43BD-9F9B-7544302FDCB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41862877-793F-43BD-9F9B-7544302FDCB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41862877-793F-43BD-9F9B-7544302FDCB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43FA2164-A4BE-4F17-84EC-36B828F36454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FA2164-A4BE-4F17-84EC-36B828F36454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43FA2164-A4BE-4F17-84EC-36B828F36454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43FA2164-A4BE-4F17-84EC-36B828F36454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02999818-CB2B-464A-8415-03244417BC76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02999818-CB2B-464A-8415-03244417BC76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02999818-CB2B-464A-8415-03244417BC76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02999818-CB2B-464A-8415-03244417BC76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4377043A-7B76-4A29-B8CF-6C7342557ACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4377043A-7B76-4A29-B8CF-6C7342557ACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4377043A-7B76-4A29-B8CF-6C7342557ACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4377043A-7B76-4A29-B8CF-6C7342557ACD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E3AF9706-E8F0-431D-B856-C3D657E62DE6} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{5EF347AD-98FC-464C-80BD-8A02BF4F201D} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{4A8A81B4-BED0-43DC-ABB4-F6986D7ACF38} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{3C3B960E-E0B7-44C6-A45A-C3D12AE233E3} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{F70A31C0-8F83-4F00-A4FD-3D71C8C5C750} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{C5FFB817-4058-44C9-B9E1-90320134696C} = {085C4360-4F66-4BF6-97B5-0D3A693AA6D0}
+		{5B0F8172-1E93-4C78-905A-369CB809CC5A} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+		{4EFA88B3-0667-4257-9465-A556D40BA032} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+		{41862877-793F-43BD-9F9B-7544302FDCB4} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+		{43FA2164-A4BE-4F17-84EC-36B828F36454} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+		{02999818-CB2B-464A-8415-03244417BC76} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+		{4377043A-7B76-4A29-B8CF-6C7342557ACD} = {466CB8F3-0B12-4E2D-A3F9-DCE51493B399}
+	EndGlobalSection
+EndGlobal
