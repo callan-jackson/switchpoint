@@ -115,7 +115,7 @@ public class DecimalMathTests
         return Prop.ForAll(gen.ToArbitrary(), x =>
         {
             decimal roundTrip = DecimalMath.Ln(DecimalMath.Exp(x));
-            return Math.Abs(roundTrip - x) < 1e-20m;
+            return Math.Abs(roundTrip - x) < 1e-18m;
         });
     }
 

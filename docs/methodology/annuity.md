@@ -7,7 +7,7 @@ ships a **pluggable mortality basis**:
 
 - `ILifeTable.SurvivalProbability(sex, ageFromYears, t)`.
 - Default `GompertzMakehamLifeTable` calibrated to the ONS National Life Tables 2020–22 period
-  expectations (male 65: 18.5 years, female 65: 21.0 years) with a 1.25% p.a. mortality improvement
+  expectations (male 65: 18.3 years, female 65: 20.8 years) with a 1.25% p.a. mortality improvement
   applied by year-of-use. It is an approximation to the PMA16/PFA16 + CMI basis; the report states
   this. A firm holding a CMI licence drops in a `CmiLifeTable` from its own files.
 
