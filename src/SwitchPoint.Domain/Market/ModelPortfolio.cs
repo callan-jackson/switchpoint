@@ -9,6 +9,12 @@ public sealed class ModelPortfolio : Entity
 {
     private readonly List<ModelPortfolioHolding> _holdings = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private ModelPortfolio()
+    {
+        Name = null!;
+    }
+
     public ModelPortfolio(Guid id, Guid providerId, string name, int riskLevel, decimal mpsFee, DateTime createdAtUtc)
         : base(id, createdAtUtc)
     {

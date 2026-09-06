@@ -6,6 +6,11 @@ namespace SwitchPoint.Domain.Common;
 /// </summary>
 public abstract class Entity : IAuditable
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    protected Entity()
+    {
+    }
+
     protected Entity(Guid id, DateTime createdAtUtc)
     {
         Id = Guard.NotEmpty(id);

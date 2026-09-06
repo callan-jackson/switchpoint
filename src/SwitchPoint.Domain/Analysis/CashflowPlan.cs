@@ -100,6 +100,12 @@ public sealed class CashflowPlan : AnalysisBase
     private readonly List<PlanAsset> _assets = [];
     private readonly List<PlanEvent> _events = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private CashflowPlan()
+    {
+        Title = null!;
+    }
+
     public CashflowPlan(Guid id, Guid firmId, Guid clientId, Guid assumptionSetId, Guid createdBy, string title, DateTime createdAtUtc, Guid? partnerClientId = null, int planEndAge = 100)
         : base(id, firmId, clientId, assumptionSetId, createdBy, createdAtUtc)
     {

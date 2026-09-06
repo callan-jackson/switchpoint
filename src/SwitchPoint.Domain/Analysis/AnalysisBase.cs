@@ -5,6 +5,11 @@ namespace SwitchPoint.Domain.Analysis;
 /// <summary>Common lifecycle for every analysis: draft → calculated → locked, with a result snapshot and version counter.</summary>
 public abstract class AnalysisBase : Entity, ITenantScoped
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    protected AnalysisBase()
+    {
+    }
+
     protected AnalysisBase(Guid id, Guid firmId, Guid clientId, Guid assumptionSetId, Guid createdBy, DateTime createdAtUtc)
         : base(id, createdAtUtc)
     {

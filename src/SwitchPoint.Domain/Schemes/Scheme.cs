@@ -9,6 +9,12 @@ public class Scheme : Entity, ITenantScoped
     private readonly List<Contribution> _contributions = [];
     private readonly List<Holding> _holdings = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    protected Scheme()
+    {
+        ProductName = null!;
+    }
+
     public Scheme(
         Guid id,
         Guid firmId,

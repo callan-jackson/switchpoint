@@ -5,6 +5,13 @@ namespace SwitchPoint.Domain.Tenancy;
 /// <summary>An adviser firm: the tenancy boundary for every client, analysis and audit chain.</summary>
 public sealed class Firm : Entity
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private Firm()
+    {
+        Name = null!;
+        FcaFirmReferenceNumber = null!;
+    }
+
     public Firm(Guid id, string name, string fcaFirmReferenceNumber, DateTime createdAtUtc, Guid? defaultAssumptionSetId = null)
         : base(id, createdAtUtc)
     {

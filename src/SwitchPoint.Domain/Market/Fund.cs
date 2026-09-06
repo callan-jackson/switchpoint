@@ -29,6 +29,15 @@ public sealed record FundStatistics(
 /// <summary>A fund, ETF, investment trust or cash option in the research universe.</summary>
 public sealed class Fund : Entity
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private Fund()
+    {
+        Isin = null!;
+        Name = null!;
+        ManagerName = null!;
+        AssetAllocation = null!;
+    }
+
     public Fund(
         Guid id,
         string isin,

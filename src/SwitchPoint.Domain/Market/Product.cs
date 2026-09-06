@@ -8,6 +8,12 @@ public sealed class Product : Entity
 {
     private readonly List<ProductChargeVersion> _chargeVersions = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private Product()
+    {
+        Name = null!;
+    }
+
     public Product(
         Guid id,
         Guid providerId,

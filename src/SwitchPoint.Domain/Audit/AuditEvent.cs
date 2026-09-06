@@ -14,6 +14,16 @@ public sealed class AuditEvent : ITenantScoped
     /// <summary>Hash used as the predecessor of the first event in a chain (64 zeros).</summary>
     public const string GenesisHash = "0000000000000000000000000000000000000000000000000000000000000000";
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private AuditEvent()
+    {
+        EntityType = null!;
+        Action = null!;
+        PayloadJson = null!;
+        PreviousHash = null!;
+        Hash = null!;
+    }
+
     public AuditEvent(Guid id, Guid firmId, long sequence, Guid? userId, DateTime occurredAtUtc, string entityType, Guid? entityId, string action, string payloadJson, string previousHash)
     {
         Id = Guard.NotEmpty(id);
@@ -52,7 +62,7 @@ public sealed class AuditEvent : ITenantScoped
         FirmId.ToString("D"),
         Sequence.ToString(System.Globalization.CultureInfo.InvariantCulture),
         UserId?.ToString("D") ?? string.Empty,
-        OccurredAtUtc.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+        DateTime.SpecifyKind(OccurredAtUtc, DateTimeKind.Utc).ToString("O", System.Globalization.CultureInfo.InvariantCulture),
         EntityType,
         EntityId?.ToString("D") ?? string.Empty,
         Action,

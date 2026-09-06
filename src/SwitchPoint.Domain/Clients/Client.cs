@@ -5,6 +5,14 @@ namespace SwitchPoint.Domain.Clients;
 /// <summary>A person the firm advises. Aggregate root for their schemes and analyses.</summary>
 public sealed class Client : Entity, ITenantScoped
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private Client()
+    {
+        FirstName = null!;
+        LastName = null!;
+        ExternalReference = ExternalReference.Manual;
+    }
+
     public Client(
         Guid id,
         Guid firmId,

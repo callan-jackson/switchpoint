@@ -47,6 +47,14 @@ public sealed record MarketInputs
 /// <summary>A named, versioned set of projection assumptions. FCA-standard sets are read-only.</summary>
 public sealed class AssumptionSet : Entity
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private AssumptionSet()
+    {
+        Name = null!;
+        TaxYear = null!;
+        MarketInputs = null!;
+    }
+
     public AssumptionSet(
         Guid id,
         Guid? firmId,

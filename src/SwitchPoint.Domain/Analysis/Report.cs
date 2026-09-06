@@ -5,6 +5,15 @@ namespace SwitchPoint.Domain.Analysis;
 /// <summary>A generated document, tied to the analysis version and result hash it was produced from.</summary>
 public sealed class Report : Entity, ITenantScoped
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private Report()
+    {
+        AnalysisResultHash = null!;
+        TemplateVersion = null!;
+        Sha256 = null!;
+        StoragePath = null!;
+    }
+
     public Report(Guid id, Guid firmId, Guid clientId, Guid analysisId, int analysisVersion, string analysisResultHash, ReportKind kind, ReportFormat format, string templateVersion, Guid generatedBy, string sha256, string storagePath, long sizeBytes, DateTime generatedAtUtc)
         : base(id, generatedAtUtc)
     {

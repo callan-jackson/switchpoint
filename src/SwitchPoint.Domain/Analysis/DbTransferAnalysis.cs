@@ -9,6 +9,11 @@ public sealed class DbTransferAnalysis : AnalysisBase
 {
     private readonly List<Holding> _proposedHoldings = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private DbTransferAnalysis()
+    {
+    }
+
     public DbTransferAnalysis(Guid id, Guid firmId, Guid clientId, Guid dbSchemeId, Guid assumptionSetId, Guid createdBy, DateOnly transferDate, DateTime createdAtUtc)
         : base(id, firmId, clientId, assumptionSetId, createdBy, createdAtUtc)
     {

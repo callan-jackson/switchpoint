@@ -7,6 +7,11 @@ public sealed class DefinedBenefitScheme : Scheme
 {
     private readonly List<DbTranche> _tranches = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private DefinedBenefitScheme()
+    {
+    }
+
     public DefinedBenefitScheme(
         Guid id,
         Guid firmId,

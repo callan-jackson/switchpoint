@@ -14,6 +14,12 @@ public enum ProviderKind
 /// <summary>A pension provider, platform, insurer or fund manager in the market catalogue.</summary>
 public sealed class Provider : Entity
 {
+    /// <summary>For EF Core materialisation only.</summary>
+    private Provider()
+    {
+        Name = null!;
+    }
+
     public Provider(Guid id, string name, ProviderKind kind, DateTime createdAtUtc, string? fcaFirmReferenceNumber = null, string? website = null)
         : base(id, createdAtUtc)
     {

@@ -10,6 +10,12 @@ public sealed class PensionSwitchAnalysis : AnalysisBase
     private readonly List<Guid> _cedingSchemeIds = [];
     private readonly List<Holding> _proposedHoldings = [];
 
+    /// <summary>For EF Core materialisation only.</summary>
+    private PensionSwitchAnalysis()
+    {
+        Title = null!;
+    }
+
     public PensionSwitchAnalysis(Guid id, Guid firmId, Guid clientId, Guid assumptionSetId, Guid createdBy, string title, int retirementAge, DateTime createdAtUtc)
         : base(id, firmId, clientId, assumptionSetId, createdBy, createdAtUtc)
     {
