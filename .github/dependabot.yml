@@ -1,0 +1,63 @@
+version: 2
+updates:
+  # .NET packages: versions are pinned centrally in Directory.Packages.props.
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    open-pull-requests-limit: 5
+    groups:
+      dotnet-platform:
+        patterns:
+          - "Microsoft.AspNetCore.*"
+          - "Microsoft.EntityFrameworkCore*"
+          - "Microsoft.Extensions.*"
+      azure:
+        patterns:
+          - "Azure.*"
+      test-tooling:
+        patterns:
+          - "xunit*"
+          - "FsCheck*"
+          - "NSubstitute"
+          - "Bogus"
+          - "coverlet.*"
+          - "Microsoft.NET.Test.Sdk"
+    labels: [dependencies, nuget]
+
+  # SPA packages (installed with --legacy-peer-deps; see docs/deployment.md if an update fails to resolve).
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    labels: [dependencies, npm]
+
+  # Action versions used by ci.yml, deploy.yml and codeql.yml.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    labels: [dependencies, github-actions]
+
+  # Base images in the Dockerfile (node, dotnet/sdk, dotnet/aspnet).
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/London
+    labels: [dependencies, docker]

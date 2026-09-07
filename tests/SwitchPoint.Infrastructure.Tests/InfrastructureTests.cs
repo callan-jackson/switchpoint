@@ -248,6 +248,23 @@ public class PersistenceRoundTripTests : IDisposable
     }
 
     [Fact]
+    public void Every_entity_maps_its_read_only_properties()
+    {
+        using IServiceScope scope = _fx.Scope();
+        SwitchPointDbContext db = scope.ServiceProvider.GetRequiredService<SwitchPointDbContext>();
+        foreach (Type t in new[] { typeof(Firm), typeof(Client), typeof(Scheme), typeof(Product), typeof(Fund), typeof(AssumptionSet), typeof(AnalysisBase), typeof(Report) })
+        {
+            Microsoft.EntityFrameworkCore.Metadata.IEntityType et = db.Model.FindEntityType(t)!;
+            Assert.NotNull(et.FindProperty(nameof(Entity.CreatedAtUtc)));
+            Assert.NotNull(et.FindProperty(nameof(Entity.UpdatedAtUtc)));
+        }
+
+        Assert.NotNull(db.Model.FindEntityType(typeof(AssumptionSet))!.FindProperty(nameof(AssumptionSet.IsFcaStandard)));
+        Assert.NotNull(db.Model.FindEntityType(typeof(AnalysisBase))!.FindProperty(nameof(AnalysisBase.CreatedBy)));
+        Assert.NotNull(db.Model.FindEntityType(typeof(Scheme))!.FindProperty(nameof(Scheme.Type)));
+    }
+
+    [Fact]
     public async Task Tenant_query_filter_hides_other_firms()
     {
         Guid otherFirm = Guid.NewGuid();

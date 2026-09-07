@@ -7,6 +7,7 @@ import {
   auth,
   catalogue,
   clients,
+  dashboard,
   integrations,
   reports,
   schemes,
@@ -80,6 +81,9 @@ export const queryKeys = {
   },
   integrations: {
     all: ['integrations'] as const,
+  },
+  dashboard: {
+    summary: ['dashboard', 'summary'] as const,
   },
 }
 
@@ -490,5 +494,16 @@ export function useImportFromIntegration() {
         qc.invalidateQueries({ queryKey: queryKeys.clients.all }),
         qc.invalidateQueries({ queryKey: queryKeys.integrations.all }),
       ]),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+export function useDashboardSummary() {
+  return useQuery({
+    queryKey: queryKeys.dashboard.summary,
+    queryFn: ({ signal }) => dashboard.summary(signal),
   })
 }

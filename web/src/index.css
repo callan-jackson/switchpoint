@@ -187,6 +187,93 @@
   .skip-link:focus-visible {
     @apply not-sr-only fixed top-2 left-2 z-[100] rounded-md bg-surface px-4 py-2 text-sm font-semibold text-primary-700 shadow-raised;
   }
+
+  /* Cards are the page's primary surface. */
+  .card {
+    @apply rounded-lg border border-border bg-surface shadow-card;
+  }
+
+  /* Form controls share one look; components add state classes. */
+  .control {
+    @apply block w-full rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-fg shadow-none transition-colors;
+    @apply placeholder:text-fg-subtle;
+    @apply hover:border-primary-300;
+    @apply focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30;
+    @apply disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-fg-subtle;
+    min-height: 2.375rem;
+  }
+  .control[aria-invalid='true'] {
+    @apply border-danger-500 focus:border-danger-500 focus:ring-danger-500/25;
+  }
+  .control-sm {
+    @apply px-2 py-1 text-xs;
+    min-height: 1.875rem;
+  }
+
+  /* Data tables. */
+  .table {
+    @apply w-full border-collapse text-sm;
+  }
+  .table th {
+    @apply bg-surface-muted px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-fg-muted;
+    @apply border-b border-border;
+  }
+  .table td {
+    @apply border-b border-border px-3 py-2 align-middle;
+  }
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  .table-hover tbody tr:hover {
+    @apply bg-primary-50;
+  }
+  .table-dense th,
+  .table-dense td {
+    @apply px-2 py-1.5 text-xs;
+  }
+  .num {
+    @apply text-right tabular-nums;
+  }
+
+  /* Definition lists on detail pages. */
+  .dl {
+    @apply grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2;
+  }
+  .dl dt {
+    @apply text-xs font-medium uppercase tracking-wide text-fg-subtle;
+  }
+  .dl dd {
+    @apply mt-0.5 text-sm text-fg;
+  }
+
+  .section-title {
+    @apply text-sm font-semibold text-fg;
+  }
+
+  /* Native dialog styling. */
+  dialog.dialog {
+    @apply m-auto w-full max-w-lg rounded-xl border border-border bg-surface p-0 text-fg shadow-raised;
+  }
+  dialog.dialog::backdrop {
+    background: rgb(7 21 39 / 0.55);
+  }
+  dialog.dialog[open] {
+    animation: dialog-in 140ms ease-out;
+  }
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-md bg-surface-sunken;
+  }
 }
 
 /* Reports and analysis pages are printed directly from the browser. */

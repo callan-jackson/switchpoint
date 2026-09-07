@@ -95,6 +95,12 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
         ArgumentNullException.ThrowIfNull(b);
         base.OnModelCreating(b);
 
+        foreach (Type entityType in new[] { typeof(Firm), typeof(Client), typeof(Scheme), typeof(Provider), typeof(Product), typeof(Fund), typeof(ModelPortfolio), typeof(AssumptionSet), typeof(AnalysisBase), typeof(Report) })
+        {
+            b.Entity(entityType).Property(nameof(Entity.CreatedAtUtc));
+            b.Entity(entityType).Property(nameof(Entity.UpdatedAtUtc));
+        }
+
         b.Entity<Firm>(e =>
         {
             e.ToTable("Firms");

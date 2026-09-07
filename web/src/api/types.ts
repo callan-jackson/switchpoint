@@ -1134,3 +1134,16 @@ export interface HealthResponse {
   status: 'Healthy' | 'Degraded' | 'Unhealthy'
   checks: HealthCheckDto[]
 }
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+/** `GET /dashboard/summary`: headline counts for the signed-in firm plus recent activity. */
+export interface DashboardSummary {
+  clients: number
+  analysesInProgress: number
+  reportsThisMonth: number
+  fundsInCatalogue: number
+  recentAnalyses: AnalysisSummary[]
+}

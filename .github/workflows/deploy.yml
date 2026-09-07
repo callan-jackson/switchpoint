@@ -1,0 +1,203 @@
+name: Deploy
+
+# Builds the API/SPA container, pushes it to GitHub Container Registry, deploys the Bicep template
+# and waits for the web app to report healthy. Authentication to Azure is an OIDC federated
+# credential on the Entra app "switchpoint-deploy": no cloud credentials are stored in GitHub.
+#
+# Required repository variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID,
+#   AZURE_RESOURCE_GROUP, AZURE_LOCATION, AZURE_WEBAPP_NAME
+# Optional variable:              AZURE_SQL_USE_FREE_LIMIT (default true; set to false when the
+#                                 subscription's one free Azure SQL database is already taken)
+# Required secrets:               SQL_ADMIN_PASSWORD, JWT_SIGNING_KEY
+# See docs/deployment.md.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+# Never run two production deployments at once; queue the newer one instead of cancelling.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/callan-jackson/switchpoint-api
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  deploy:
+    name: Build image and deploy to Azure
+    # Forks and clones without the Azure variables configured skip the job instead of failing.
+    if: vars.AZURE_WEBAPP_NAME != ''
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.infra.outputs.webAppUrl }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # ----------------------------------------------------------------------------------------
+      # Container image -> GHCR
+      # ----------------------------------------------------------------------------------------
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Image metadata (tags: full commit sha + latest)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,format=long,prefix=
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          # A plain single-manifest image; App Service does not need the provenance attestation index.
+          provenance: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ----------------------------------------------------------------------------------------
+      # Azure
+      # ----------------------------------------------------------------------------------------
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure resource group
+        env:
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+          LOCATION: ${{ vars.AZURE_LOCATION }}
+        run: az group create -n "$RG" -l "$LOCATION" -o none
+
+      - name: Deploy infrastructure (Bicep)
+        id: infra
+        env:
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+          APP: ${{ vars.AZURE_WEBAPP_NAME }}
+          IMAGE_REF: ${{ env.IMAGE }}:${{ github.sha }}
+          USE_FREE_LIMIT: ${{ vars.AZURE_SQL_USE_FREE_LIMIT || 'true' }}
+          SQL_ADMIN_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }}
+          JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
+        run: |
+          set -euo pipefail
+          az deployment group create \
+            --resource-group "$RG" \
+            --name "switchpoint-${GITHUB_RUN_NUMBER}" \
+            --template-file infra/main.bicep \
+            --parameters \
+              appName="$APP" \
+              imageRef="$IMAGE_REF" \
+              useFreeLimit="$USE_FREE_LIMIT" \
+              sqlAdminPassword="$SQL_ADMIN_PASSWORD" \
+              jwtSigningKey="$JWT_SIGNING_KEY" \
+            --query properties.outputs \
+            --output json > "${RUNNER_TEMP}/outputs.json"
+
+          for key in webAppName webAppUrl sqlServerFqdn keyVaultName appInsightsName; do
+            value=$(jq -r ".${key}.value" "${RUNNER_TEMP}/outputs.json")
+            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
+            echo "${key}: ${value}"
+          done
+
+      - name: Restart web app so it pulls the new image
+        env:
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+          APP: ${{ vars.AZURE_WEBAPP_NAME }}
+        run: az webapp restart -g "$RG" -n "$APP" -o none
+
+      - name: Wait for /healthz
+        env:
+          APP: ${{ vars.AZURE_WEBAPP_NAME }}
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+        run: |
+          set -uo pipefail
+          url="https://${APP}.azurewebsites.net/healthz"
+          # 48 attempts x 10 s sleep (+ up to 20 s per request) is roughly 8 minutes: enough for a
+          # cold F1 instance to pull the image, run migrations, seed and resume a paused database.
+          for attempt in $(seq 1 48); do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo "000")
+            echo "[$attempt/48] GET $url -> $code"
+            if [ "$code" = "200" ]; then
+              echo "Healthy: $url"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::$url did not return 200 within the deadline"
+          echo "Last container log lines:"
+          az webapp log download -g "$RG" -n "$APP" --log-file "${RUNNER_TEMP}/logs.zip" -o none || true
+          (cd "$RUNNER_TEMP" && unzip -o -q logs.zip -d logs 2>/dev/null && find logs -name '*docker*' -type f -exec tail -n 60 {} + 2>/dev/null) || true
+          exit 1
+
+      # ----------------------------------------------------------------------------------------
+      # Alternative: apply EF Core migrations from the workflow instead of at container start.
+      # Set the Bicep parameter migrateOnStartup=false (Database__MigrateOnStartup=false), then
+      # uncomment the four steps below. They build a self-contained migrations bundle, open a
+      # firewall rule for this runner's IP for the duration of the step, apply the bundle and
+      # always remove the rule again. Place them between "Deploy infrastructure" and "Restart".
+      # ----------------------------------------------------------------------------------------
+      # - uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: 10.0.x
+      #
+      # - name: Build EF Core migrations bundle
+      #   run: |
+      #     dotnet tool install --global dotnet-ef
+      #     dotnet ef migrations bundle \
+      #       --project src/SwitchPoint.Infrastructure \
+      #       --startup-project src/SwitchPoint.Api \
+      #       --configuration Release \
+      #       --self-contained --runtime linux-x64 \
+      #       --output "${RUNNER_TEMP}/efbundle"
+      #
+      # - name: Open a temporary SQL firewall rule for this runner
+      #   env:
+      #     RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+      #     SQL_FQDN: ${{ steps.infra.outputs.sqlServerFqdn }}
+      #   run: |
+      #     runner_ip=$(curl -sS https://api.ipify.org)
+      #     az sql server firewall-rule create -g "$RG" -s "${SQL_FQDN%%.*}" -n "github-runner-${GITHUB_RUN_ID}" \
+      #       --start-ip-address "$runner_ip" --end-ip-address "$runner_ip" -o none
+      #
+      # - name: Apply migrations
+      #   env:
+      #     SQL_FQDN: ${{ steps.infra.outputs.sqlServerFqdn }}
+      #     SQL_ADMIN_LOGIN: switchpointadmin
+      #     SQL_ADMIN_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }}
+      #   run: |
+      #     "${RUNNER_TEMP}/efbundle" --connection \
+      #       "Server=tcp:${SQL_FQDN},1433;Initial Catalog=switchpoint;User ID=${SQL_ADMIN_LOGIN};Password=${SQL_ADMIN_PASSWORD};Encrypt=True;Connection Timeout=60;"
+      #
+      # - name: Remove the temporary SQL firewall rule
+      #   if: always()
+      #   env:
+      #     RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+      #     SQL_FQDN: ${{ steps.infra.outputs.sqlServerFqdn }}
+      #   run: az sql server firewall-rule delete -g "$RG" -s "${SQL_FQDN%%.*}" -n "github-runner-${GITHUB_RUN_ID}" -o none || true

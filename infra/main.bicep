@@ -6,6 +6,9 @@
 //   Linux App Service plan + Web App        (webapp.bicep)
 //   Key Vault Secrets User for the web app  (keyvault-access.bicep)
 //
+// Every runtime setting the API reads (Database__*, Seed__*, Auth__*, Reports__Path, Integrations__*__Mode)
+// is written as an App Service app setting in modules/webapp.bicep; secrets are Key Vault references.
+//
 // Deploy into one resource group (default switchpoint-rg, uksouth):
 //   az deployment group create -g switchpoint-rg -f infra/main.bicep -p infra/main.bicepparam
 // The GitHub deploy workflow passes the same parameters on the command line instead.
@@ -48,8 +51,8 @@ param jwtSigningKey string
 @description('Opt the database into the Azure SQL free offer (one per subscription).')
 param useFreeLimit bool = true
 
-@description('JWT issuer written to Auth__Issuer. Defaults to the web app URL.')
-param authIssuer string = 'https://${appName}.azurewebsites.net'
+@description('JWT issuer written to Auth__Issuer. The API validates tokens against this exact value.')
+param authIssuer string = 'switchpoint'
 
 @description('JWT audience written to Auth__Audience.')
 param authAudience string = 'switchpoint-api'
@@ -125,6 +128,7 @@ module keyVault 'modules/keyvault.bicep' = {
   params: {
     keyVaultName: keyVaultName
     location: location
+    logAnalyticsWorkspaceId: monitoring.outputs.workspaceId
     sqlConnectionString: sqlConnectionString
     jwtSigningKey: jwtSigningKey
     morningstarApiKey: morningstarApiKey

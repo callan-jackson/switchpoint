@@ -28,6 +28,9 @@ param morningstarApiKey string = ''
 @secure()
 param intellifloClientSecret string = ''
 
+@description('Log Analytics workspace resource id. When set, vault audit events are streamed there via a diagnostic setting.')
+param logAnalyticsWorkspaceId string = ''
+
 @description('Tags applied to the vault.')
 param tags object = {}
 
@@ -95,6 +98,20 @@ resource intellifloClientSecretSecret 'Microsoft.KeyVault/vaults/secrets@2023-07
   properties: {
     value: intellifloClientSecret
     contentType: 'text/plain'
+  }
+}
+
+resource diagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = if (!empty(logAnalyticsWorkspaceId)) {
+  name: 'to-log-analytics'
+  scope: keyVault
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logs: [
+      { categoryGroup: 'audit', enabled: true }
+    ]
+    metrics: [
+      { category: 'AllMetrics', enabled: true }
+    ]
   }
 }
 

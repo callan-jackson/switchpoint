@@ -1,0 +1,32 @@
+# Build output and caches (the image builds from source)
+**/bin/
+**/obj/
+**/node_modules/
+web/dist/
+web/coverage/
+**/TestResults/
+**/*.tsbuildinfo
+
+# Source control, CI and infrastructure are not part of the image
+.git/
+.github/
+infra/
+docs/
+db/
+tools/
+
+# Local state, secrets and databases
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.*
+*.local
+appsettings.Local.json
+appsettings.*.Local.json
+.vs/
+.vscode/
+.idea/
+.DS_Store
+docker-compose.yml
+Dockerfile

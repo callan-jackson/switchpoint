@@ -1,0 +1,57 @@
+# Full local stack: the API/SPA container against SQL Server 2022.
+#
+#   cp .env.example .env        # set MSSQL_SA_PASSWORD and JWT_SIGNING_KEY
+#   docker compose up --build   # http://localhost:5080  (Scalar UI at /scalar)
+#
+# The default `dotnet run` path uses SQLite and needs none of this; compose exists to exercise the
+# SQL Server provider and EF migrations exactly as they run in Azure.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: switchpoint-api:local
+    ports:
+      - "5080:8080"
+    environment:
+      Database__Provider: SqlServer
+      ConnectionStrings__SwitchPoint: "Server=mssql;Database=switchpoint;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      Database__MigrateOnStartup: "true"
+      Seed__Demo: "true"
+      Auth__SigningKey: ${JWT_SIGNING_KEY}
+      Auth__Issuer: switchpoint
+      Auth__Audience: switchpoint-api
+      Reports__Path: /app/data/reports
+    volumes:
+      - reports:/app/data/reports
+    depends_on:
+      mssql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    # The SQL Server image is amd64 only; Docker Desktop on Apple Silicon runs it under Rosetta.
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: Developer
+    ports:
+      # Bound to loopback so a local SSMS / Azure Data Studio can connect; drop if 1433 is taken.
+      - "127.0.0.1:1433:1433"
+    healthcheck:
+      # mssql-tools18 enforces encryption by default; -C trusts the container's self-signed cert.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    volumes:
+      - mssql-data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  mssql-data:
+  reports:

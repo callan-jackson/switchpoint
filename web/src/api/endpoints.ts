@@ -13,6 +13,7 @@ import type {
   ClientDetail,
   ClientSummary,
   ClientWrite,
+  DashboardSummary,
   DbTransferAnalysisDto,
   DbTransferAnalysisWrite,
   DbTransferCalcRequest,
@@ -242,6 +243,14 @@ export const health = {
   get: (signal?: AbortSignal) => get<HealthResponse>('/healthz', { signal }),
 }
 
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+export const dashboard = {
+  summary: (signal?: AbortSignal) => get<DashboardSummary>('/dashboard/summary', { signal }),
+}
+
 export const endpoints = {
   auth,
   clients,
@@ -254,4 +263,5 @@ export const endpoints = {
   audit,
   integrations,
   health,
+  dashboard,
 }

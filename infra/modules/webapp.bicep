@@ -1,5 +1,8 @@
 // Linux App Service plan + Web App for Containers pulling the public API image from GHCR,
 // with diagnostic settings streamed to Log Analytics.
+//
+// The container serves both the API and the SPA (web/dist is copied into wwwroot at image build
+// time), so one web app is the whole public surface.
 
 @description('Web app name; also the azurewebsites.net host label, so it must be globally unique.')
 @minLength(2)
@@ -22,7 +25,7 @@ param imageRef string
 @description('Container registry URL passed to App Service (public GHCR needs no credentials).')
 param registryUrl string = 'https://ghcr.io'
 
-@description('Port the container listens on.')
+@description('Port the container listens on (ASPNETCORE_URLS in the image is http://+:8080).')
 param containerPort int = 8080
 
 @description('Application Insights connection string.')
@@ -38,16 +41,28 @@ param sqlConnectionStringSecretUri string
 param jwtSigningKeySecretUri string
 
 @description('JWT issuer written to Auth__Issuer.')
-param authIssuer string
+param authIssuer string = 'switchpoint'
 
 @description('JWT audience written to Auth__Audience.')
-param authAudience string
+param authAudience string = 'switchpoint-api'
 
 @description('Whether the API seeds demo users and sample data on startup (Seed__Demo).')
 param seedDemo bool = true
 
 @description('Whether the API applies EF Core migrations on startup (Database__MigrateOnStartup).')
 param migrateOnStartup bool = true
+
+@description('Directory inside the container where generated reports are written (Reports__Path). /home is the App Service persistent share, so reports survive restarts and redeploys.')
+param reportsPath string = '/home/data/reports'
+
+@description('Mode for every back-office and fund-data integration (Integrations__<Name>__Mode). Sandbox uses the built-in fake connectors; Live needs the matching Key Vault secrets.')
+@allowed(['Sandbox', 'Live', 'Disabled'])
+param integrationsMode string = 'Sandbox'
+
+@description('Seconds App Service waits for the container to start answering before it gives up (platform default 230). Migrations, seeding and resuming a paused serverless database all happen on first request.')
+@minValue(230)
+@maxValue(1800)
+param containerStartTimeLimitSeconds int = 600
 
 @description('Log Analytics workspace resource id for diagnostic settings.')
 param logAnalyticsWorkspaceId string
@@ -63,6 +78,16 @@ var skuTiers = {
 
 // Always On is not available on the Free tier; App Service rejects the property when set on F1.
 var isFreeTier = planSku == 'F1'
+
+var integrationNames = ['Intelliflo', 'Xplan', 'TruePotential', 'OrigoHub', 'Morningstar']
+
+// One Integrations__<Name>__Mode setting per connector (for-expressions are only allowed at declaration level).
+var integrationSettings = [
+  for name in integrationNames: {
+    name: 'Integrations__${name}__Mode'
+    value: integrationsMode
+  }
+]
 
 resource plan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: planName
@@ -102,27 +127,33 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
       http20Enabled: true
       healthCheckPath: '/healthz'
       acrUseManagedIdentityCreds: false
-      appSettings: [
-        // --- container plumbing ---
-        { name: 'WEBSITES_PORT', value: string(containerPort) }
-        { name: 'DOCKER_REGISTRY_SERVER_URL', value: registryUrl }
-        { name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE', value: 'false' }
-        { name: 'DOCKER_ENABLE_CI', value: 'false' }
-        // --- ASP.NET Core ---
-        { name: 'ASPNETCORE_ENVIRONMENT', value: 'Production' }
-        { name: 'ASPNETCORE_FORWARDEDHEADERS_ENABLED', value: 'true' }
-        { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsightsConnectionString }
-        // --- SwitchPoint configuration (double underscore == ":" section separator) ---
-        { name: 'KeyVault__Uri', value: keyVaultUri }
-        { name: 'Database__Provider', value: 'SqlServer' }
-        { name: 'Database__MigrateOnStartup', value: string(migrateOnStartup) }
-        { name: 'Auth__Issuer', value: authIssuer }
-        { name: 'Auth__Audience', value: authAudience }
-        { name: 'Seed__Demo', value: string(seedDemo) }
-        // --- secrets resolved by App Service from Key Vault via the managed identity ---
-        { name: 'ConnectionStrings__SwitchPoint', value: '@Microsoft.KeyVault(SecretUri=${sqlConnectionStringSecretUri})' }
-        { name: 'Auth__SigningKey', value: '@Microsoft.KeyVault(SecretUri=${jwtSigningKeySecretUri})' }
-      ]
+      appSettings: concat(
+        [
+          // --- container plumbing ---
+          { name: 'WEBSITES_PORT', value: string(containerPort) }
+          { name: 'DOCKER_REGISTRY_SERVER_URL', value: registryUrl }
+          // Mount the persistent /home share into the container (reports live there).
+          { name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE', value: 'true' }
+          { name: 'WEBSITES_CONTAINER_START_TIME_LIMIT', value: string(containerStartTimeLimitSeconds) }
+          { name: 'DOCKER_ENABLE_CI', value: 'false' }
+          // --- ASP.NET Core ---
+          { name: 'ASPNETCORE_ENVIRONMENT', value: 'Production' }
+          { name: 'ASPNETCORE_FORWARDEDHEADERS_ENABLED', value: 'true' }
+          { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsightsConnectionString }
+          // --- SwitchPoint configuration (double underscore == ":" section separator) ---
+          { name: 'KeyVault__Uri', value: keyVaultUri }
+          { name: 'Database__Provider', value: 'SqlServer' }
+          { name: 'Database__MigrateOnStartup', value: string(migrateOnStartup) }
+          { name: 'Seed__Demo', value: string(seedDemo) }
+          { name: 'Auth__Issuer', value: authIssuer }
+          { name: 'Auth__Audience', value: authAudience }
+          { name: 'Reports__Path', value: reportsPath }
+          // --- secrets resolved by App Service from Key Vault via the managed identity ---
+          { name: 'ConnectionStrings__SwitchPoint', value: '@Microsoft.KeyVault(SecretUri=${sqlConnectionStringSecretUri})' }
+          { name: 'Auth__SigningKey', value: '@Microsoft.KeyVault(SecretUri=${jwtSigningKeySecretUri})' }
+        ],
+        integrationSettings
+      )
     }
   }
 }

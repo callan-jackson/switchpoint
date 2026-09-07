@@ -128,3 +128,69 @@ export function roundTo(value: number, dp: number): number {
   const factor = 10 ** dp
   return Math.round((value + Number.EPSILON) * factor) / factor
 }
+
+/**
+ * Format a contract `Pct` field (a PERCENTAGE number: 5.25 means 5.25%) for display.
+ * fmtPct(5.25) -> '5.25%'; fmtPct(-0.4, 1, true) -> '-0.4%'.
+ */
+export function fmtPct(valuePct: number | null | undefined, dp = 2, signed = false): string {
+  if (valuePct === null || valuePct === undefined || Number.isNaN(valuePct)) return EM_DASH
+  return pct(valuePct / 100, dp, signed)
+}
+
+/**
+ * Parse user-typed percentage text into a PERCENTAGE number (contract `Pct` convention):
+ * parsePct('5%') -> 5; parsePct('0.25') -> 0.25; parsePct('') / parsePct('-') -> null.
+ */
+export function parsePct(text: string, dp = 4): number | null {
+  const trimmed = text.trim().replace(/%$/, '').trim()
+  if (trimmed === '') return null
+  const negative = trimmed.startsWith('-')
+  const cleaned = trimmed.replace(/^-/, '').replace(/[,\s]/g, '')
+  if (cleaned === '' || !/^\d*\.?\d*$/.test(cleaned) || cleaned === '.') return null
+  const n = Number(cleaned)
+  if (!Number.isFinite(n)) return null
+  const rounded = roundTo(n, dp)
+  return negative ? -rounded : rounded
+}
+
+/** Plain number for an input box (no currency symbol): numInput(1250.5) -> '1,250.50'. */
+export function numInput(value: number | null | undefined, dp = 2): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return ''
+  return num(value, dp)
+}
+
+/** Months as '2 yrs 3 mths' for payback periods. */
+export function months(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return EM_DASH
+  const whole = Math.round(value)
+  const y = Math.floor(whole / 12)
+  const m = whole % 12
+  if (y === 0) return `${m} ${m === 1 ? 'mth' : 'mths'}`
+  if (m === 0) return `${y} ${y === 1 ? 'yr' : 'yrs'}`
+  return `${y} ${y === 1 ? 'yr' : 'yrs'} ${m} ${m === 1 ? 'mth' : 'mths'}`
+}
+
+/** Truncate a hash for display: '9f86d081884c...' */
+export function shortHash(hash: string | null | undefined, chars = 12): string {
+  if (!hash) return EM_DASH
+  return hash.length <= chars ? hash : `${hash.slice(0, chars)}…`
+}
+
+/** 'PersonalPension' -> 'Personal pension'; 'SwitchCandidate' -> 'Switch candidate'. */
+export function humanise(value: string | null | undefined): string {
+  if (!value) return EM_DASH
+  const spaced = value
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/_/g, ' ')
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase()
+}
+
+/** Bytes -> '12.4 KB'. */
+export function fileSize(bytes: number | null | undefined): string {
+  if (bytes === null || bytes === undefined || Number.isNaN(bytes)) return EM_DASH
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
