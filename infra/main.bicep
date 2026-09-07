@@ -34,6 +34,15 @@ param planSku string = 'F1'
 @description('Container image reference the web app pulls. The deploy workflow passes an immutable sha tag.')
 param imageRef string = 'ghcr.io/callan-jackson/switchpoint-api:latest'
 
+@description('''Registry username for a private container image. A GHCR package inherits the visibility of the
+repository that published it, so a private repository needs a GitHub username here and a read:packages token in
+registryPassword. Leave both empty for a public image.''')
+param registryUsername string = ''
+
+@description('Registry password or token (a GitHub personal access token with read:packages for GHCR).')
+@secure()
+param registryPassword string = ''
+
 @description('SQL administrator login name.')
 @minLength(1)
 param sqlAdminLogin string = 'switchpointadmin'
@@ -152,6 +161,8 @@ module webApp 'modules/webapp.bicep' = {
     location: location
     planSku: planSku
     imageRef: imageRef
+    registryUsername: registryUsername
+    registryPassword: registryPassword
     appInsightsConnectionString: monitoring.outputs.appInsightsConnectionString
     keyVaultUri: keyVault.outputs.vaultUri
     sqlConnectionStringSecretUri: keyVault.outputs.sqlConnectionStringSecretUri

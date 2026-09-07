@@ -62,3 +62,27 @@ az ad app federated-credential create --id <app object id> --parameters '{
 ```
 
 The ids are stable across renames, so this form is in fact more durable than the name-based one.
+
+
+## Pulling the image when the repository is private (recorded 7 September 2026)
+
+A GHCR package inherits the visibility of the repository that published it. Making the repository private
+therefore makes `ghcr.io/<owner>/switchpoint-api` private too, and App Service's anonymous pull fails — the web app
+comes up with the platform's placeholder page and the container never starts.
+
+Two ways round it:
+
+1. **Make the package public** while the repository stays private (Packages → switchpoint-api → Package settings →
+   Change visibility). Anonymous pull works again and no credentials are needed. The compiled application becomes
+   publicly downloadable, which may not be what you want if the repository was made private deliberately.
+2. **Give App Service a pull token.** Create a GitHub personal access token (classic) with only `read:packages`,
+   then set it on the repository:
+
+   ```bash
+   gh variable set GHCR_PULL_USERNAME --body '<github username>'
+   gh secret set GHCR_PULL_TOKEN     --body '<the token>'
+   ```
+
+   The deploy workflow passes them to `registryUsername` / `registryPassword`, which become
+   `DOCKER_REGISTRY_SERVER_USERNAME` and `DOCKER_REGISTRY_SERVER_PASSWORD` on the web app. Leaving them unset keeps
+   the anonymous behaviour, so a public image needs no change.

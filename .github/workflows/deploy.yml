@@ -106,6 +106,11 @@ jobs:
           USE_FREE_LIMIT: ${{ vars.AZURE_SQL_USE_FREE_LIMIT || 'true' }}
           SQL_ADMIN_PASSWORD: ${{ secrets.SQL_ADMIN_PASSWORD }}
           JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
+          # A GHCR package inherits the visibility of the repository that published it. While this
+          # repository is private, App Service needs a read:packages token to pull the image; make
+          # the package public and both of these can be left unset.
+          REGISTRY_USERNAME: ${{ vars.GHCR_PULL_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.GHCR_PULL_TOKEN }}
         run: |
           set -euo pipefail
           az deployment group create \
@@ -117,6 +122,8 @@ jobs:
               location="$LOCATION" \
               imageRef="$IMAGE_REF" \
               useFreeLimit="$USE_FREE_LIMIT" \
+              registryUsername="$REGISTRY_USERNAME" \
+              registryPassword="$REGISTRY_PASSWORD" \
               sqlAdminPassword="$SQL_ADMIN_PASSWORD" \
               jwtSigningKey="$JWT_SIGNING_KEY" \
             --query properties.outputs \

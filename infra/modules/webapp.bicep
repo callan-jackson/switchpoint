@@ -22,8 +22,17 @@ param planSku string = 'F1'
 @description('Container image reference, e.g. ghcr.io/callan-jackson/switchpoint-api:latest.')
 param imageRef string
 
-@description('Container registry URL passed to App Service (public GHCR needs no credentials).')
+@description('Container registry URL passed to App Service.')
 param registryUrl string = 'https://ghcr.io'
+
+@description('''Registry username. Leave empty for a public image, which needs no credentials.
+A package in GHCR inherits its repository's visibility, so a private repository needs a GitHub
+username here and a read:packages token in registryPassword.''')
+param registryUsername string = ''
+
+@description('Registry password or token. Empty means anonymous pull.')
+@secure()
+param registryPassword string = ''
 
 @description('Port the container listens on (ASPNETCORE_URLS in the image is http://+:8080).')
 param containerPort int = 8080
@@ -95,6 +104,15 @@ var integrationSettings = [
   }
 ]
 
+// App Service only needs registry credentials for a private image; sending empty strings would
+// make it attempt an authenticated pull with no password and fail.
+var registryCredentialSettings = empty(registryUsername)
+  ? []
+  : [
+      { name: 'DOCKER_REGISTRY_SERVER_USERNAME', value: registryUsername }
+      { name: 'DOCKER_REGISTRY_SERVER_PASSWORD', value: registryPassword }
+    ]
+
 resource plan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: planName
   location: location
@@ -158,7 +176,8 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
           { name: 'ConnectionStrings__SwitchPoint', value: useSqlServer ? '@Microsoft.KeyVault(SecretUri=${sqlConnectionStringSecretUri})' : sqliteConnectionString }
           { name: 'Auth__SigningKey', value: '@Microsoft.KeyVault(SecretUri=${jwtSigningKeySecretUri})' }
         ],
-        integrationSettings
+        integrationSettings,
+        registryCredentialSettings
       )
     }
   }
