@@ -16,6 +16,7 @@ param imageRef = 'ghcr.io/callan-jackson/switchpoint-api:latest'
 param sqlAdminLogin = readEnvironmentVariable('SQL_ADMIN_LOGIN', 'switchpointadmin')
 param sqlAdminPassword = readEnvironmentVariable('SQL_ADMIN_PASSWORD', '')
 param jwtSigningKey = readEnvironmentVariable('JWT_SIGNING_KEY', '')
+param useSqlServer = true
 param useFreeLimit = true
 param seedDemo = true
 param migrateOnStartup = true

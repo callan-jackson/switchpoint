@@ -51,6 +51,11 @@ param jwtSigningKey string
 @description('Opt the database into the Azure SQL free offer (one per subscription).')
 param useFreeLimit bool = true
 
+@description('''Provision Azure SQL. Set false to run on SQLite in App Service persistent storage, which is free and
+needs no database resource. Some subscriptions (including free trials in certain regions such as UK South) are
+restricted from provisioning Microsoft.Sql; deploy to another region or set this to false.''')
+param useSqlServer bool = true
+
 @description('JWT issuer written to Auth__Issuer. The API validates tokens against this exact value.')
 param authIssuer string = 'switchpoint'
 
@@ -107,7 +112,7 @@ module monitoring 'modules/monitoring.bicep' = {
   }
 }
 
-module sql 'modules/sql.bicep' = {
+module sql 'modules/sql.bicep' = if (useSqlServer) {
   name: 'sql'
   params: {
     serverName: sqlServerName
@@ -121,7 +126,9 @@ module sql 'modules/sql.bicep' = {
 }
 
 // Built here (not in sql.bicep) so no module ever outputs a secret.
-var sqlConnectionString = 'Server=tcp:${sql.outputs.serverFqdn},1433;Initial Catalog=${sql.outputs.databaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;'
+var sqlConnectionString = useSqlServer
+  ? 'Server=tcp:${sql!.outputs.serverFqdn},1433;Initial Catalog=${sql!.outputs.databaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;'
+  : 'Data Source=/home/data/switchpoint.db'
 
 module keyVault 'modules/keyvault.bicep' = {
   name: 'keyvault'
@@ -153,6 +160,7 @@ module webApp 'modules/webapp.bicep' = {
     authAudience: authAudience
     seedDemo: seedDemo
     migrateOnStartup: migrateOnStartup
+    useSqlServer: useSqlServer
     logAnalyticsWorkspaceId: monitoring.outputs.workspaceId
     tags: tags
   }
@@ -177,7 +185,7 @@ output webAppName string = webApp.outputs.webAppName
 output webAppUrl string = webApp.outputs.webAppUrl
 
 @description('SQL logical server FQDN.')
-output sqlServerFqdn string = sql.outputs.serverFqdn
+output sqlServerFqdn string = useSqlServer ? sql!.outputs.serverFqdn : 'sqlite (/home/data/switchpoint.db)'
 
 @description('Key Vault name.')
 output keyVaultName string = keyVault.outputs.keyVaultName

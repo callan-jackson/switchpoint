@@ -52,6 +52,12 @@ param seedDemo bool = true
 @description('Whether the API applies EF Core migrations on startup (Database__MigrateOnStartup).')
 param migrateOnStartup bool = true
 
+@description('Use Azure SQL. When false the API runs on SQLite in the persistent /home share (free, single instance).')
+param useSqlServer bool = true
+
+@description('SQLite connection string used when useSqlServer is false. /home is App Service persistent storage.')
+param sqliteConnectionString string = 'Data Source=/home/data/switchpoint.db'
+
 @description('Directory inside the container where generated reports are written (Reports__Path). /home is the App Service persistent share, so reports survive restarts and redeploys.')
 param reportsPath string = '/home/data/reports'
 
@@ -142,14 +148,14 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
           { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsightsConnectionString }
           // --- SwitchPoint configuration (double underscore == ":" section separator) ---
           { name: 'KeyVault__Uri', value: keyVaultUri }
-          { name: 'Database__Provider', value: 'SqlServer' }
+          { name: 'Database__Provider', value: useSqlServer ? 'SqlServer' : 'Sqlite' }
           { name: 'Database__MigrateOnStartup', value: string(migrateOnStartup) }
           { name: 'Seed__Demo', value: string(seedDemo) }
           { name: 'Auth__Issuer', value: authIssuer }
           { name: 'Auth__Audience', value: authAudience }
           { name: 'Reports__Path', value: reportsPath }
           // --- secrets resolved by App Service from Key Vault via the managed identity ---
-          { name: 'ConnectionStrings__SwitchPoint', value: '@Microsoft.KeyVault(SecretUri=${sqlConnectionStringSecretUri})' }
+          { name: 'ConnectionStrings__SwitchPoint', value: useSqlServer ? '@Microsoft.KeyVault(SecretUri=${sqlConnectionStringSecretUri})' : sqliteConnectionString }
           { name: 'Auth__SigningKey', value: '@Microsoft.KeyVault(SecretUri=${jwtSigningKeySecretUri})' }
         ],
         integrationSettings
