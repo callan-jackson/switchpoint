@@ -53,29 +53,8 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 
 // --- Auth ---
-AuthOptions auth = builder.Configuration.GetSection("Auth").Get<AuthOptions>() ?? new AuthOptions();
-if (string.IsNullOrWhiteSpace(auth.SigningKey) && builder.Environment.IsDevelopment())
-{
-    Console.WriteLine("WARNING: Auth:SigningKey is not configured; using a development-only key.");
-}
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
-{
-    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidIssuer = auth.Issuer,
-        ValidateAudience = true,
-        ValidAudience = auth.Audience,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = auth.ResolveKey(builder.Environment.IsDevelopment()),
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.FromMinutes(1),
-        NameClaimType = "name",
-        RoleClaimType = SwitchPointClaims.Role,
-    };
-    o.MapInboundClaims = false;
-});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddSingleton<Microsoft.Extensions.Options.IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearer>();
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(Policies.Adviser, p => p.RequireRole(nameof(UserRole.Adviser), nameof(UserRole.Paraplanner), nameof(UserRole.FirmAdmin), nameof(UserRole.PlatformAdmin)))
     .AddPolicy(Policies.Compliance, p => p.RequireRole(nameof(UserRole.Compliance), nameof(UserRole.FirmAdmin), nameof(UserRole.PlatformAdmin)))
@@ -86,8 +65,6 @@ builder.Services.AddAuthorizationBuilder()
 string[] origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:5173"];
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition", CorrelationIdMiddleware.HeaderName)));
 
-int calculationsPerMinute = builder.Configuration.GetValue("RateLimiting:CalculationsPerMinute", 60);
-int globalPerMinute = builder.Configuration.GetValue("RateLimiting:GlobalPerMinute", 600);
 builder.Services.AddRateLimiter(o =>
 {
     o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -96,12 +73,13 @@ builder.Services.AddRateLimiter(o =>
         ctx.HttpContext.Response.ContentType = "application/problem+json";
         await ctx.HttpContext.Response.WriteAsJsonAsync(new { status = 429, title = "Too many requests.", detail = "Rate limit exceeded; retry shortly." }, ct);
     };
+    // Limits are read from the request's configuration so late sources (and tests) are honoured.
+    static string Partition(HttpContext ctx) => ctx.User.FindFirst("sub")?.Value ?? ctx.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+    static int Limit(HttpContext ctx, string key, int fallback) => ctx.RequestServices.GetRequiredService<IConfiguration>().GetValue($"RateLimiting:{key}", fallback);
     o.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(ctx => RateLimitPartition.GetFixedWindowLimiter(
-        ctx.User.FindFirst("sub")?.Value ?? ctx.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-        _ => new FixedWindowRateLimiterOptions { PermitLimit = globalPerMinute, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+        Partition(ctx), _ => new FixedWindowRateLimiterOptions { PermitLimit = Limit(ctx, "GlobalPerMinute", 600), Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
     o.AddPolicy("calculations", ctx => RateLimitPartition.GetFixedWindowLimiter(
-        ctx.User.FindFirst("sub")?.Value ?? ctx.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
-        _ => new FixedWindowRateLimiterOptions { PermitLimit = calculationsPerMinute, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+        $"calc:{Partition(ctx)}", _ => new FixedWindowRateLimiterOptions { PermitLimit = Limit(ctx, "CalculationsPerMinute", 60), Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 
 builder.Services.AddHealthChecks().AddDbContextCheck<SwitchPointDbContext>("database");

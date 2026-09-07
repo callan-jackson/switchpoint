@@ -58,8 +58,7 @@ public sealed class ProblemDetailsExceptionHandler(ILogger<ProblemDetailsExcepti
         }
 
         httpContext.Response.StatusCode = status;
-        httpContext.Response.ContentType = "application/problem+json";
-        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problem, options: null, contentType: "application/problem+json", cancellationToken);
         return true;
     }
 

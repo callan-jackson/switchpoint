@@ -28,7 +28,10 @@ public sealed class AuthController(IIdentityService identity, JwtTokenIssuer iss
         UserDto? user = await identity.AuthenticateAsync(request.Email, request.Password, ct);
         if (user is null)
         {
-            return Problem(statusCode: StatusCodes.Status401Unauthorized, title: "Invalid email or password.");
+            ProblemDetails details = new() { Status = StatusCodes.Status401Unauthorized, Title = "Invalid email or password.", Type = "https://httpstatuses.io/401", Instance = HttpContext.Request.Path };
+            Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await Response.WriteAsJsonAsync(details, options: null, contentType: "application/problem+json", ct);
+            return new EmptyResult();
         }
 
         return Ok(issuer.Issue(user));

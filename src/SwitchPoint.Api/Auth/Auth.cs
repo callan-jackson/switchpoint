@@ -90,6 +90,35 @@ public sealed class HttpCurrentUser(IHttpContextAccessor accessor) : ICurrentUse
     public string DisplayName => Principal?.FindFirstValue(JwtRegisteredClaimNames.Name) ?? Principal?.FindFirstValue(ClaimTypes.Name) ?? "anonymous";
 }
 
+/// <summary>
+/// Configures JWT validation from <see cref="AuthOptions"/> at resolution time, so a signing key supplied by a late
+/// configuration source (Key Vault in production, an override in tests) is the one actually used.
+/// </summary>
+public sealed class ConfigureJwtBearer(IOptions<AuthOptions> options, IHostEnvironment environment) : Microsoft.Extensions.Options.IConfigureNamedOptions<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>
+{
+    public void Configure(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions target) => Configure(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme, target);
+
+    public void Configure(string? name, Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        AuthOptions o = options.Value;
+        target.MapInboundClaims = false;
+        target.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = o.Issuer,
+            ValidateAudience = true,
+            ValidAudience = o.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = o.ResolveKey(environment.IsDevelopment()),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(1),
+            NameClaimType = "name",
+            RoleClaimType = SwitchPointClaims.Role,
+        };
+    }
+}
+
 /// <summary>Authorization policy names.</summary>
 public static class Policies
 {

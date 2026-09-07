@@ -62,11 +62,13 @@ public static class DependencyInjection
         services.Configure<ReportStoreOptions>(configuration.GetSection("Reports"));
         services.Configure<IntegrationsOptions>(configuration.GetSection("Integrations"));
 
-        DatabaseOptions dbOptions = configuration.GetSection("Database").Get<DatabaseOptions>() ?? new DatabaseOptions();
-        string connectionString = configuration.GetConnectionString("SwitchPoint") ?? "Data Source=switchpoint.db";
         services.AddSingleton<AppendOnlyAuditInterceptor>();
         services.AddDbContext<SwitchPointDbContext>((sp, o) =>
         {
+            // Read configuration through the provider so that late sources (Key Vault, test overrides) are honoured.
+            IConfiguration current = sp.GetRequiredService<IConfiguration>();
+            DatabaseOptions dbOptions = current.GetSection("Database").Get<DatabaseOptions>() ?? new DatabaseOptions();
+            string connectionString = current.GetConnectionString("SwitchPoint") ?? "Data Source=switchpoint.db";
             o.AddInterceptors(sp.GetRequiredService<AppendOnlyAuditInterceptor>());
             if (string.Equals(dbOptions.Provider, DatabaseOptions.SqlServer, StringComparison.OrdinalIgnoreCase))
             {
@@ -106,7 +108,7 @@ public static class DependencyInjection
         services.AddScoped<DataSeeder>();
         services.AddSingleton<IReportStore>(sp =>
         {
-            ReportStoreOptions o = configuration.GetSection("Reports").Get<ReportStoreOptions>() ?? new ReportStoreOptions();
+            ReportStoreOptions o = sp.GetRequiredService<IConfiguration>().GetSection("Reports").Get<ReportStoreOptions>() ?? new ReportStoreOptions();
             return new FileReportStore(o.Path);
         });
 
