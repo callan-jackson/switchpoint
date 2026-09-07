@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { ShieldCheck } from 'lucide-react'
 import { errorMessage, isApiError } from '@/api/client'
+import { LogoLockup } from '@/components/ui/Logo'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Field } from '@/components/form/Field'
@@ -63,14 +63,9 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface-sunken px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-6 flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-primary-700 text-white">
-            <ShieldCheck className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <p className="text-lg font-semibold tracking-tight text-fg">SwitchPoint</p>
-            <p className="text-xs text-fg-muted">Pension switching and DB transfer analysis</p>
-          </div>
+        <div className="mb-7">
+          <LogoLockup className="h-8" />
+          <p className="mt-2.5 text-xs text-fg-muted">Pension switching and DB transfer analysis</p>
         </div>
 
         <div className="card p-6">

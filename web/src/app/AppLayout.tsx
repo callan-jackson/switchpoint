@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
-import { ChevronLeft, ChevronRight, Menu, ShieldCheck, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { LogoMark } from '@/components/ui/Logo'
 import { useLocalStorage, useMediaQuery } from '@/lib/hooks'
 import { navItems } from './nav'
 import { Breadcrumbs } from './Breadcrumbs'
@@ -68,10 +69,12 @@ export function AppLayout() {
         )}
       >
         <div className={cn('flex h-14 items-center gap-2.5 px-4', showRail && 'justify-center px-0')}>
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-white/10">
-            <ShieldCheck className="size-4.5" aria-hidden="true" />
+          <span className="flex h-7 shrink-0 items-center">
+            <LogoMark tone="light" />
           </span>
-          {!showRail && <span className="text-base font-semibold tracking-tight text-white">SwitchPoint</span>}
+          {!showRail && (
+            <span className="text-sm font-semibold uppercase tracking-[0.18em] text-white">SwitchPoint</span>
+          )}
           {!isDesktop && (
             <button
               type="button"
