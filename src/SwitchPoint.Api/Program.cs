@@ -113,6 +113,19 @@ app.UseExceptionHandler();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseSerilogRequestLogging();
+
+// The SPA's bundles are served before authentication runs. The fallback authorization policy
+// requires an authenticated user and applies to any request the authorization middleware sees
+// without explicit authorization metadata, including one that matched no endpoint at all: with the
+// static file middleware registered after it, every /assets/*.js came back 401 and the browser
+// rendered a blank page. Nothing under wwwroot is secret; the API below it is what needs the token.
+bool hasSpa = File.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty, "index.html"));
+if (hasSpa)
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
@@ -124,12 +137,9 @@ app.MapScalarApiReference("/scalar", o => o.WithTitle("SwitchPoint API").WithThe
 app.MapHealthChecks("/healthz").AllowAnonymous();
 app.MapControllers();
 
-// SPA: serve the built front end from wwwroot with a client-side routing fallback.
-string wwwroot = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
-if (File.Exists(Path.Combine(wwwroot, "index.html")))
+// Client-side routing: any path the API did not claim renders the SPA shell.
+if (hasSpa)
 {
-    app.UseDefaultFiles();
-    app.UseStaticFiles();
     app.MapFallbackToFile("index.html").AllowAnonymous();
 }
 

@@ -11,8 +11,8 @@ Last updated: 7 September 2026.
 | SwitchPoint.Application.Tests | 16 | DTO mappers and percent conversion, validators, calculation orchestration, analysis lifecycle handlers, firm scoping |
 | SwitchPoint.Infrastructure.Tests | 11 | EF Core round trips of JSON value objects, tenant filter, audit append/verify/tamper, seeding idempotence, connectors, report store |
 | SwitchPoint.Reports.Tests | 19 | PDF/DOCX/JSON rendering of all five report kinds, composer section order, SVG chart edge cases |
-| SwitchPoint.Api.Tests | 26 | auth and roles, client and scheme CRUD, catalogue, all calculation endpoints, analysis lifecycle, reports, audit, rate limiting, OpenAPI drift |
-| **Total (.NET)** | **361** | |
+| SwitchPoint.Api.Tests | 31 | auth and roles, client and scheme CRUD, catalogue, all calculation endpoints, analysis lifecycle, reports, audit, rate limiting, OpenAPI drift |
+| **Total (.NET)** | **366** | |
 | web (vitest) | 23 | routing and the auth gate, clients, products, fund research, reports, audit chain verification, settings, and all three analysis wizards driven end to end against the mock API |
 
 `dotnet test` runs the .NET projects and `npm test --prefix web` the front end; every project is green,

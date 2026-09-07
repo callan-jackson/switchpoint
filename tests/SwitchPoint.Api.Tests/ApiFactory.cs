@@ -19,10 +19,12 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
     private readonly string _databasePath = Path.Combine(Path.GetTempPath(), $"switchpoint-api-{Guid.NewGuid():N}.db");
     private readonly string _reportsPath = Path.Combine(Path.GetTempPath(), $"switchpoint-api-reports-{Guid.NewGuid():N}");
     private readonly Dictionary<string, string?> _extraSettings;
+    private readonly string? _webRootPath;
 
-    public ApiFactory(Dictionary<string, string?>? extraSettings = null)
+    public ApiFactory(Dictionary<string, string?>? extraSettings = null, string? webRootPath = null)
     {
         _extraSettings = extraSettings ?? [];
+        _webRootPath = webRootPath;
     }
 
     public static JsonSerializerOptions Json { get; } = CreateJsonOptions();
@@ -32,6 +34,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         ArgumentNullException.ThrowIfNull(builder);
         builder.UseEnvironment("Development");
         builder.UseContentRoot(ApiContentRoot());
+        if (_webRootPath is not null)
+        {
+            builder.UseWebRoot(_webRootPath);
+        }
         builder.ConfigureAppConfiguration((_, config) =>
         {
             Dictionary<string, string?> settings = new()
