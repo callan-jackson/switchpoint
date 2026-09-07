@@ -259,7 +259,7 @@ export const funds: FundDto[] = [
     iaSector: 'Mixed Investment 20-60% Shares',
     statistics: { return1YPct: 5.1, return3YPct: 9.8, return5YPct: 15.2, volatility3YPct: 6.4, morningstarRating: 3 },
   }),
-  fund('f-4', 'GB00B3X7QG63', 'Vanguard LifeStrategy 60% Equity', 'Vanguard', 0.22, 60, 38, {
+  fund('f-4', 'GB00B3TYHH97', 'Vanguard LifeStrategy 60% Equity', 'Vanguard', 0.22, 60, 38, {
     iaSector: 'Mixed Investment 40-85% Shares',
     statistics: { return1YPct: 7.3, return3YPct: 14.9, return5YPct: 26.8, volatility3YPct: 8.1, morningstarRating: 4 },
   }),
@@ -303,7 +303,7 @@ export const modelPortfolios: ModelPortfolioDto[] = [
     blendedOcfPct: 0.19,
     totalInvestmentChargePct: 0.34,
     holdings: [
-      { fundId: 'f-4', isin: 'GB00B3X7QG63', name: 'Vanguard LifeStrategy 60% Equity', weightPct: 45, ocfPct: 0.22 },
+      { fundId: 'f-4', isin: 'GB00B3TYHH97', name: 'Vanguard LifeStrategy 60% Equity', weightPct: 45, ocfPct: 0.22 },
       { fundId: 'f-7', isin: 'IE00B4L5Y983', name: 'iShares Core MSCI World UCITS ETF', weightPct: 35, ocfPct: 0.2 },
       { fundId: 'f-8', isin: 'GB00BD3RZ368', name: 'Royal London Short Duration Gilts M Acc', weightPct: 20, ocfPct: 0.15 },
     ],
@@ -463,7 +463,7 @@ export const clients: ClientDetail[] = [
           { payer: 'member', amount: 290, frequency: 'monthly', escalationPct: 3, isGrossOfTaxRelief: true },
           { payer: 'employer', amount: 435, frequency: 'monthly', escalationPct: 3, isGrossOfTaxRelief: true },
         ],
-        holdings: [{ name: 'Vanguard LifeStrategy 60% Equity', weightPct: 100, isin: 'GB00B3X7QG63', ocfPct: 0.22 }],
+        holdings: [{ name: 'Vanguard LifeStrategy 60% Equity', weightPct: 100, isin: 'GB00B3TYHH97', ocfPct: 0.22 }],
       }),
       scheme({
         id: 's-sarah-legacy',
@@ -533,7 +533,7 @@ export const clients: ClientDetail[] = [
         charges: investcentreCharges,
         weightedOcfPct: 0.19,
         holdings: [
-          { name: 'Vanguard LifeStrategy 60% Equity', weightPct: 60, isin: 'GB00B3X7QG63', ocfPct: 0.22 },
+          { name: 'Vanguard LifeStrategy 60% Equity', weightPct: 60, isin: 'GB00B3TYHH97', ocfPct: 0.22 },
           { name: 'Vanguard S&P 500 UCITS ETF', weightPct: 25, isin: 'IE00B3XXRP09', ocfPct: 0.07 },
           { name: 'Royal London Short Duration Gilts M Acc', weightPct: 15, isin: 'GB00BD3RZ368', ocfPct: 0.15 },
         ],
