@@ -85,6 +85,19 @@ jobs:
       - name: Build
         run: npm run build
 
+  workflows:
+    name: Workflow lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # A malformed workflow file fails the run before any job starts and produces no log, so it is
+      # easy to miss. actionlint catches the YAML and expression errors here instead.
+      - name: actionlint
+        run: |
+          bash <(curl -sSf https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
   bicep:
     name: Bicep build and lint
     runs-on: ubuntu-latest
