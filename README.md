@@ -1,15 +1,15 @@
 # SwitchPoint
 
 **FCA-compliant pension switching, defined benefit transfer and cashflow analysis platform for UK
-Independent Financial Advisers.** A ground-up rebuild of the category of software sold by
-Selectapension (Crowborough, East Sussex): an auditable recommendation engine that compares 200+
-pension and investment products, quantifies the effect of charges to the penny, runs the analyses the
-FCA Handbook requires (critical yield, reduction in yield, Transfer Value Comparator, APTA, cashflow
-and stochastic modelling) and produces the suitability report behind a recommendation.
+Independent Financial Advisers.** An auditable recommendation engine, built ground-up, that compares
+pension and investment products across the market, quantifies the effect of charges to the penny,
+runs the analyses the FCA Handbook requires (critical yield, reduction in yield, Transfer Value
+Comparator, APTA, cashflow and stochastic modelling) and produces the suitability report behind a
+recommendation.
 
 | Layer | Stack |
 |---|---|
-| Calculation engines | C# / .NET 10, `decimal` arithmetic throughout, 289 property and unit tests |
+| Calculation engines | C# / .NET 10, `decimal` arithmetic throughout, 361 unit and property tests |
 | API | ASP.NET Core Web API, JWT auth, OpenAPI + Scalar, RFC 9457 problem details, rate limiting |
 | Persistence | EF Core (Azure SQL in production, SQLite locally), JSON-column value objects, hash-chained audit log |
 | Front end | React 19, TypeScript 6, Vite 8, Tailwind 4, TanStack Query, Recharts |
@@ -18,7 +18,7 @@ and stochastic modelling) and produces the suitability report behind a recommend
 
 ## What it does
 
-| Selectapension capability | SwitchPoint module | Where |
+| Capability an adviser needs | SwitchPoint module | Where |
 |---|---|---|
 | Pension Switching (critical yield, RIY, effect of charges, consolidation of several plans) | `CriticalYieldCalculator`, `ReductionInYieldCalculator`, `ProjectionEngine` | `src/SwitchPoint.Calculation/CriticalYield`, `/Riy`, `/Projection` |
 | Defined Benefit Transfer ("APTA with TVC"), Income Modeller, hurdle rate, PCLS options | `DbTransferCalculator`, `AnnuityPricer`, life table | `src/SwitchPoint.Calculation/DbTransfer`, `/Annuities`, `/Mortality` |
@@ -41,8 +41,8 @@ Every number the engines use is traced to its source in `docs/methodology/` and
 - **Contingent charging**: COBS 19.1B carve-outs are recorded on every DB analysis.
 - **Stochastic modelling**: COBS 19.1.2CR conservativeness check (median no less conservative than the deterministic analysis).
 
-The research behind the build, including Selectapension's Companies House profile and product
-suite, is in `docs/research/`.
+The market research behind the build — what the established UK analysis tools do, which regulatory
+analyses they run and how advisers use them — is in `docs/research/`.
 
 ## Running locally
 

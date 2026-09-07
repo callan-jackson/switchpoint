@@ -1,8 +1,8 @@
 # Critical yield (pension switching, no safeguarded benefits)
 
 There is no Handbook formula for a DC-to-DC critical yield; the FSA's 2009 switching template
-compares charges and RIY, and the "critical yield" is an industry convention that Selectapension,
-O&M Profiler and others report. SwitchPoint defines it precisely so the number is reproducible.
+compares charges and RIY, and the "critical yield" is an industry convention that the established
+comparison tools report. SwitchPoint defines it precisely so the number is reproducible.
 
 ## Definition
 Given one or more ceding schemes projected to the selected retirement date at growth rate `g`

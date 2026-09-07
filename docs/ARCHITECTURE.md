@@ -1,6 +1,6 @@
 # SwitchPoint architecture
 
-SwitchPoint is a ground-up rebuild of the kind of platform Selectapension sells to UK
+SwitchPoint is a ground-up build of the kind of analysis platform sold to UK
 Independent Financial Advisers (IFAs): an automated, auditable recommendation engine that
 compares pension and investment products, quantifies the effect of charges, and produces the
 FCA-required analysis (critical yield, reduction in yield, Transfer Value Comparator, cashflow

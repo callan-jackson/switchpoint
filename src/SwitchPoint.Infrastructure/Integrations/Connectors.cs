@@ -88,7 +88,7 @@ public abstract class BackOfficeConnectorBase(string name, IntegrationOptions op
 
 /// <summary>
 /// Intelliflo Office (intelliflo office) public API: OAuth2 client credentials at identity.gb.intelliflo.net/core/connect/token,
-/// x-api-key header, GET /v2/clients and /v2/clients/{id}/plans (docs/research/selectapension-research-brief.md §4).
+/// x-api-key header, GET /v2/clients and /v2/clients/{id}/plans (docs/research/market-research-brief.md §4).
 /// </summary>
 public sealed class IntellifloConnector(IHttpClientFactory httpClientFactory, IOptions<IntegrationsOptions> options, ILogger<IntellifloConnector> logger)
     : BackOfficeConnectorBase("Intelliflo", options.Value.Intelliflo, logger)
