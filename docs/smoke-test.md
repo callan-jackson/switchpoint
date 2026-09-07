@@ -149,3 +149,31 @@ analysis, calculate it, generate a PDF report, and download it. The response is 
 `%PDF`, and exceeds 10 KB; generating the report locks the analysis, after which further edits return 409.
 Sample PDFs for all five report kinds are written to
 `tests/SwitchPoint.Reports.Tests/bin/Debug/net10.0/samples/` when the report tests run (98–136 KB each).
+
+## Production (7 September 2026)
+
+The same checks against the deployed app on Azure App Service (Sweden Central, F1 plan, Azure SQL serverless
+free offer), after the container image was made publicly pullable from GHCR:
+
+```
+GET /healthz                200 Healthy
+GET /                       200 text/html  <title>SwitchPoint</title>
+GET /openapi/v1.json        200
+POST /api/v1/auth/login     200  (529-character bearer token)
+GET  /api/v1/auth/me        Alex Adviser, adviser, Demo Financial Planning Ltd
+```
+
+The catalogue and demo firm seeded into Azure SQL on first start:
+
+```
+products 32   funds 87   clients: Ms Sarah Mitchell, Mr David Okafor, Dr Priya Shah
+```
+
+The tax engine returns the same figures in production as it does locally and in the unit tests:
+
+```json
+{"taxYear":"2026/27","taxableIncome":7430,"incomeTax":1486,"nationalInsurance":594.40,"marginalRatePct":20}
+```
+
+and the audit chain verifies (`{"isValid":true,"eventsChecked":0}` on a database where nothing has been changed
+yet). The container start took under a minute from the restart that first pulled the image.

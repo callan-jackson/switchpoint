@@ -16,6 +16,11 @@ recommendation.
 | Reports | QuestPDF (PDF), OpenXML (DOCX), deterministic JSON with SHA-256 embedded in every document |
 | Cloud | Azure App Service (container), Azure SQL serverless free offer, Key Vault, Application Insights, Bicep, GitHub Actions with OIDC |
 
+**Live:** <https://switchpoint-callan.azurewebsites.net> — sign in as `adviser@demo.switchpoint.local` /
+`Demo!Pass123` (paraplanner and compliance demo accounts use the same password). The API documentation is at
+[`/scalar`](https://switchpoint-callan.azurewebsites.net/scalar). It runs on the free App Service tier against a
+serverless database that pauses when idle, so the first request after a quiet spell takes a minute or so.
+
 ## What it does
 
 | Capability an adviser needs | SwitchPoint module | Where |

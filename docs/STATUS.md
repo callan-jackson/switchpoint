@@ -29,8 +29,8 @@ with warnings treated as errors in the .NET build.
 | Reports | Complete. QuestPDF A4 PDFs, OpenXML DOCX, deterministic JSON, SVG charts, five report kinds including the COBS 19 Annex 5 Transfer Value Comparator layout and the COBS 13 Annex 4 effect-of-charges table. |
 | API | Complete. JWT auth with role policies, 45 endpoints, RFC 9457 problem details, per-user rate limiting, security headers, correlation ids, health checks, OpenAPI plus Scalar, SPA hosting with client-side routing fallback. |
 | Web | Complete. Ten pages, the analysis wizards, domain editors (charges, holdings, DB tranches), charts, a mock API for development and tests, and vitest coverage of each page. |
-| Infrastructure as code | Complete and validated against Azure (`az deployment group validate` succeeds): Log Analytics, Application Insights, Linux App Service plan, Web App for Containers, Azure SQL serverless on the free offer, Key Vault with RBAC and a Secrets User role assignment for the app identity. |
-| CI/CD | Workflows for build/test/lint/bicep/docker, OIDC deployment to Azure, CodeQL and Dependabot. |
+| Infrastructure as code | Deployed and running at <https://switchpoint-callan.azurewebsites.net>: Log Analytics, Application Insights, Linux App Service plan, Web App for Containers, Azure SQL serverless on the free offer, Key Vault with RBAC and a Secrets User role assignment for the app identity. |
+| CI/CD | Workflows for build/test/lint/bicep/docker/actionlint, OIDC deployment to Azure, CodeQL and Dependabot. The deploy workflow builds and pushes the image successfully but cannot yet log in to Azure: see the OIDC subject-claim note in `docs/deployment.md`. Deployments are manual (`az deployment group create`, then `az webapp restart`) until the federated credential is added. |
 
 ## Known gaps
 
