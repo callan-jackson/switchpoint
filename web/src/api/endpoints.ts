@@ -1,4 +1,4 @@
-import { del, download, get, post, put } from './client'
+import { del, download, get, post, put, requestText } from './client'
 import type {
   AnalysisSummary,
   AssumptionSetCopyRequest,
@@ -19,7 +19,7 @@ import type {
   DbTransferCalcRequest,
   DbTransferResultDto,
   FundDto,
-  HealthResponse,
+  HealthStatusText,
   IntegrationConnector,
   IntegrationDto,
   IntegrationImportRequest,
@@ -216,6 +216,8 @@ export const analyses = {
 // ---------------------------------------------------------------------------
 
 export const reports = {
+  /** Not in CONTRACT.md but implemented: every report the caller's firm has generated. */
+  list: (signal?: AbortSignal) => get<ReportDto[]>('/reports', { signal }),
   create: (body: ReportCreateRequest) => post<ReportDto>('/reports', body),
   get: (id: string, signal?: AbortSignal) => get<ReportDto>(`/reports/${id}`, { signal }),
   /** Binary download; use `saveBlob` from `@/lib/files` to hand it to the browser. */
@@ -240,7 +242,11 @@ export const integrations = {
 }
 
 export const health = {
-  get: (signal?: AbortSignal) => get<HealthResponse>('/healthz', { signal }),
+  /** Anonymous liveness probe at the site root (outside `/api/v1`), answering `text/plain`. */
+  get: async (signal?: AbortSignal): Promise<HealthStatusText> => {
+    const text = await requestText('/healthz', { signal })
+    return text.trim() as HealthStatusText
+  },
 }
 
 // ---------------------------------------------------------------------------

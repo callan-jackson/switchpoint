@@ -199,6 +199,18 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   return (text ? JSON.parse(text) : undefined) as T
 }
 
+/**
+ * Fetch a plain-text resource. Paths outside `/api/v1` (the anonymous `/healthz` probe) are
+ * passed through untouched by `resolveUrl`'s absolute form.
+ */
+export async function requestText(path: string, options: RequestOptions = {}): Promise<string> {
+  const url = path.startsWith('/api')
+    ? resolveUrl(path, options.query)
+    : `${typeof location !== 'undefined' ? location.origin : 'http://localhost'}${path}${buildQuery(options.query)}`
+  const response = await send(url, buildInit(options, 'text/plain, application/json'))
+  return response.text()
+}
+
 /** Fetch a binary resource (report download) with the bearer token attached. */
 export async function download(
   path: string,

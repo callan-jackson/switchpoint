@@ -24,6 +24,7 @@
     <PackageReference Include="FsCheck.Xunit" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Bogus" />
+    <PackageReference Include="DocumentFormat.OpenXml" />
   </ItemGroup>
 
 </Project>

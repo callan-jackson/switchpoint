@@ -20,8 +20,8 @@ public sealed class ReportRenderer : IReportRenderer
         return request.Format switch
         {
             ReportFormat.Json => Task.FromResult(RenderJson(request)),
-            ReportFormat.Pdf => Task.FromResult(PdfReportRenderer.Render(request)),
-            ReportFormat.Docx => Task.FromResult(DocxReportRenderer.Render(request)),
+            ReportFormat.Pdf => Task.FromResult(PdfReportRenderer.Render(request, TemplateVersion)),
+            ReportFormat.Docx => Task.FromResult(DocxReportRenderer.Render(request, TemplateVersion)),
             _ => throw new ArgumentOutOfRangeException(nameof(request), request.Format, "Unknown report format."),
         };
     }
@@ -47,16 +47,4 @@ public sealed class ReportRenderer : IReportRenderer
         byte[] bytes = Encoding.UTF8.GetBytes(JsonDefaults.Serialize(envelope));
         return new ReportDocument(bytes, "application/json", $"{request.Kind}-{request.AnalysisId:N}-v{request.AnalysisVersion}.json", TemplateVersion);
     }
-}
-
-/// <summary>Placeholder until the PDF renderer is implemented: returns the JSON envelope with a PDF content type is NOT acceptable, so throw.</summary>
-internal static class PdfReportRenderer
-{
-    public static ReportDocument Render(ReportRequest request) => throw new NotImplementedException("PDF rendering is implemented in Rendering/PdfReportRenderer.cs.");
-}
-
-/// <summary>Placeholder until the DOCX renderer is implemented.</summary>
-internal static class DocxReportRenderer
-{
-    public static ReportDocument Render(ReportRequest request) => throw new NotImplementedException("DOCX rendering is implemented in Rendering/DocxReportRenderer.cs.");
 }

@@ -15,13 +15,13 @@ import type {
 
 export function paymentsPerYear(frequency: Frequency): number {
   switch (frequency) {
-    case 'Monthly':
+    case 'monthly':
       return 12
-    case 'Quarterly':
+    case 'quarterly':
       return 4
-    case 'Annually':
+    case 'annually':
       return 1
-    case 'Single':
+    case 'single':
       return 0
   }
 }
@@ -30,7 +30,7 @@ export function paymentsPerYear(frequency: Frequency): number {
 export function tieredAnnualCharge(tiered: TieredChargeDto | undefined, value: number): number {
   if (!tiered || tiered.bands.length === 0 || value <= 0) return 0
   const bands = [...tiered.bands]
-  if (tiered.mode === 'WholeOfFund') {
+  if (tiered.mode === 'wholeOfFund') {
     const band = bands.find((b) => b.upTo === undefined || b.upTo === null || value <= b.upTo)
     const rate = (band ?? bands[bands.length - 1]).annualRatePct
     return (value * rate) / 100
@@ -94,9 +94,9 @@ export function annualChargeBreakdown(
   const product = tieredAnnualCharge(schedule.productCharge, value)
   const fixed = fixedChargesAnnual(schedule.fixedCharges)
   const ocfPct =
-    schedule.fundCharge.kind === 'Explicit'
+    schedule.fundCharge.kind === 'explicit'
       ? (schedule.fundCharge.ocfPct ?? 0)
-      : schedule.fundCharge.kind === 'FromHoldings'
+      : schedule.fundCharge.kind === 'fromHoldings'
         ? (weightedOcfPct ?? 0)
         : 0
   const fund = (value * ocfPct) / 100
@@ -147,7 +147,7 @@ export function emptyChargeSchedule(): ChargeScheduleDto {
     platformCharge: undefined,
     productCharge: undefined,
     fixedCharges: [],
-    fundCharge: { kind: 'FromHoldings' },
+    fundCharge: { kind: 'fromHoldings' },
     transactionCostsPct: 0,
     adviserCharges: { initialPct: 0, initialAmount: 0, ongoingPct: 0, ongoingAmount: 0 },
     dealingCharges: {
@@ -167,7 +167,7 @@ export function emptyChargeSchedule(): ChargeScheduleDto {
 /** A schedule with a single flat platform charge and explicit OCF (cashflow asset shortcut). */
 export function flatChargeSchedule(platformPct: number, ocfPct: number): ChargeScheduleDto {
   const s = emptyChargeSchedule()
-  s.platformCharge = { mode: 'Marginal', bands: [{ annualRatePct: platformPct }] }
-  s.fundCharge = { kind: 'Explicit', ocfPct }
+  s.platformCharge = { mode: 'marginal', bands: [{ annualRatePct: platformPct }] }
+  s.fundCharge = { kind: 'explicit', ocfPct }
   return s
 }

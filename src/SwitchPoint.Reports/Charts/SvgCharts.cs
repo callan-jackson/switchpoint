@@ -53,7 +53,7 @@ public static class SvgCharts
 {
     private const string FontFamily = "Lato, Arial, Helvetica, sans-serif";
     private const string Ink = "#333333";
-    private const string Grid = "#DDDDDD";
+    private const string GridColour = "#DDDDDD";
     private const string Axis = "#888888";
 
     /// <summary>Line chart: dashed vs solid series, £ axis labels, legend.</summary>
@@ -434,7 +434,7 @@ public static class SvgCharts
             foreach (double t in ys.Ticks())
             {
                 double y = ys.Map(t);
-                Line(f.PlotLeft, y, f.PlotLeft + f.PlotWidth, y, Grid, 1);
+                Line(f.PlotLeft, y, f.PlotLeft + f.PlotWidth, y, GridColour, 1);
                 Text(f.PlotLeft - 6, y + 3.5, MoneyTick(t), 10, "end", Ink);
             }
 

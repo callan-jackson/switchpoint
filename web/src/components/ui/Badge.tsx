@@ -38,7 +38,11 @@ export function Badge({ tone = 'neutral', size = 'md', dot, className, children,
   )
 }
 
-const statusTone: Record<AnalysisStatus, BadgeTone> = { Draft: 'neutral', Calculated: 'info', Locked: 'success' }
+const statusTone: Record<AnalysisStatus, BadgeTone> = {
+  draft: 'neutral',
+  calculated: 'info',
+  locked: 'success',
+}
 
 export function StatusBadge({ status }: { status: AnalysisStatus }) {
   return (
@@ -49,17 +53,21 @@ export function StatusBadge({ status }: { status: AnalysisStatus }) {
 }
 
 const verdictTone: Record<SwitchVerdict, BadgeTone> = {
-  SwitchCandidate: 'success',
-  Consider: 'warning',
-  Retain: 'danger',
-  Refer: 'primary',
+  switchCandidate: 'success',
+  consider: 'warning',
+  retain: 'danger',
+  refer: 'primary',
 }
 
 export function VerdictBadge({ verdict }: { verdict: SwitchVerdict }) {
   return <Badge tone={verdictTone[verdict]}>{verdictLabels[verdict]}</Badge>
 }
 
-const qualityTone: Record<DataQuality, BadgeTone> = { Verified: 'success', Indicative: 'warning', Placeholder: 'danger' }
+const qualityTone: Record<DataQuality, BadgeTone> = {
+  verified: 'success',
+  indicative: 'warning',
+  placeholder: 'danger',
+}
 
 export function DataQualityBadge({ quality }: { quality: DataQuality }) {
   return (
