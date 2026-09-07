@@ -44,8 +44,8 @@ public class MarketTests
     [Fact]
     public void Fund_validates_isin_and_ratings()
     {
-        Fund f = new(Guid.NewGuid(), "GB00B3X7QG63", "Vanguard LifeStrategy 60% Equity", "Vanguard", FundType.Oeic, 0.0022m, new AssetAllocation(0.6m, 0.4m, 0m, 0m, 0m), Now, srri: 4);
-        Assert.Equal("GB00B3X7QG63", f.Isin);
+        Fund f = new(Guid.NewGuid(), "GB00B3TYHH97", "Vanguard LifeStrategy 60% Equity", "Vanguard", FundType.Oeic, 0.0022m, new AssetAllocation(0.6m, 0.4m, 0m, 0m, 0m), Now, srri: 4);
+        Assert.Equal("GB00B3TYHH97", f.Isin);
         Assert.Throws<DomainException>(() => new Fund(Guid.NewGuid(), "BAD", "x", "y", FundType.Oeic, 0.001m, AssetAllocation.AllEquity, Now));
         Assert.Throws<ArgumentOutOfRangeException>(() => f.UpdateStatistics(new FundStatistics(null, null, null, null, null, null, null, 7, null), null, null, Now));
         f.UpdateCharges(0.0023m, 0.0004m, new DateOnly(2026, 8, 31), "https://example.com", Now);
@@ -57,7 +57,7 @@ public class MarketTests
     {
         ModelPortfolio m = new(Guid.NewGuid(), Guid.NewGuid(), "Balanced 5", 5, 0.0015m, Now);
         m.ReplaceHoldings([
-            new ModelPortfolioHolding(Guid.NewGuid(), "GB00B3X7QG63", "A", 0.5m, 0.0022m),
+            new ModelPortfolioHolding(Guid.NewGuid(), "GB00B3TYHH97", "A", 0.5m, 0.0022m),
             new ModelPortfolioHolding(Guid.NewGuid(), "IE00B4L5Y983", "B", 0.5m, 0.0012m),
         ], Now);
         Assert.Equal(0.0017m, m.BlendedOcf);

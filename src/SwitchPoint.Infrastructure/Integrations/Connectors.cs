@@ -51,7 +51,7 @@ internal static class SandboxFixtures
         new(new ClientWrite { Title = "Mrs", FirstName = "Helen", LastName = "Barrow", DateOfBirth = new DateOnly(1975, 4, 19), Sex = Sex.Female, Email = "helen.barrow@example.com", MaritalStatus = MaritalStatus.Divorced, EmploymentStatus = EmploymentStatus.SelfEmployed, AnnualSalary = 47_500m, TargetRetirementAge = 67, RiskProfile = 5, StatePension = new StatePensionDto(null, 28) },
             $"{source}-10002",
             [
-                new SchemeWrite { Type = SchemeType.Sipp, ProductName = "Transact SIPP", PolicyNumber = $"{source}-SIPP-10002", CurrentValue = 154_000m, TransferValue = 154_000m, ValuationDate = new DateOnly(2026, 8, 31), Charges = new ChargeScheduleDto { PlatformCharge = new TieredChargeDto(TieredChargeMode.Marginal, [new TierBandDto(60_000m, 0.31m), new TierBandDto(300_000m, 0.28m), new TierBandDto(null, 0.20m)]), FundCharge = new FundChargeDto(FundChargeBasisKind.FromHoldings, null) }, Holdings = [new HoldingDto("Vanguard LifeStrategy 60% Equity", 100m, "GB00B3X7QG63", null, 0.22m)] },
+                new SchemeWrite { Type = SchemeType.Sipp, ProductName = "Transact SIPP", PolicyNumber = $"{source}-SIPP-10002", CurrentValue = 154_000m, TransferValue = 154_000m, ValuationDate = new DateOnly(2026, 8, 31), Charges = new ChargeScheduleDto { PlatformCharge = new TieredChargeDto(TieredChargeMode.Marginal, [new TierBandDto(60_000m, 0.31m), new TierBandDto(300_000m, 0.28m), new TierBandDto(null, 0.20m)]), FundCharge = new FundChargeDto(FundChargeBasisKind.FromHoldings, null) }, Holdings = [new HoldingDto("Vanguard LifeStrategy 60% Equity", 100m, "GB00B3TYHH97", null, 0.22m)] },
             ]),
     ];
 }

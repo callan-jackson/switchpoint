@@ -39,3 +39,6 @@ Thumbs.db
 *.db-shm
 *.db-wal
 /tmp/
+
+# Throwaway debugging probes
+tests/**/Scratch_*.cs

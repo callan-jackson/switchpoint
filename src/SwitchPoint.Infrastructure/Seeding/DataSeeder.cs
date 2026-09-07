@@ -53,6 +53,10 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
         await SeedAssumptionSetsAsync(dataDirectory, now, ct);
         await SeedProvidersAndProductsAsync(dataDirectory, now, ct);
         await SeedFundsAsync(dataDirectory, now, ct);
+
+        // Model portfolios resolve their holdings against funds and providers by querying the database, so the
+        // preceding steps must be committed first; otherwise every holding is dropped as "not in catalogue".
+        await db.SaveChangesAsync(ct);
         await SeedModelPortfoliosAsync(dataDirectory, now, ct);
         await db.SaveChangesAsync(ct);
         if (seedDemo)
@@ -259,7 +263,7 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
     /// <summary>Real funds with valid ISINs; OCFs are indicative when data/funds.json is absent.</summary>
     private static IReadOnlyList<FundDto> BuiltInFunds() =>
     [
-        F("GB00B3X7QG63", "Vanguard LifeStrategy 60% Equity", "Vanguard", FundType.Oeic, "Mixed Investment 40-85% Shares", 0.22m, 60m, 40m, 0m, 0m, 4),
+        F("GB00B3TYHH97", "Vanguard LifeStrategy 60% Equity", "Vanguard", FundType.Oeic, "Mixed Investment 40-85% Shares", 0.22m, 60m, 40m, 0m, 0m, 4),
         F("GB00B4PQW151", "Vanguard LifeStrategy 80% Equity", "Vanguard", FundType.Oeic, "Mixed Investment 40-85% Shares", 0.22m, 80m, 20m, 0m, 0m, 5),
         F("GB00B3ZHN960", "Vanguard LifeStrategy 40% Equity", "Vanguard", FundType.Oeic, "Mixed Investment 20-60% Shares", 0.22m, 40m, 60m, 0m, 0m, 4),
         F("GB00B41XG308", "Vanguard LifeStrategy 100% Equity", "Vanguard", FundType.Oeic, "Global", 0.22m, 100m, 0m, 0m, 0m, 6),
@@ -386,7 +390,7 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
         Scheme workplace = new(Guid.NewGuid(), DemoFirmId, sarah.Id, SchemeType.OccupationalMoneyPurchase, "Employer Group Personal Pension", 96_500m, 96_500m, new DateOnly(2026, 8, 31), now, aviva?.Id, "GPP-88213");
         workplace.SetProduct(aviva?.Id, "Employer Group Personal Pension", "GPP-88213", new DateOnly(2015, 4, 6), now);
         workplace.SetCharges(new ChargeSchedule { ProductCharge = TieredCharge.Flat(0.0045m), FundCharge = FundChargeBasis.FromHoldings }, now);
-        workplace.ReplaceHoldings([new Holding("Vanguard LifeStrategy 60% Equity", 1m, "GB00B3X7QG63")], now);
+        workplace.ReplaceHoldings([new Holding("Vanguard LifeStrategy 60% Equity", 1m, "GB00B3TYHH97")], now);
         workplace.ReplaceContributions([new Contribution(ContributionPayer.Member, 290m, Frequency.Monthly, 0.03m, true), new Contribution(ContributionPayer.Employer, 435m, Frequency.Monthly, 0.03m, true)], now);
         await db.Schemes.AddAsync(workplace, ct);
 
@@ -410,7 +414,7 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
         Scheme davidSipp = new(Guid.NewGuid(), DemoFirmId, david.Id, SchemeType.Sipp, "AJ Bell Investcentre SIPP", 210_000m, 210_000m, new DateOnly(2026, 8, 31), now, ajBell?.Id, "SIPP-30991");
         davidSipp.SetProduct(ajBell?.Id, "AJ Bell Investcentre SIPP", "SIPP-30991", new DateOnly(2019, 1, 10), now);
         davidSipp.SetCharges(new ChargeSchedule { PlatformCharge = TieredCharge.Marginal((250_000m, 0.0020m), (1_000_000m, 0.0015m), (null, 0.0010m)), FundCharge = FundChargeBasis.FromHoldings, AdviserCharges = new AdviserCharge(ongoingRate: 0.0075m) }, now);
-        davidSipp.ReplaceHoldings([new Holding("Vanguard LifeStrategy 60% Equity", 0.7m, "GB00B3X7QG63"), new Holding("iShares Core MSCI World UCITS ETF", 0.3m, "IE00B4L5Y983")], now);
+        davidSipp.ReplaceHoldings([new Holding("Vanguard LifeStrategy 60% Equity", 0.7m, "GB00B3TYHH97"), new Holding("iShares Core MSCI World UCITS ETF", 0.3m, "IE00B4L5Y983")], now);
         await db.Schemes.AddAsync(davidSipp, ct);
 
         // Client 3: Priya Shah, 44, accumulating — the cashflow demo.

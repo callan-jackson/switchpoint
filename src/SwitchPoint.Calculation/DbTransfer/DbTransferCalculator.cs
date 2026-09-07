@@ -207,7 +207,7 @@ public sealed class DbTransferCalculator
 
         if (tvcValue > r.CashEquivalentTransferValue)
         {
-            warnings.Add($"The TVC shows the same income could cost £{tvcValue - r.CashEquivalentTransferValue:N0} more from an insurer than the CETV offered (COBS 19.1.6G: start from the assumption a transfer is not suitable).");
+            warnings.Add($"The TVC shows the same income could cost £{UkFormat.Amount(tvcValue - r.CashEquivalentTransferValue)} more from an insurer than the CETV offered (COBS 19.1.6G: start from the assumption a transfer is not suitable).");
         }
 
         if (!converged)
@@ -405,9 +405,9 @@ public sealed class DbTransferCalculator
     }
 
     private static string Annex5Wording(decimal cetv, decimal replacementCost) =>
-        $"You have been offered a cash equivalent transfer value of £{cetv:N0} in exchange for you giving up any future claims to a pension from the scheme. " +
-        $"Will I be better or worse off by transferring? It could cost you £{replacementCost:N0} to obtain a comparable level of income from an insurer. " +
-        $"This means the same retirement income could cost you £{replacementCost - cetv:N0} more by transferring.";
+        $"You have been offered a cash equivalent transfer value of £{UkFormat.Amount(cetv)} in exchange for you giving up any future claims to a pension from the scheme. " +
+        $"Will I be better or worse off by transferring? It could cost you £{UkFormat.Amount(replacementCost)} to obtain a comparable level of income from an insurer. " +
+        $"This means the same retirement income could cost you £{UkFormat.Amount(replacementCost - cetv)} more by transferring.";
 
     private static IReadOnlyList<string> Annex5Notes() =>
     [

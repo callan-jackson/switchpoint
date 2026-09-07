@@ -1,3 +1,5 @@
+using SwitchPoint.Calculation.Numerics;
+
 namespace SwitchPoint.Calculation.Tax;
 
 /// <summary>Inputs for an annual allowance check.</summary>
@@ -54,7 +56,7 @@ public sealed class PensionAllowanceCalculator
         bool tapered = allowance < _p.AnnualAllowance;
         if (tapered)
         {
-            warnings.Add($"Annual allowance tapered to £{allowance:N0} (adjusted income £{request.AdjustedIncome:N0}).");
+            warnings.Add($"Annual allowance tapered to £{UkFormat.Amount(allowance)} (adjusted income £{UkFormat.Amount(request.AdjustedIncome)}).");
         }
 
         decimal? mpaaExcess = null;
@@ -63,7 +65,7 @@ public sealed class PensionAllowanceCalculator
             mpaaExcess = Math.Max(0m, request.MoneyPurchaseInput - _p.MoneyPurchaseAnnualAllowance);
             if (mpaaExcess > 0m)
             {
-                warnings.Add($"Money purchase input £{request.MoneyPurchaseInput:N0} exceeds the MPAA of £{_p.MoneyPurchaseAnnualAllowance:N0} by £{mpaaExcess:N0}; carry forward cannot be used against it.");
+                warnings.Add($"Money purchase input £{UkFormat.Amount(request.MoneyPurchaseInput)} exceeds the MPAA of £{UkFormat.Amount(_p.MoneyPurchaseAnnualAllowance)} by £{UkFormat.Amount(mpaaExcess.Value)}; carry forward cannot be used against it.");
             }
         }
 
@@ -76,7 +78,7 @@ public sealed class PensionAllowanceCalculator
         excess -= carryUsed;
         if (excess > 0m)
         {
-            warnings.Add($"Pension input exceeds the available annual allowance by £{excess:N0}; an annual allowance charge at the marginal rate applies.");
+            warnings.Add($"Pension input exceeds the available annual allowance by £{UkFormat.Amount(excess)}; an annual allowance charge at the marginal rate applies.");
         }
 
         return new AllowanceCheckResult(allowance, tapered, carryAvailable, carryUsed, excess, mpaaExcess, warnings);

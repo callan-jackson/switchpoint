@@ -242,7 +242,7 @@ public sealed class CashflowEngine
                     decimal cap = allowances.MaxRelievableContribution(employment[p]);
                     if (memberInput > cap)
                     {
-                        warnings.Add($"{people[p].Name}: member contributions £{memberInput:N0} exceed the relievable maximum £{cap:N0} (greater of £3,600 and relevant UK earnings).");
+                        warnings.Add($"{people[p].Name}: member contributions £{UkFormat.Amount(memberInput)} exceed the relievable maximum £{UkFormat.Amount(cap)} (greater of £3,600 and relevant UK earnings).");
                     }
                 }
             }
@@ -300,7 +300,7 @@ public sealed class CashflowEngine
                         a.Kind = PlanAssetKind.Drawdown;
                         AssetState cash = GetOrCreateCash(assets, p);
                         cash.Value += tfc;
-                        warnings.Add($"{people[p].Name}: £{tfc:N0} tax-free cash taken from {a.Source.Asset.Name}; remaining lump sum allowance £{lsaRemaining:N0}.");
+                        warnings.Add($"{people[p].Name}: £{UkFormat.Amount(tfc)} tax-free cash taken from {a.Source.Asset.Name}; remaining lump sum allowance £{UkFormat.Amount(lsaRemaining)}.");
                     }
                 }
             }

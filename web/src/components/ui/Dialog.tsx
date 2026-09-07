@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode, type SyntheticEvent } from 'react'
+import { useEffect, useId, useRef, type ReactNode, type SyntheticEvent } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 
@@ -22,7 +22,7 @@ const sizeClasses = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-3xl', xl: 'max-
  */
 export function Dialog({ open, onClose, title, description, children, footer, size = 'md', locked }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
-  const titleId = useRef(`dlg-${Math.random().toString(36).slice(2, 9)}`).current
+  const titleId = `dlg-${useId()}`
 
   useEffect(() => {
     const el = ref.current

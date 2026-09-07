@@ -24,7 +24,8 @@ export function AppLayout() {
   // Route changes close the drawer and reset scroll; the page heading takes focus for AT users.
   useEffect(() => {
     setDrawerOpen(false)
-    mainRef.current?.scrollTo({ top: 0 })
+    // jsdom (and very old browsers) have no Element.scrollTo; scrolling is cosmetic here.
+    mainRef.current?.scrollTo?.({ top: 0 })
   }, [location.pathname])
 
   useEffect(() => {

@@ -170,7 +170,7 @@ public class ClientAndCatalogueTests(ApiFixture fixture)
                 exitPenalty = new { bands = new object[] { new { untilYearsFromStart = 5, ratePct = 2, amount = 0 } } },
                 allocationRatePct = 100,
             },
-            holdings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3X7QG63" } },
+            holdings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3TYHH97" } },
             contributions = new object[] { new { payer = "member", amount = 300, frequency = "monthly", escalationPct = 3, isGrossOfTaxRelief = true } },
         };
         HttpResponseMessage created = await fixture.Adviser.PostAsJsonAsync($"/api/v1/clients/{client.Id}/schemes", scheme, ApiFactory.Json);
@@ -223,7 +223,7 @@ public class ClientAndCatalogueTests(ApiFixture fixture)
         PagedResult<FundDto> funds = (await fixture.Adviser.GetFromJsonAsync<PagedResult<FundDto>>("/api/v1/funds?pageSize=5", ApiFactory.Json))!;
         Assert.True(funds.Total >= 5);
         Assert.True(funds.Items.Count <= 5);
-        FundDto fund = (await fixture.Adviser.GetFromJsonAsync<FundDto>("/api/v1/funds/GB00B3X7QG63", ApiFactory.Json))!;
+        FundDto fund = (await fixture.Adviser.GetFromJsonAsync<FundDto>("/api/v1/funds/GB00B3TYHH97", ApiFactory.Json))!;
         Assert.Equal(0.22m, fund.OcfPct);
         Assert.Equal(HttpStatusCode.NotFound, (await fixture.Adviser.GetAsync(new Uri("/api/v1/funds/GB00B0000000", UriKind.Relative))).StatusCode);
 
@@ -281,7 +281,7 @@ public class CalculationTests(ApiFixture fixture)
         clientId,
         cedingSchemes = schemeIds.Select(id => new { schemeId = id }).ToArray(),
         proposedProductId = productId,
-        proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3X7QG63" } },
+        proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3TYHH97" } },
         proposedAdviserCharges = new { initialPct = 1, initialAmount = 0, ongoingPct = 0.5, ongoingAmount = 0 },
         retirementAge = 67,
         redirectContributions = true,
@@ -319,7 +319,7 @@ public class CalculationTests(ApiFixture fixture)
             clientId,
             cedingSchemes = schemes.Select(s => new { schemeId = s.Id }).ToArray(),
             proposedProductId = await ProductIdAsync(),
-            proposedHoldings = new object[] { new { name = "Half a fund", weightPct = 50, isin = "GB00B3X7QG63" } },
+            proposedHoldings = new object[] { new { name = "Half a fund", weightPct = 50, isin = "GB00B3TYHH97" } },
             proposedAdviserCharges = new { initialPct = 1, initialAmount = 0, ongoingPct = 0.5, ongoingAmount = 0 },
             retirementAge = 67,
         };
@@ -339,7 +339,7 @@ public class CalculationTests(ApiFixture fixture)
         {
             dbSchemeId = dbScheme.Id,
             proposedProductId = await ProductIdAsync(),
-            proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3X7QG63" } },
+            proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3TYHH97" } },
             proposedAdviserCharges = new { initialPct = 2, initialAmount = 0, ongoingPct = 0.75, ongoingAmount = 0 },
             aptaGrowthPct = 5,
             planEndAge = 100,
@@ -442,7 +442,7 @@ public class AnalysisAndReportTests(ApiFixture fixture)
             cedingSchemeIds = sarah.Schemes.Select(s => s.Id).ToArray(),
             proposedProductId = products.First(p => p.ProviderName.StartsWith("AJ Bell", StringComparison.Ordinal)).Id,
             proposedProductChargeVersion = 1,
-            proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3X7QG63" } },
+            proposedHoldings = new object[] { new { name = "Vanguard LifeStrategy 60% Equity", weightPct = 100, isin = "GB00B3TYHH97" } },
             proposedAdviserCharges = new { initialPct = 1, initialAmount = 0, ongoingPct = 0.5, ongoingAmount = 0 },
             assumptionSetId = sets[0].Id,
             rationale = "Lower ongoing charges and access to drawdown.",

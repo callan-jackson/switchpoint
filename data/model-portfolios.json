@@ -1,0 +1,440 @@
+{
+  "modelPortfolios": [
+    {
+      "providerName": "AJ Bell Asset Management",
+      "name": "AJ Bell Managed Portfolio Service - Cautious",
+      "riskLevel": 3,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "IE00B1S75374",
+          "weightPct": 20
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 18
+        },
+        {
+          "isin": "IE00B50W2R13",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB00B45Q9038",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00BFYDWN66",
+          "weightPct": 7
+        },
+        {
+          "isin": "GB00B59G4Q73",
+          "weightPct": 18
+        },
+        {
+          "isin": "GB00B3X7QG63",
+          "weightPct": 9
+        },
+        {
+          "isin": "IE00B50MZ724",
+          "weightPct": 4
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 4
+        }
+      ]
+    },
+    {
+      "providerName": "AJ Bell Asset Management",
+      "name": "AJ Bell Managed Portfolio Service - Balanced",
+      "riskLevel": 5,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "GB00B59G4Q73",
+          "weightPct": 30
+        },
+        {
+          "isin": "GB00B3X7QG63",
+          "weightPct": 12
+        },
+        {
+          "isin": "IE00B50MZ724",
+          "weightPct": 6
+        },
+        {
+          "isin": "IE00B95PGT31",
+          "weightPct": 4
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 14
+        },
+        {
+          "isin": "IE00B1S75374",
+          "weightPct": 12
+        },
+        {
+          "isin": "IE00B50W2R13",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00B45Q9038",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 5
+        },
+        {
+          "isin": "GB00BFYDWN66",
+          "weightPct": 3
+        }
+      ]
+    },
+    {
+      "providerName": "AJ Bell Asset Management",
+      "name": "AJ Bell Managed Portfolio Service - Adventurous",
+      "riskLevel": 7,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "GB00B59G4Q73",
+          "weightPct": 34
+        },
+        {
+          "isin": "IE00B4L5Y983",
+          "weightPct": 16
+        },
+        {
+          "isin": "GB00B3X7QG63",
+          "weightPct": 12
+        },
+        {
+          "isin": "IE00B50MZ724",
+          "weightPct": 10
+        },
+        {
+          "isin": "IE00B95PGT31",
+          "weightPct": 6
+        },
+        {
+          "isin": "IE00B52MJY50",
+          "weightPct": 5
+        },
+        {
+          "isin": "GB00B7VT0938",
+          "weightPct": 5
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 4
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 5
+        },
+        {
+          "isin": "IE00B4ND3602",
+          "weightPct": 3
+        }
+      ]
+    },
+    {
+      "providerName": "AJ Bell Asset Management",
+      "name": "AJ Bell Gilt Managed Portfolio Service",
+      "riskLevel": 2,
+      "mpsFeePct": 0.1,
+      "holdings": [
+        {
+          "isin": "IE00B4WXJK79",
+          "weightPct": 35
+        },
+        {
+          "isin": "GB00B83HGR24",
+          "weightPct": 30
+        },
+        {
+          "isin": "IE00BG0TQD32",
+          "weightPct": 20
+        },
+        {
+          "isin": "GB00B4M89245",
+          "weightPct": 15
+        }
+      ]
+    },
+    {
+      "providerName": "Parmenion Investment Management",
+      "name": "Parmenion Strategic Passive Risk Grade 3",
+      "riskLevel": 3,
+      "mpsFeePct": 0.12,
+      "holdings": [
+        {
+          "isin": "GB00B83HGR24",
+          "weightPct": 24
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 20
+        },
+        {
+          "isin": "IE00B50W2R13",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB00B83RVT96",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00B8XYYQ86",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00BJS8SJ34",
+          "weightPct": 18
+        },
+        {
+          "isin": "GB00B80QFX11",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 4
+        }
+      ]
+    },
+    {
+      "providerName": "Parmenion Investment Management",
+      "name": "Parmenion Strategic Passive Risk Grade 5",
+      "riskLevel": 5,
+      "mpsFeePct": 0.12,
+      "holdings": [
+        {
+          "isin": "GB00BJS8SJ34",
+          "weightPct": 28
+        },
+        {
+          "isin": "GB00B80QFX11",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB00B80QG615",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00B80QGN87",
+          "weightPct": 4
+        },
+        {
+          "isin": "IE00B50MZ724",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B83HGR24",
+          "weightPct": 16
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 14
+        },
+        {
+          "isin": "GB00B83RVT96",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 6
+        }
+      ]
+    },
+    {
+      "providerName": "Parmenion Investment Management",
+      "name": "Parmenion Strategic Active Risk Grade 7",
+      "riskLevel": 7,
+      "mpsFeePct": 0.24,
+      "holdings": [
+        {
+          "isin": "GB0006061963",
+          "weightPct": 14
+        },
+        {
+          "isin": "GB00B7FQLN12",
+          "weightPct": 14
+        },
+        {
+          "isin": "GB00B41YBW71",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB00B2PLJG05",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B5STJW84",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB0006011133",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B4TZHH95",
+          "weightPct": 4
+        },
+        {
+          "isin": "GB00B57TMD12",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B77DQT14",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B87FJ401",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 6
+        }
+      ]
+    },
+    {
+      "providerName": "Tatton Investment Management",
+      "name": "Tatton Tracker Balanced",
+      "riskLevel": 5,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "GB00BJS8SJ34",
+          "weightPct": 26
+        },
+        {
+          "isin": "GB00B80QFX11",
+          "weightPct": 12
+        },
+        {
+          "isin": "IE0005042456",
+          "weightPct": 6
+        },
+        {
+          "isin": "IE00B6YX5C33",
+          "weightPct": 8
+        },
+        {
+          "isin": "IE00B3VVMM84",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B83HGR24",
+          "weightPct": 14
+        },
+        {
+          "isin": "IE00BKW9SV11",
+          "weightPct": 12
+        },
+        {
+          "isin": "IE00BF1QPJ56",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B8XYYQ86",
+          "weightPct": 6
+        }
+      ]
+    },
+    {
+      "providerName": "Tatton Investment Management",
+      "name": "Tatton Core Aggressive",
+      "riskLevel": 7,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "GB00BJS8SJ34",
+          "weightPct": 24
+        },
+        {
+          "isin": "GB00B41YBW71",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB0006061963",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B7FQLN12",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B2PLJJ36",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB00B3X7QG63",
+          "weightPct": 8
+        },
+        {
+          "isin": "IE00B50MZ724",
+          "weightPct": 8
+        },
+        {
+          "isin": "IE00B95PGT31",
+          "weightPct": 5
+        },
+        {
+          "isin": "IE00B52MJY50",
+          "weightPct": 5
+        },
+        {
+          "isin": "GB00B84DSW83",
+          "weightPct": 6
+        },
+        {
+          "isin": "GB00B5BFJG71",
+          "weightPct": 4
+        }
+      ]
+    },
+    {
+      "providerName": "Tatton Investment Management",
+      "name": "Tatton Managed Cautious",
+      "riskLevel": 3,
+      "mpsFeePct": 0.15,
+      "holdings": [
+        {
+          "isin": "GB00B87FJ401",
+          "weightPct": 20
+        },
+        {
+          "isin": "GB00B77DQT14",
+          "weightPct": 14
+        },
+        {
+          "isin": "IE00B1S75374",
+          "weightPct": 16
+        },
+        {
+          "isin": "GB00BJXPPH66",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B8XYYQ86",
+          "weightPct": 8
+        },
+        {
+          "isin": "GB0006010168",
+          "weightPct": 12
+        },
+        {
+          "isin": "GB00B86SVM24",
+          "weightPct": 10
+        },
+        {
+          "isin": "GB00B882H241",
+          "weightPct": 10
+        }
+      ]
+    }
+  ]
+}

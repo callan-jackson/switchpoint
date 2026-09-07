@@ -1,0 +1,60 @@
+{
+  "assumptionSets": [
+    {
+      "name": "FCA standard 2026/27",
+      "isFcaStandard": true,
+      "growthLowerPct": 2.0,
+      "growthIntermediatePct": 5.0,
+      "growthHigherPct": 8.0,
+      "inflationPct": 2.0,
+      "earningsGrowthPct": 3.5,
+      "rpiInflationPct": 3.0,
+      "chargeInflationPct": 2.0,
+      "preRetirementProductChargePct": 0.4,
+      "annuityExpenseLoadingPct": 4.0,
+      "spouseAgeGapYears": 3,
+      "mortalityBasis": "onsNationalLifeTables2020_22",
+      "statePensionIncreasePct": 3.5,
+      "taxYear": "2026/27",
+      "projectionBasis": "real",
+      "marketInputs": {
+        "giltYieldUpTo5Pct": 4.38,
+        "giltYield5To10Pct": 4.88,
+        "giltYield10To15Pct": 5.33,
+        "giltYieldOver15Pct": 5.7,
+        "tvcAnnuityRateRpiLinkedPct": 2.0,
+        "tvcAnnuityRateLevelPct": 5.5,
+        "cobs13YPct": 2.0,
+        "asAt": "2026-09-07"
+      }
+    },
+    {
+      "name": "Cautious firm default",
+      "isFcaStandard": false,
+      "growthLowerPct": 1.0,
+      "growthIntermediatePct": 4.0,
+      "growthHigherPct": 7.0,
+      "inflationPct": 2.0,
+      "earningsGrowthPct": 3.0,
+      "rpiInflationPct": 3.0,
+      "chargeInflationPct": 2.0,
+      "preRetirementProductChargePct": 0.4,
+      "annuityExpenseLoadingPct": 4.0,
+      "spouseAgeGapYears": 3,
+      "mortalityBasis": "onsNationalLifeTables2020_22",
+      "statePensionIncreasePct": 3.0,
+      "taxYear": "2026/27",
+      "projectionBasis": "real",
+      "marketInputs": {
+        "giltYieldUpTo5Pct": 4.38,
+        "giltYield5To10Pct": 4.88,
+        "giltYield10To15Pct": 5.33,
+        "giltYieldOver15Pct": 5.7,
+        "tvcAnnuityRateRpiLinkedPct": 2.0,
+        "tvcAnnuityRateLevelPct": 5.5,
+        "cobs13YPct": 2.0,
+        "asAt": "2026-09-07"
+      }
+    }
+  ]
+}

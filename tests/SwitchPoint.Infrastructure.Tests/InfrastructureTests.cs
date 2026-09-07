@@ -167,6 +167,7 @@ public class PersistenceRoundTripTests : IDisposable
         Guid productId = Guid.NewGuid();
         Guid fundId = Guid.NewGuid();
         Guid setId = Guid.NewGuid();
+        Guid mpsId = Guid.NewGuid();
         using (IServiceScope scope = _fx.Scope())
         {
             SwitchPointDbContext db = scope.ServiceProvider.GetRequiredService<SwitchPointDbContext>();
@@ -179,7 +180,7 @@ public class PersistenceRoundTripTests : IDisposable
             Fund fund = new(fundId, "US0378331005", "Test Fund", "Test Co", FundType.Oeic, 0.0022m, new AssetAllocation(0.6m, 0.4m, 0m, 0m, 0m), Now, srri: 4);
             fund.UpdateStatistics(new FundStatistics(0.08m, 0.06m, 0.07m, 0.09m, 0.5m, -0.12m, 0.02m, 4, "Gold"), 250.12m, new DateOnly(2026, 9, 5), Now);
             db.Funds.Add(fund);
-            ModelPortfolio mps = new(Guid.NewGuid(), provider.Id, "Balanced", 5, 0.0015m, Now);
+            ModelPortfolio mps = new(mpsId, provider.Id, "Balanced", 5, 0.0015m, Now);
             mps.ReplaceHoldings([new ModelPortfolioHolding(fundId, "US0378331005", "Test Fund", 1m, 0.0022m)], Now);
             db.ModelPortfolios.Add(mps);
             AssumptionSet set = new(setId, null, "FCA test", true, Now, 0.02m, 0.05m, 0.08m, 0.02m, 0.035m, 0.03m, 0.02m, 0.004m, 0.04m, 3, MortalityBasis.OnsNationalLifeTables2020_22, 0.035m, "2026/27", ProjectionBasis.Real,
@@ -199,7 +200,7 @@ public class PersistenceRoundTripTests : IDisposable
             Fund f = await db.Funds.SingleAsync(x => x.Id == fundId);
             Assert.Equal("Gold", f.Statistics.MedalistRating);
             Assert.Equal(0.6m, f.AssetAllocation.Equity);
-            ModelPortfolio m = await db.ModelPortfolios.SingleAsync();
+            ModelPortfolio m = await db.ModelPortfolios.SingleAsync(x => x.Id == mpsId);
             Assert.Equal(0.0037m, m.TotalInvestmentCharge);
             AssumptionSet s = await db.AssumptionSets.SingleAsync(x => x.Id == setId);
             Assert.Equal(0.044m, s.MarketInputs.GiltYield5To10);
@@ -426,12 +427,12 @@ public class ReportStoreAndConnectorTests
     public async Task Morningstar_sandbox_serves_the_catalogue()
     {
         IFundCatalogue catalogue = Substitute.For<IFundCatalogue>();
-        Fund fund = new(Guid.NewGuid(), "GB00B3X7QG63", "Vanguard LS60", "Vanguard", FundType.Oeic, 0.0022m, AssetAllocation.AllEquity, DateTime.UtcNow);
+        Fund fund = new(Guid.NewGuid(), "GB00B3TYHH97", "Vanguard LS60", "Vanguard", FundType.Oeic, 0.0022m, AssetAllocation.AllEquity, DateTime.UtcNow);
         catalogue.SearchAsync("Vanguard", null, null, 1, 10, Arg.Any<CancellationToken>()).Returns(new Page<Fund>([fund], 1, 10, 1));
-        catalogue.GetByIsinAsync("GB00B3X7QG63", Arg.Any<CancellationToken>()).Returns(fund);
+        catalogue.GetByIsinAsync("GB00B3TYHH97", Arg.Any<CancellationToken>()).Returns(fund);
         MorningstarFundDataProvider provider = new(Substitute.For<IHttpClientFactory>(), Options.Create(new IntegrationsOptions { Morningstar = new IntegrationOptions { Mode = IntegrationMode.Sandbox } }), catalogue, NullLogger<MorningstarFundDataProvider>.Instance);
         Assert.Single(await provider.SearchAsync("Vanguard", 10));
-        Assert.Equal(0.22m, (await provider.GetAsync("GB00B3X7QG63"))!.OcfPct);
+        Assert.Equal(0.22m, (await provider.GetAsync("GB00B3TYHH97"))!.OcfPct);
         Assert.Equal(0, await provider.SyncAsync());
         Assert.Equal(IntegrationMode.Sandbox, provider.Mode);
     }

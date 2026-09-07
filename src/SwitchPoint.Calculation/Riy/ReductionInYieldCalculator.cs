@@ -36,10 +36,10 @@ public sealed record RiyResult(
 
     /// <summary>COBS 13 Annex 4 3.3R sentence.</summary>
     public string ProductSentence(bool realTerms) =>
-        $"Product charges reduce investment growth{(realTerms ? " after price inflation" : string.Empty)} from {GrowthRate:P1} to {RateMath.RoundToNearest(RateAfterProductCharges, 0.001m):P1}.";
+        $"Product charges reduce investment growth{(realTerms ? " after price inflation" : string.Empty)} from {UkFormat.Percent(GrowthRate)} to {UkFormat.Percent(RateMath.RoundToNearest(RateAfterProductCharges, 0.001m))}.";
 
     public string TotalSentence(bool realTerms) =>
-        $"All charges reduce investment growth{(realTerms ? " after price inflation" : string.Empty)} from {GrowthRate:P1} to {RateMath.RoundToNearest(RateAfterAllCharges, 0.001m):P1}.";
+        $"All charges reduce investment growth{(realTerms ? " after price inflation" : string.Empty)} from {UkFormat.Percent(GrowthRate)} to {UkFormat.Percent(RateMath.RoundToNearest(RateAfterAllCharges, 0.001m))}.";
 }
 
 /// <summary>

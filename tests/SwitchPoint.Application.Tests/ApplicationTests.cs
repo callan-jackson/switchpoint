@@ -74,7 +74,7 @@ public class MappingTests
         Assert.Equal(g, g.ToDomain().ToDto());
         ContributionDto c = new(ContributionPayer.Member, 200m, Frequency.Monthly, 3m, false, 1, 120);
         Assert.Equal(c, c.ToDomain().ToDto());
-        HoldingDto h = new("Vanguard LifeStrategy 60", 60m, "GB00B3X7QG63", null, 0.22m);
+        HoldingDto h = new("Vanguard LifeStrategy 60", 60m, "GB00B3TYHH97", null, 0.22m);
         Assert.Equal(h, h.ToDomain().ToDto());
         IndexRuleDto lpi = new(IndexBasis.LpiCpi, 0m, 5m, null);
         Assert.Equal(lpi, lpi.ToRevaluation().ToDto());
@@ -166,7 +166,7 @@ public class ValidatorTests
     public void Scheme_holdings_must_sum_to_100_and_have_valid_isins()
     {
         SchemeWriteValidator v = new();
-        SchemeWrite good = new() { Type = SchemeType.Sipp, ProductName = "X", CurrentValue = 1m, TransferValue = 1m, ValuationDate = new DateOnly(2026, 9, 1), Holdings = [new HoldingDto("A", 60m, "GB00B3X7QG63", null, null), new HoldingDto("B", 40m, null, null, 0.2m)] };
+        SchemeWrite good = new() { Type = SchemeType.Sipp, ProductName = "X", CurrentValue = 1m, TransferValue = 1m, ValuationDate = new DateOnly(2026, 9, 1), Holdings = [new HoldingDto("A", 60m, "GB00B3TYHH97", null, null), new HoldingDto("B", 40m, null, null, 0.2m)] };
         Assert.True(v.Validate(good).IsValid);
         ValidationResult bad = v.Validate(good with { Holdings = [new HoldingDto("A", 60m, "GB00B3X7QG64", null, null)] });
         Assert.False(bad.IsValid);

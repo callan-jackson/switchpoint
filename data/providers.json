@@ -1,0 +1,2444 @@
+{
+  "providers": [
+    {
+      "name": "AJ Bell Investcentre",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.investcentre.co.uk",
+      "products": [
+        {
+          "name": "AJ Bell Investcentre Funds & Shares Service (SIPP, ISA and GIA)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown",
+            "JuniorIsa"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2024-12-02",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.investcentre.co.uk/sites/default/files/AJBIC_charges_and_rates.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 50,
+                "frequency": "quarterly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "sipp",
+                "description": "SIPP quarterly administration: GBP 50 up to GBP 100,000, GBP 60 from GBP 100,000 to GBP 200,000, GBP 70 above GBP 200,000; waived where GBP 200,000+ is held in the Funds & Shares Service. VAT payable in addition."
+              },
+              {
+                "amount": 150,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "Flexi-access drawdown annual charge (GBP 250 for capped drawdown from age 75)."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 3.95,
+              "etfDealAmount": 3.95,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": [
+                {
+                  "untilYearsFromStart": null,
+                  "ratePct": 0,
+                  "amount": 75
+                }
+              ]
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.175
+                },
+                {
+                  "upTo": 1500000,
+                  "annualRatePct": 0.15
+                },
+                {
+                  "upTo": 2000000,
+                  "annualRatePct": 0.075
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transact",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.transact-online.co.uk",
+      "products": [
+        {
+          "name": "Transact Personal Pension / SIPP (portfolios of GBP 100,000 and above)",
+          "wrapperTypes": [
+            "Sipp",
+            "PersonalPension",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown",
+            "OnshoreBond",
+            "OffshoreBond"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-06-16",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.transact-online.co.uk/documents/charges-schedule",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 20,
+                "frequency": "quarterly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "sipp",
+                "description": "Quarterly wrapper administration fee for the SIPP / Personal Pension Plan (one fee per wrapper type; a single fee applies across a linked family group)."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 3.75,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 600000,
+                  "annualRatePct": 0.26
+                },
+                {
+                  "upTo": 1200000,
+                  "annualRatePct": 0.17
+                },
+                {
+                  "upTo": 5000000,
+                  "annualRatePct": 0.07
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.05
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transact Personal Pension / SIPP (portfolios below GBP 100,000)",
+          "wrapperTypes": [
+            "Sipp",
+            "PersonalPension",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-06-16",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.transact-online.co.uk/documents/charges-schedule",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 20,
+                "frequency": "quarterly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "sipp",
+                "description": "Quarterly SIPP / Personal Pension wrapper administration fee."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 3.75,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 60000,
+                  "annualRatePct": 0.5
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.26
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quilter",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.quilter.com",
+      "products": [
+        {
+          "name": "Quilter Collective Retirement Account (Charge Basis 3)",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2012-12-18",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.quilter.com/siteassets/documents/platform/guides-and-brochures/18035-making-the-cost-of-investment-clear.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 3.5,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 50000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 750000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.15
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Quilter Collective Investment Account and ISA (Charge Basis 3)",
+          "wrapperTypes": [
+            "Isa",
+            "GeneralInvestmentAccount",
+            "JuniorIsa"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2012-12-18",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.quilter.com/siteassets/documents/platform/guides-and-brochures/18035-making-the-cost-of-investment-clear.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 3.5,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 50000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 750000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.15
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aegon",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.aegon.co.uk",
+      "products": [
+        {
+          "name": "Aegon Retirement Choices (ARC)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown",
+            "JuniorIsa"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.aegon.co.uk/content/dam/auk/assets/publication/marketing-support/arc-charges-guide.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 75,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "Drawdown fee, charged once however many income streams are taken."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 15,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 30000,
+                  "annualRatePct": 0.6
+                },
+                {
+                  "upTo": 50000,
+                  "annualRatePct": 0.55
+                },
+                {
+                  "upTo": 100000,
+                  "annualRatePct": 0.5
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.45
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aberdeen (abrdn) Adviser",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.aberdeenadviser.com",
+      "products": [
+        {
+          "name": "Wrap (Aberdeen SIPP, ISA and Personal Portfolio)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-04-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.aberdeenadviser.com/library/wrap-charges-and-discounts---guide.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 10,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Elevate Portfolio (PIA, ISA and GIA)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.aberdeenadviser.com/library/elevate---your-guide-to-charges.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 12.5,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": 150000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 2500000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": 5000000,
+                  "annualRatePct": 0.15
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fidelity Adviser Solutions",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://adviserservices.fidelity.co.uk",
+      "products": [
+        {
+          "name": "Fidelity Adviser Solutions Pension, ISA and Investment Account",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown",
+            "JuniorIsa"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://adviserservices.fidelity.co.uk/media/fnw/guides/client-guide-to-fees-and-charges.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 45,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "wrapper",
+                "description": "Investor Fee: one GBP 45 a year charge covering all accounts in the client's sole name, collected as GBP 3.75 a month."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.25
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seven Investment Management (7IM)",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.7im.co.uk",
+      "products": [
+        {
+          "name": "7IM Platform SIPP, ISA and GIA",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2024-09-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.7im.co.uk/media/r55h1p4k/platform-fees-and-charges.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 162,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "Payment of income (drawdown) fee, GBP 135 plus VAT. SIPP annual administration is nil, but GBP 100 plus VAT applies to SIPP accounts below GBP 75,000."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 2000000,
+                  "annualRatePct": 0.15
+                },
+                {
+                  "upTo": 5000000,
+                  "annualRatePct": 0.08
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.05
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nucleus Financial Platforms",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://nucleusfinancial.com",
+      "products": [
+        {
+          "name": "Nucleus Wrap (SIPP, ISA and GIA)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://nucleusfinancial.com/wrap/clients/our-platform/costs-and-charges",
+          "dataQuality": "indicative",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 200000,
+                  "annualRatePct": 0.33
+                },
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.175
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.05
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Nucleus Modular iSIPP (formerly James Hay Modular iSIPP)",
+          "wrapperTypes": [
+            "Sipp",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://nucleusfinancial.com/advisers/support/simplified-pricing",
+          "dataQuality": "indicative",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 180,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "Income drawdown charge; indicative pending the client-specific charges schedule. Module charges apply for off-platform assets (Whole of Market, Specialist Investments, Commercial Property)."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 200000,
+                  "annualRatePct": 0.33
+                },
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.175
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.05
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wealthtime (Novia Financial plc)",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": "481600",
+      "website": "https://www.wealthtime.com",
+      "products": [
+        {
+          "name": "Wealthtime SIPP, ISA and GIA",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2025-05-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.wealthtime.com/wp-content/uploads/sites/7/2026/05/WT-Charges-schedule_0526-1.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 75,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "SIPP income drawdown / UFPLS charge, GBP 62.50 plus VAT for any 12-month period in which a payment is taken. The platform charge is subject to a GBP 100 a year minimum."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 15,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parmenion",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://parmenion.co.uk",
+      "products": [
+        {
+          "name": "Parmenion Platform SIPP, ISA and GIA",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://parmenion.co.uk/charges/",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 18,
+                "frequency": "quarterly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "sipp",
+                "description": "SIPP administration, GBP 18 plus VAT a quarter. A GBP 5 a month minimum platform charge applies for clients over 18."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0.05,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": 300000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 600000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 1500000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.15
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Standard Life",
+      "kind": "insurer",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.standardlife.co.uk",
+      "products": [
+        {
+          "name": "Standard Life Personal Pension (ready-made option)",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.standardlife.co.uk/pensions/personal-pension/charges",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "explicit",
+              "ocfPct": 0.1
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.45
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "M&G Wealth Platform",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": "114432",
+      "website": "https://www.mandg.com/wealth/platform",
+      "products": [
+        {
+          "name": "M&G Wealth Platform (SIPP, ISA and GIA)",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.mandg.com/wealth/platform/your-platform/pricing-and-charging",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 3000000,
+                  "annualRatePct": 0.1
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.06
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scottish Widows Platform",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://platform.scottishwidows.co.uk",
+      "products": [
+        {
+          "name": "Scottish Widows Platform Personal Pension Account",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": true,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://platform.scottishwidows.co.uk/wp-content/uploads/Client_Charges_Guide.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 75,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "sipp",
+                "description": "Pension Account Charge, GBP 75 a year taken as GBP 6.25 a month."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 7.5,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 100000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 500000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Royal London",
+      "kind": "insurer",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://adviser.royallondon.com",
+      "products": [
+        {
+          "name": "Royal London Pension Portfolio",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2025-04-06",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://adviser.royallondon.com/globalassets/docs/adviser/guides/65g2035-pensions-and-investments-charges-guide.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "none",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": 48300,
+                  "annualRatePct": 0.75
+                },
+                {
+                  "upTo": 96700,
+                  "annualRatePct": 0.5
+                },
+                {
+                  "upTo": 290000,
+                  "annualRatePct": 0.45
+                },
+                {
+                  "upTo": 967000,
+                  "annualRatePct": 0.4
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.35
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prudential (M&G)",
+      "kind": "insurer",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.mandg.com/pru",
+      "products": [
+        {
+          "name": "Prudential Retirement Account",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.mandg.com/assets/shared/documents/en/rack164801.pdf",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": 100000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": 750000,
+                  "annualRatePct": 0.15
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.125
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aviva",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.aviva.co.uk",
+      "products": [
+        {
+          "name": "Aviva Pension Portfolio (Choice option)",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown",
+            "Isa",
+            "GeneralInvestmentAccount"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://connect.avivab2b.co.uk/adviser/retirement/individual-pensions/pension-portfolio/",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 30000,
+                  "annualRatePct": 0.4
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 400000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.15
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Aviva Pension Portfolio (Core option)",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown",
+            "Isa",
+            "GeneralInvestmentAccount"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://connect.avivab2b.co.uk/adviser/retirement/individual-pensions/pension-portfolio/",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 30000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.3
+                },
+                {
+                  "upTo": 400000,
+                  "annualRatePct": 0.2
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hargreaves Lansdown",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.hl.co.uk",
+      "products": [
+        {
+          "name": "HL Self-Invested Personal Pension",
+          "wrapperTypes": [
+            "Sipp",
+            "Drawdown"
+          ],
+          "minimumInvestment": 100,
+          "minimumRegularContribution": 25,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.hl.co.uk/pensions/sipp/charges-and-interest-rates",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 1.95,
+              "etfDealAmount": 6.95,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.35
+                },
+                {
+                  "upTo": 1000000,
+                  "annualRatePct": 0.25
+                },
+                {
+                  "upTo": 2000000,
+                  "annualRatePct": 0.1
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "interactive investor",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.ii.co.uk",
+      "products": [
+        {
+          "name": "ii Personal Pension (SIPP) - Plus plan",
+          "wrapperTypes": [
+            "Sipp",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.ii.co.uk/our-charges",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 14.99,
+                "frequency": "monthly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "wrapper",
+                "description": "Plus plan flat monthly fee covering the ISA, Personal Pension (SIPP) and Trading Account; applies once the portfolio exceeds GBP 100,000."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 1.49,
+              "etfDealAmount": 3.99,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": []
+          }
+        },
+        {
+          "name": "ii Personal Pension (SIPP) - Core plan",
+          "wrapperTypes": [
+            "Sipp",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.ii.co.uk/our-charges",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 5.99,
+                "frequency": "monthly",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "wrapper",
+                "description": "Core plan flat monthly fee for portfolios up to GBP 100,000, covering the ISA, Personal Pension (SIPP) and Trading Account."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 3.99,
+              "etfDealAmount": 3.99,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vanguard Investor UK",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.vanguardinvestor.co.uk",
+      "products": [
+        {
+          "name": "Vanguard Personal Pension (self-managed)",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "JuniorIsa"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.vanguardinvestor.co.uk/what-we-offer/fees-explained",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 250000,
+                  "annualRatePct": 0.15
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "PensionBee",
+      "kind": "insurer",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.pensionbee.com",
+      "products": [
+        {
+          "name": "PensionBee Global Leaders Plan",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.pensionbee.com/uk/plans",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "none",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 100000,
+                  "annualRatePct": 0.7
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.35
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "True Potential",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": "529810",
+      "website": "https://www.tpinvestor.com",
+      "products": [
+        {
+          "name": "True Potential Personal Pension",
+          "wrapperTypes": [
+            "PersonalPension",
+            "Drawdown",
+            "Isa",
+            "GeneralInvestmentAccount"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.tpinvestor.com/our-fees",
+          "dataQuality": "verified",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.4
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fundment",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": null,
+      "website": "https://www.fundment.com",
+      "products": [
+        {
+          "name": "Fundment Personal Pension",
+          "wrapperTypes": [
+            "Sipp",
+            "Isa",
+            "GeneralInvestmentAccount",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2024-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.zedra.com/wp-content/uploads/2025/09/Fundment_costs_and_charges_2024.pdf",
+          "dataQuality": "indicative",
+          "charges": {
+            "fixedCharges": [],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "platformCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.2
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "SS&C Hubwise",
+      "kind": "platform",
+      "fcaFirmReferenceNumber": "502619",
+      "website": "https://www.hubwise.co.uk",
+      "products": [
+        {
+          "name": "SS&C Hubwise SIPP",
+          "wrapperTypes": [
+            "Sipp",
+            "Drawdown"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "wholeOfMarket",
+          "effectiveFrom": "2026-01-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": "https://www.ssctech.com/about/disclosures/ssc-hubwise-schedule-of-charges",
+          "dataQuality": "indicative",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 150,
+                "frequency": "annually",
+                "indexation": {
+                  "basis": "none",
+                  "ratePct": 0
+                },
+                "appliesTo": "drawdown",
+                "description": "Drawdown charge, GBP 125 plus VAT, payable in any drawdown year in which a payment is made."
+              }
+            ],
+            "fundCharge": {
+              "kind": "fromHoldings",
+              "ocfPct": null
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": []
+            },
+            "bidOfferSpreadPct": 0,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "marginal",
+              "bands": [
+                {
+                  "upTo": 50000,
+                  "annualRatePct": 0.1
+                },
+                {
+                  "upTo": null,
+                  "annualRatePct": 0.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Heritage Life Assurance (illustrative legacy book)",
+      "kind": "insurer",
+      "fcaFirmReferenceNumber": null,
+      "website": null,
+      "products": [
+        {
+          "name": "Retirement Annuity Contract (1978 series)",
+          "wrapperTypes": [
+            "PersonalPension"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "1978-04-06",
+          "asAt": "2026-09-07",
+          "sourceUrl": null,
+          "dataQuality": "placeholder",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 2.5,
+                "frequency": "monthly",
+                "indexation": {
+                  "basis": "fixed",
+                  "ratePct": 5
+                },
+                "appliesTo": "wrapper",
+                "description": "Policy fee, escalating at 5% a year."
+              }
+            ],
+            "fundCharge": {
+              "kind": "explicit",
+              "ocfPct": 0.0
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": [
+                {
+                  "untilYearsFromStart": 1,
+                  "ratePct": 8,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 2,
+                  "ratePct": 6,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 3,
+                  "ratePct": 4,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 4,
+                  "ratePct": 2,
+                  "amount": 0
+                }
+              ]
+            },
+            "bidOfferSpreadPct": 5,
+            "allocationRatePct": 95,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 1.5
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Personal Pension Plan (1994 series, unit-linked)",
+          "wrapperTypes": [
+            "PersonalPension"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "1994-07-01",
+          "asAt": "2026-09-07",
+          "sourceUrl": null,
+          "dataQuality": "placeholder",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 3.5,
+                "frequency": "monthly",
+                "indexation": {
+                  "basis": "fixed",
+                  "ratePct": 5
+                },
+                "appliesTo": "wrapper",
+                "description": "Policy fee, escalating at 5% a year."
+              }
+            ],
+            "fundCharge": {
+              "kind": "explicit",
+              "ocfPct": 0.0
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": [
+                {
+                  "untilYearsFromStart": 2,
+                  "ratePct": 5,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 4,
+                  "ratePct": 3,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 6,
+                  "ratePct": 1,
+                  "amount": 0
+                }
+              ]
+            },
+            "bidOfferSpreadPct": 5,
+            "allocationRatePct": 97,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 1.25
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Personal Pension Plan (2001 series, stakeholder-priced)",
+          "wrapperTypes": [
+            "PersonalPension"
+          ],
+          "minimumInvestment": 0,
+          "minimumRegularContribution": 0,
+          "allowsFamilyLinking": false,
+          "fundUniverse": "restricted",
+          "effectiveFrom": "2001-04-06",
+          "asAt": "2026-09-07",
+          "sourceUrl": null,
+          "dataQuality": "placeholder",
+          "charges": {
+            "fixedCharges": [
+              {
+                "amount": 1.5,
+                "frequency": "monthly",
+                "indexation": {
+                  "basis": "fixed",
+                  "ratePct": 5
+                },
+                "appliesTo": "wrapper",
+                "description": "Policy fee, escalating at 5% a year."
+              }
+            ],
+            "fundCharge": {
+              "kind": "explicit",
+              "ocfPct": 0.0
+            },
+            "transactionCostsPct": 0,
+            "adviserCharges": {
+              "initialPct": 0,
+              "initialAmount": 0,
+              "ongoingPct": 0,
+              "ongoingAmount": 0
+            },
+            "dealingCharges": {
+              "fundDealAmount": 0,
+              "etfDealAmount": 0,
+              "expectedFundDealsPerYear": 0,
+              "expectedEtfDealsPerYear": 0
+            },
+            "switchCharge": {
+              "amountPerSwitch": 0,
+              "expectedSwitchesPerYear": 0
+            },
+            "exitPenalty": {
+              "bands": [
+                {
+                  "untilYearsFromStart": 3,
+                  "ratePct": 4,
+                  "amount": 0
+                },
+                {
+                  "untilYearsFromStart": 5,
+                  "ratePct": 2,
+                  "amount": 0
+                }
+              ]
+            },
+            "bidOfferSpreadPct": 5,
+            "allocationRatePct": 100,
+            "largeFundDiscounts": [],
+            "productCharge": {
+              "mode": "wholeOfFund",
+              "bands": [
+                {
+                  "upTo": null,
+                  "annualRatePct": 1.0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

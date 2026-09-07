@@ -20,7 +20,17 @@ import { gbp, num } from '@/lib/format'
 import { axisProps, chartColors, chartHeight, DASH_EXISTING, gridProps, series } from './palette'
 
 const moneyTick = (v: number) => gbp(v, { compact: true })
-const moneyTip = (v: number) => gbp(v)
+
+/**
+ * Recharts types tooltip callbacks with its own generic value/label unions, so the shared
+ * formatters take `unknown` and narrow themselves. Keeping them here means every chart shows
+ * money and axis labels the same way.
+ */
+const moneyTip = (value: unknown, name?: unknown): [string, string] => [gbp(Number(value)), String(name ?? '')]
+const moneyOnly = (value: unknown): string => gbp(Number(value))
+const yearLabel = (label: unknown): string => `Year ${String(label)}`
+const ageLabel = (label: unknown): string => `Age ${String(label)}`
+const pctTip = (value: unknown, name?: unknown): [string, string] => [`${num(Number(value), 1)}%`, String(name ?? '')]
 
 const tooltipStyle = {
   contentStyle: {
@@ -67,8 +77,8 @@ export function ExistingVsProposedChart({
         />
         <Tooltip
           {...tooltipStyle}
-          formatter={(value: number, name) => [moneyTip(value), name]}
-          labelFormatter={(l: number) => `Year ${l}`}
+          formatter={moneyTip}
+          labelFormatter={yearLabel}
         />
         <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
         <Line
@@ -124,8 +134,13 @@ export function TvcBarChart({
           label={{ value: 'Amount (£)', position: 'insideBottom', offset: -12, fill: chartColors.axis, fontSize: 11 }}
         />
         <YAxis type="category" dataKey="name" {...axisProps} width={150} />
-        <Tooltip {...tooltipStyle} formatter={(value: number) => [moneyTip(value), 'Amount']} />
-        <Bar dataKey="value" barSize={28} radius={[0, 4, 4, 0]} label={{ position: 'right', formatter: moneyTip, fontSize: 11, fill: 'var(--fg)' }}>
+        <Tooltip {...tooltipStyle} formatter={moneyTip} />
+        <Bar
+          dataKey="value"
+          barSize={28}
+          radius={[0, 4, 4, 0]}
+          label={{ position: 'right', formatter: moneyOnly, fontSize: 11, fill: 'var(--fg)' }}
+        >
           {data.map((d) => (
             <Cell key={d.name} fill={d.fill} />
           ))}
@@ -167,7 +182,7 @@ export function IncomeComparisonChart({
           width={64}
           label={{ value: 'Income (£ pa, real)', angle: -90, position: 'insideLeft', fill: chartColors.axis, fontSize: 11 }}
         />
-        <Tooltip {...tooltipStyle} formatter={(value: number, name) => [moneyTip(value), name]} labelFormatter={(l: number) => `Age ${l}`} />
+        <Tooltip {...tooltipStyle} formatter={moneyTip} labelFormatter={ageLabel} />
         <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
         <Line
           type="monotone"
@@ -226,7 +241,7 @@ export function AssetStackChart({
           width={64}
           label={{ value: "Assets (£, today's money)", angle: -90, position: 'insideLeft', fill: chartColors.axis, fontSize: 11 }}
         />
-        <Tooltip {...tooltipStyle} formatter={(value: number, name) => [moneyTip(value), name]} labelFormatter={(l: number) => `Age ${l}`} />
+        <Tooltip {...tooltipStyle} formatter={moneyTip} labelFormatter={ageLabel} />
         <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
         {shortfallAge !== undefined && (
           <ReferenceLine
@@ -286,7 +301,7 @@ export function IncomeExpenseChart({
           width={64}
           label={{ value: "£ pa (today's money)", angle: -90, position: 'insideLeft', fill: chartColors.axis, fontSize: 11 }}
         />
-        <Tooltip {...tooltipStyle} formatter={(value: number, name) => [moneyTip(value), name]} labelFormatter={(l: number) => `Age ${l}`} />
+        <Tooltip {...tooltipStyle} formatter={moneyTip} labelFormatter={ageLabel} />
         <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="netIncomeReal" name="Net income" fill={chartColors.proposed} />
         <Bar dataKey="expensesReal" name="Expenditure" fill={chartColors.neutral} />
@@ -328,8 +343,8 @@ export function FanChart({ data, height = chartHeight.lg }: { data: FanPoint[]; 
         />
         <Tooltip
           {...tooltipStyle}
-          formatter={(value: number, name) => (name === 'spacer' ? [] : [moneyTip(value), name])}
-          labelFormatter={(l: number) => `Age ${l}`}
+          formatter={(value: unknown, name?: unknown) => (name === 'spacer' ? [] : moneyTip(value, name))}
+          labelFormatter={ageLabel}
         />
         {/* Invisible baselines lift each band to its percentile floor. */}
         <Area dataKey="outerLow" name="spacer" stackId="outer" stroke="none" fill="none" isAnimationActive={false} />
@@ -392,7 +407,7 @@ export function AllocationDonut({
             <Cell key={d.name} fill={series[i % series.length]} />
           ))}
         </Pie>
-        <Tooltip {...tooltipStyle} formatter={(value: number, name) => [`${num(value, 1)}%`, name]} />
+        <Tooltip {...tooltipStyle} formatter={pctTip} />
         <Legend verticalAlign="bottom" height={32} wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </ResponsiveContainer>

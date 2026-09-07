@@ -9,7 +9,7 @@ public class SchemeTests
     private static readonly DateTime Now = new(2026, 9, 6, 12, 0, 0, DateTimeKind.Utc);
 
     [Theory]
-    [InlineData("GB00B3X7QG63", true)]   // Vanguard LifeStrategy 60% Equity A Acc
+    [InlineData("GB00B3X7QG63", true)]   // Vanguard FTSE UK All Share Index Unit Trust Acc
     [InlineData("gb00b3x7qg63", true)]
     [InlineData("IE00B4L5Y983", true)]   // iShares Core MSCI World
     [InlineData("US0378331005", true)]   // Apple

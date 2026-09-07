@@ -1,0 +1,106 @@
+{
+  "assetClasses": [
+    {
+      "assetClass": "ukEquity",
+      "expectedReturnPct": 8.0,
+      "volatilityPct": 16.0
+    },
+    {
+      "assetClass": "globalEquity",
+      "expectedReturnPct": 7.5,
+      "volatilityPct": 15.0
+    },
+    {
+      "assetClass": "governmentBonds",
+      "expectedReturnPct": 5.3,
+      "volatilityPct": 8.0
+    },
+    {
+      "assetClass": "corporateBonds",
+      "expectedReturnPct": 6.0,
+      "volatilityPct": 7.0
+    },
+    {
+      "assetClass": "property",
+      "expectedReturnPct": 6.5,
+      "volatilityPct": 13.0
+    },
+    {
+      "assetClass": "cash",
+      "expectedReturnPct": 3.8,
+      "volatilityPct": 1.0
+    },
+    {
+      "assetClass": "alternatives",
+      "expectedReturnPct": 6.0,
+      "volatilityPct": 10.0
+    }
+  ],
+  "correlations": [
+    [
+      1.0,
+      0.85,
+      0.1,
+      0.35,
+      0.45,
+      0.0,
+      0.5
+    ],
+    [
+      0.85,
+      1.0,
+      0.05,
+      0.3,
+      0.4,
+      -0.05,
+      0.55
+    ],
+    [
+      0.1,
+      0.05,
+      1.0,
+      0.7,
+      0.1,
+      0.2,
+      0.15
+    ],
+    [
+      0.35,
+      0.3,
+      0.7,
+      1.0,
+      0.25,
+      0.15,
+      0.25
+    ],
+    [
+      0.45,
+      0.4,
+      0.1,
+      0.25,
+      1.0,
+      0.05,
+      0.3
+    ],
+    [
+      0.0,
+      -0.05,
+      0.2,
+      0.15,
+      0.05,
+      1.0,
+      0.05
+    ],
+    [
+      0.5,
+      0.55,
+      0.15,
+      0.25,
+      0.3,
+      0.05,
+      1.0
+    ]
+  ],
+  "asAt": "2026-09-07",
+  "source": "SwitchPoint build-up: nominal returns anchored on UK gilt yields at 7 September 2026 from giltcalculator.co.uk (mean redemption yield 4.38% under 5 years, 5.70% over 15 years), with equity, property and alternatives risk premia and volatilities from the UBS/LBS Global Investment Returns Yearbook long-run UK and world series and the Barclays Equity Gilt Study. Correlations are long-run sterling-investor estimates over the same series."
+}
