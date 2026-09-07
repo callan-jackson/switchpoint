@@ -2,7 +2,8 @@
 //
 // Secret names use "--" where the configuration key has ":" because Key Vault names only allow
 // letters, digits and hyphens; Azure.Extensions.AspNetCore.Configuration.Secrets maps
-// "Morningstar--ApiKey" to "Morningstar:ApiKey" automatically.
+// "Integrations--Morningstar--ApiKey" to "Integrations:Morningstar:ApiKey" automatically, which is the
+// key IntegrationsOptions binds from (services.Configure<IntegrationsOptions>(configuration.GetSection("Integrations"))).
 
 @description('Globally unique Key Vault name (3-24 characters, letters, digits and hyphens).')
 @minLength(3)
@@ -83,7 +84,7 @@ resource jwtSigningKeySecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
 
 resource morningstarApiKeySecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empty(morningstarApiKey)) {
   parent: keyVault
-  name: 'Morningstar--ApiKey'
+  name: 'Integrations--Morningstar--ApiKey'
   tags: tags
   properties: {
     value: morningstarApiKey
@@ -93,7 +94,7 @@ resource morningstarApiKeySecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' 
 
 resource intellifloClientSecretSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empty(intellifloClientSecret)) {
   parent: keyVault
-  name: 'Intelliflo--ClientSecret'
+  name: 'Integrations--Intelliflo--ClientSecret'
   tags: tags
   properties: {
     value: intellifloClientSecret
