@@ -20,6 +20,7 @@ web/coverage/
 .env
 .env.*
 !.env.example
+!web/.env.development
 *.local
 appsettings.Local.json
 appsettings.*.Local.json

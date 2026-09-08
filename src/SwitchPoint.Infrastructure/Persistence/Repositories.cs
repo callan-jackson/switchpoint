@@ -268,28 +268,30 @@ public sealed class FileReportStore(string rootPath) : IReportStore
 /// <summary>Append-only hash-chained audit log per firm (ADR-0005).</summary>
 public sealed class HashChainAuditLog(SwitchPointDbContext db, IClock clock) : IAuditLog
 {
-    private static readonly SemaphoreSlim Gate = new(1, 1);
-
+    /// <summary>
+    /// Reads the firm's last sequence and stages the next event. There is deliberately no in-process
+    /// lock here: the read and the write are separated by the caller's SaveChangesAsync, so a lock
+    /// taken and released inside this method would not span the critical section, and would protect
+    /// nothing at all once the app runs on more than one instance.
+    ///
+    /// Correctness comes from the database instead. The unique index on (FirmId, Sequence) means two
+    /// racing requests cannot both commit sequence n: the loser's SaveChangesAsync fails, and the
+    /// unit of work is retried rather than forking the chain. That is the only guarantee that holds
+    /// across instances, which is what a tamper-evident log needs.
+    /// </summary>
     public async Task<AuditEvent> AppendAsync(Guid firmId, Guid? userId, string entityType, Guid? entityId, string action, object? payload, CancellationToken ct = default)
     {
         string json = payload is null ? "{}" : JsonDefaults.Serialize(payload);
-        await Gate.WaitAsync(ct);
-        try
-        {
-            // Include events added in this unit of work but not yet saved, so several appends per request chain correctly.
-            AuditEvent? pendingLast = db.ChangeTracker.Entries<AuditEvent>().Where(e => e.State == EntityState.Added && e.Entity.FirmId == firmId).Select(e => e.Entity).OrderByDescending(e => e.Sequence).FirstOrDefault();
-            AuditEvent? storedLast = await db.AuditEvents.IgnoreQueryFilters().Where(e => e.FirmId == firmId).OrderByDescending(e => e.Sequence).FirstOrDefaultAsync(ct);
-            AuditEvent? last = pendingLast is not null && (storedLast is null || pendingLast.Sequence > storedLast.Sequence) ? pendingLast : storedLast;
-            long sequence = last is null ? 0 : last.Sequence + 1;
-            string previous = last?.Hash ?? AuditEvent.GenesisHash;
-            AuditEvent e = new(Guid.NewGuid(), firmId, sequence, userId, clock.UtcNow, entityType, entityId, action, json, previous);
-            await db.AuditEvents.AddAsync(e, ct);
-            return e;
-        }
-        finally
-        {
-            Gate.Release();
-        }
+
+        // Include events added in this unit of work but not yet saved, so several appends per request chain correctly.
+        AuditEvent? pendingLast = db.ChangeTracker.Entries<AuditEvent>().Where(e => e.State == EntityState.Added && e.Entity.FirmId == firmId).Select(e => e.Entity).OrderByDescending(e => e.Sequence).FirstOrDefault();
+        AuditEvent? storedLast = await db.AuditEvents.IgnoreQueryFilters().Where(e => e.FirmId == firmId).OrderByDescending(e => e.Sequence).FirstOrDefaultAsync(ct);
+        AuditEvent? last = pendingLast is not null && (storedLast is null || pendingLast.Sequence > storedLast.Sequence) ? pendingLast : storedLast;
+        long sequence = last is null ? 0 : last.Sequence + 1;
+        string previous = last?.Hash ?? AuditEvent.GenesisHash;
+        AuditEvent e = new(Guid.NewGuid(), firmId, sequence, userId, clock.UtcNow, entityType, entityId, action, json, previous);
+        await db.AuditEvents.AddAsync(e, ct);
+        return e;
     }
 
     public async Task<Page<AuditEvent>> QueryAsync(Guid firmId, Guid? entityId, string? entityType, int page, int pageSize, CancellationToken ct = default)
