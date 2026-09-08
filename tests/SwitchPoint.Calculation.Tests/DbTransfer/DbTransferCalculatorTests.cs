@@ -40,6 +40,49 @@ public class DbTransferCalculatorTests
     };
 
     [Fact]
+    public void An_index_linked_tranche_is_priced_at_a_real_rate_but_projected_with_its_increases()
+    {
+        // Annex 4C 1R(2)(d)-(e) prices an uncapped RPI tranche against an index-linked interest
+        // rate with zero escalation — the increases are already in the rate. That pricing rate is
+        // not the rate the pension goes up by, so anything that projects the scheme pension
+        // forward has to use the rule's own increase instead. Reusing the pricing zero here made
+        // an inflation-linked pension look level, which understates the benefit being given up and
+        // biases the comparison towards transferring.
+        DbTransferRequest request = Request() with
+        {
+            Tranches = [new DbTrancheInput("Post-05 RPI", 10_000m, RevaluationRule.StatutoryPost2009, EscalationRule.Rpi())],
+        };
+
+        DbTransferResult r = Calc.Calculate(request);
+        RevaluedTranche tranche = r.Tvc.Tranches.Single();
+
+        Assert.Equal(0m, tranche.EscalationInPayment);                       // priced at a real rate
+        Assert.Equal(request.RpiAssumption, tranche.NominalEscalation);      // but it does increase
+        Assert.True(tranche.NominalEscalation > 0m);
+
+        // Twenty years into payment the scheme pension must have grown by the index, not stayed put.
+        decimal atRetirement = tranche.PensionAtRetirement;
+        decimal expectedAfter20 = atRetirement * DecimalMath.IntegerPow(1m + request.RpiAssumption, 20);
+        Assert.True(expectedAfter20 > atRetirement * 1.4m, "an RPI-linked pension should grow materially over twenty years");
+
+        // Twenty years after normal retirement age the nominal scheme income must have grown.
+        IncomeComparisonRow late = r.IncomeComparison.Last(row => row.Age <= request.NormalRetirementAge + 20);
+        Assert.True(
+            late.SchemeIncomeNominal > atRetirement * 1.4m,
+            $"an RPI-linked pension should grow materially by age {late.Age}, but the projection gave {late.SchemeIncomeNominal:F0} against {atRetirement:F0} at retirement");
+
+        // The drawdown hurdle reads the same field. Funding a rising income out of the transferred
+        // fund needs more growth than funding a level one, so the index-linked hurdle must be higher.
+        DbTransferResult level = Calc.Calculate(request with
+        {
+            Tranches = [new DbTrancheInput("Post-05 level", 10_000m, RevaluationRule.StatutoryPost2009, EscalationRule.None)],
+        });
+        Assert.True(
+            r.CriticalYields.DrawdownHurdleRate > level.CriticalYields.DrawdownHurdleRate,
+            $"index-linked hurdle {r.CriticalYields.DrawdownHurdleRate:P2} should exceed the level hurdle {level.CriticalYields.DrawdownHurdleRate:P2}");
+    }
+
+    [Fact]
     public void Tvc_revalues_prices_and_discounts_per_cobs_19()
     {
         DbTransferResult r = Calc.Calculate(Request());

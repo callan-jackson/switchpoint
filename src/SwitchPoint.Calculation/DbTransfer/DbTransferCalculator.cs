@@ -56,7 +56,19 @@ public sealed record DbTransferRequest
     public decimal? WorkplaceDefaultChargeRate { get; init; }
 }
 
-public sealed record RevaluedTranche(string Name, decimal AccruedAnnualPension, decimal RevaluationRate, int YearsRevalued, decimal PensionAtRetirement, decimal EscalationInPayment, decimal AnnuityInterestRate, decimal AnnuityPricePerPound, decimal AnnuityCost, bool IsGmp);
+/// <summary>
+/// One tranche revalued to normal retirement age and priced as an annuity.
+/// </summary>
+/// <param name="EscalationInPayment">
+/// The escalation used to PRICE the annuity. For an index-linked tranche this is deliberately zero,
+/// because the tranche is priced against an index-linked interest rate instead (Annex 4C 1R(2)(d)-(e)).
+/// It is therefore not the rate the pension actually increases by, and must not be used to project it.
+/// </param>
+/// <param name="NominalEscalation">
+/// The rate the pension in payment actually increases by each year, after the rule's cap and floor.
+/// This is what income comparisons and death benefits project forward.
+/// </param>
+public sealed record RevaluedTranche(string Name, decimal AccruedAnnualPension, decimal RevaluationRate, int YearsRevalued, decimal PensionAtRetirement, decimal EscalationInPayment, decimal NominalEscalation, decimal AnnuityInterestRate, decimal AnnuityPricePerPound, decimal AnnuityCost, bool IsGmp);
 
 /// <summary>Transfer Value Comparator per COBS 19.1.3AR and Annex 5.</summary>
 public sealed record TransferValueComparator(
@@ -126,8 +138,13 @@ public sealed class DbTransferCalculator
             decimal revalRate = t.Revaluation.AnnualRate(r.CpiAssumption, r.RpiAssumption, r.EarningsAssumption);
             decimal atRetirement = t.AccruedAnnualPension * DecimalMath.IntegerPow(1m + revalRate, yearsRevalued);
             (decimal escalation, decimal interest) = AnnuityBasisFor(t.Escalation, r);
+
+            // AnnuityBasisFor returns the PRICING escalation, which is zero for an index-linked
+            // tranche because the pricing uses a real interest rate. The pension still increases in
+            // payment, so the projection rate has to come from the rule itself.
+            decimal nominalEscalation = t.Escalation.AnnualRate(r.CpiAssumption, r.RpiAssumption);
             AnnuityFactorResult factor = _pricer.Factor(new AnnuityRequest(r.Sex, retirementAge, interest, escalation, r.GuaranteePeriodYears, r.SpousePensionFraction, ExpenseLoading: r.AnnuityExpenseLoading, CalendarYear: retirementYear, SpouseAgeGapYears: r.SpouseAgeGapYears));
-            tranches.Add(new RevaluedTranche(t.Name, t.AccruedAnnualPension, revalRate, yearsRevalued, atRetirement, escalation, interest, factor.PricePerPound, atRetirement * factor.PricePerPound, t.IsGmp));
+            tranches.Add(new RevaluedTranche(t.Name, t.AccruedAnnualPension, revalRate, yearsRevalued, atRetirement, escalation, nominalEscalation, interest, factor.PricePerPound, atRetirement * factor.PricePerPound, t.IsGmp));
         }
 
         decimal pensionAtRetirement = tranches.Sum(t => t.PensionAtRetirement);
@@ -177,7 +194,7 @@ public sealed class DbTransferCalculator
                 break;
             }
 
-            decimal schemeNominal = tranches.Sum(t => t.PensionAtRetirement * DecimalMath.IntegerPow(1m + t.EscalationInPayment, offset));
+            decimal schemeNominal = tranches.Sum(t => t.PensionAtRetirement * DecimalMath.IntegerPow(1m + t.NominalEscalation, offset));
             decimal schemeReal = schemeNominal / RateMath.GrowthFactor(r.CpiAssumption, term + offset);
             residualFund = ResidualAfterYears(fundRealAtRetirement, netRealRate, sustainable, offset);
             decimal spouseIncome = schemeNominal * r.SpousePensionFraction;
@@ -329,7 +346,7 @@ public sealed class DbTransferCalculator
             decimal fund = cetv * RateMath.GrowthFactor(Math.Max(-0.99m, net), termYears);
             for (int y = 0; y < years; y++)
             {
-                decimal income = tranches.Sum(t => t.PensionAtRetirement * DecimalMath.IntegerPow(1m + t.EscalationInPayment, y));
+                decimal income = tranches.Sum(t => t.PensionAtRetirement * DecimalMath.IntegerPow(1m + t.NominalEscalation, y));
                 fund = (fund - income) * (1m + net);
             }
 

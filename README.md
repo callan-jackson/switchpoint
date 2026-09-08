@@ -10,7 +10,7 @@ recommendation.
 
 | Layer | Stack |
 |---|---|
-| Calculation engines | C# / .NET 10, `decimal` arithmetic throughout, 366 unit and property tests |
+| Calculation engines | C# / .NET 10, `decimal` arithmetic throughout, 367 unit and property tests |
 | API | ASP.NET Core Web API, JWT auth, OpenAPI + Scalar, RFC 9457 problem details, rate limiting |
 | Persistence | EF Core (Azure SQL in production, SQLite locally), JSON-column value objects, hash-chained audit log |
 | Front end | React 19, TypeScript 6, Vite 8, Tailwind 4, TanStack Query, Recharts |
