@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Microsoft.Net.Http.Headers;
 
@@ -8,6 +9,8 @@ namespace SwitchPoint.Api.Tests;
 /// endpoint, so static files served after the authorization middleware come back 401 and the browser shows a
 /// blank page — the bundles must be served before it. These tests stand up a throwaway wwwroot to prove it.
 /// </summary>
+[SuppressMessage("Reliability", "CA1001:Types that own disposable fields should be disposable",
+    Justification = "xUnit disposes the fixture through IAsyncLifetime.DisposeAsync, which disposes the factory.")]
 public sealed class SpaHostingTests : IAsyncLifetime
 {
     private readonly string _webRoot = Path.Combine(Path.GetTempPath(), $"switchpoint-wwwroot-{Guid.NewGuid():N}");

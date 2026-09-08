@@ -323,11 +323,26 @@ public sealed class IdentityService(UserManager<ApplicationUser> users, SwitchPo
     public async Task<UserDto?> AuthenticateAsync(string email, string password, CancellationToken ct = default)
     {
         ApplicationUser? user = await users.FindByEmailAsync(email);
-        if (user is null || !await users.CheckPasswordAsync(user, password))
+        if (user is null)
         {
             return null;
         }
 
+        // CheckPasswordAsync on its own only verifies the hash: it neither reads the lockout flag
+        // nor records a failure, which would leave MaxFailedAccessAttempts as decoration and the
+        // only authentication endpoint open to unlimited guessing. Drive the lockout explicitly.
+        if (await users.IsLockedOutAsync(user))
+        {
+            return null;
+        }
+
+        if (!await users.CheckPasswordAsync(user, password))
+        {
+            await users.AccessFailedAsync(user);
+            return null;
+        }
+
+        await users.ResetAccessFailedCountAsync(user);
         return await ToDtoAsync(user, ct);
     }
 

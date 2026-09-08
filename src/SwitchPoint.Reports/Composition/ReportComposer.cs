@@ -82,7 +82,7 @@ public static class ReportComposer
             .Facts(
             [
                 Fmt.Kv("Analysis identifier", request0(r)),
-                Fmt.Kv("Analysis version", Fmt.Int(r.AnalysisVersion)),
+                Fmt.Kv("Analysis version", Fmt.Count(r.AnalysisVersion)),
                 Fmt.Kv("Result hash (SHA-256)", r.AnalysisResultHash),
                 Fmt.Kv("Calculation engine", "SwitchPoint 1.0.0"),
                 Fmt.Kv("Generated", $"{Fmt.Stamp(r.GeneratedAtUtc)} by {r.GeneratedBy}"),
@@ -98,8 +98,8 @@ public static class ReportComposer
             .Facts(
             [
                 Fmt.Kv("Name", c.FullName),
-                Fmt.Kv("Age", Fmt.Int(c.Age)),
-                Fmt.Kv("Target retirement age", Fmt.Int(c.TargetRetirementAge)),
+                Fmt.Kv("Age", Fmt.Count(c.Age)),
+                Fmt.Kv("Target retirement age", Fmt.Count(c.TargetRetirementAge)),
                 Fmt.Kv("Employment", Fmt.Words(c.EmploymentStatus)),
                 Fmt.Kv("Annual salary", Fmt.Money(c.AnnualSalary)),
                 Fmt.Kv("Income tax regime", c.TaxRegime == Domain.Clients.TaxRegime.Scotland ? "Scotland" : "Rest of UK"),
@@ -118,7 +118,7 @@ public static class ReportComposer
         CriticalYieldAtRateDto mid = result.Intermediate;
 
         SectionBuilder summary = new("Executive summary");
-        summary.P($"This analysis compares {result.Schemes.Count} existing arrangement{(result.Schemes.Count == 1 ? string.Empty : "s")} with the proposed plan to {Fmt.Int(analysis.RetirementAge)}, using the {r.AssumptionSet.Name} assumptions.");
+        summary.P($"This analysis compares {result.Schemes.Count} existing arrangement{(result.Schemes.Count == 1 ? string.Empty : "s")} with the proposed plan to {Fmt.Count(analysis.RetirementAge)}, using the {r.AssumptionSet.Name} assumptions.");
         summary.Facts(
         [
             Fmt.Kv("Total transfer value", Fmt.Money(result.TotalNetTransferValue)),
@@ -179,7 +179,7 @@ public static class ReportComposer
             ]));
             TableBlock data = new(
                 [new TableColumn("Year", ColumnAlign.Right), new TableColumn("Existing", ColumnAlign.Right), new TableColumn("Proposed", ColumnAlign.Right)],
-                [.. result.Chart.Where((_, i) => i % Math.Max(1, result.Chart.Count / 12) == 0 || i == result.Chart.Count - 1).Select(p => new List<string> { Fmt.Int(p.Year), Fmt.Money(p.ExistingValue), Fmt.Money(p.ReceivingValue) })]);
+                [.. result.Chart.Where((_, i) => i % Math.Max(1, result.Chart.Count / 12) == 0 || i == result.Chart.Count - 1).Select(p => new List<string> { Fmt.Count(p.Year), Fmt.Money(p.ExistingValue), Fmt.Money(p.ReceivingValue) })]);
             rates.Chart(new ChartBlock("Projected value: existing versus proposed", svg, data, "Values are shown in today's money at the intermediate growth rate."));
         }
 
@@ -187,7 +187,7 @@ public static class ReportComposer
         charges.P("The table below follows COBS 13 Annex 4 2.2R: it shows what the proposed plan might be worth before charges, with plan and investment charges only, and after all charges including adviser charges.");
         charges.Table(new TableBlock(
             [new TableColumn("End of year", ColumnAlign.Right), new TableColumn("Payments in", ColumnAlign.Right), new TableColumn("Before charges", ColumnAlign.Right), new TableColumn("Plan and investment charges only", ColumnAlign.Right), new TableColumn("After all charges", ColumnAlign.Right), new TableColumn("Effect of deductions", ColumnAlign.Right)],
-            [.. result.ReceivingRiy.EffectOfCharges.Select(e => new List<string> { Fmt.Int(e.Year), Fmt.Money(e.PaymentsToDate), Fmt.Money(e.BeforeCharges), Fmt.Money(e.PlanAndInvestmentChargesOnly), Fmt.Money(e.AfterAllCharges), Fmt.Money(e.EffectOfDeductionsToDate) })]));
+            [.. result.ReceivingRiy.EffectOfCharges.Select(e => new List<string> { Fmt.Count(e.Year), Fmt.Money(e.PaymentsToDate), Fmt.Money(e.BeforeCharges), Fmt.Money(e.PlanAndInvestmentChargesOnly), Fmt.Money(e.AfterAllCharges), Fmt.Money(e.EffectOfDeductionsToDate) })]));
         ChargeTotalsDto t = result.ReceivingRiy.TotalCharges;
         charges.Table(new TableBlock(
             [new TableColumn("Charge"), new TableColumn("Total over the term", ColumnAlign.Right)],
@@ -214,7 +214,7 @@ public static class ReportComposer
             holdings.H2("Adviser rationale").P(analysis.Rationale!);
         }
 
-        return [summary.Build(), ClientSnapshot(r), Assumptions(r, [Fmt.Kv("Retirement age used", Fmt.Int(analysis.RetirementAge))]), verdicts.Build(), rates.Build(), charges.Build(), holdings.Build()];
+        return [summary.Build(), ClientSnapshot(r), Assumptions(r, [Fmt.Kv("Retirement age used", Fmt.Count(analysis.RetirementAge))]), verdicts.Build(), rates.Build(), charges.Build(), holdings.Build()];
     }
 
     private static List<string> RateRow(string label, CriticalYieldAtRateDto c) =>
@@ -256,7 +256,7 @@ public static class ReportComposer
         comparator.Numbered(tvc.Notes);
         comparator.Facts(
         [
-            Fmt.Kv("Retirement age used", Fmt.Int(tvc.RetirementAgeUsed)),
+            Fmt.Kv("Retirement age used", Fmt.Count(tvc.RetirementAgeUsed)),
             Fmt.Kv("Term to retirement", $"{Fmt.Num(tvc.TermYears, 1)} years"),
             Fmt.Kv("Gilt yield used", Fmt.Pct(tvc.GiltYieldUsedPct)),
             Fmt.Kv("Discount rate after the 0.4% product charge", Fmt.Pct(tvc.DiscountRateUsedPct)),
@@ -268,7 +268,7 @@ public static class ReportComposer
         benefits.P("Each tranche of your pension is revalued to retirement on the basis the Handbook prescribes (COBS 19 Annex 4C 1R(4)) and priced as an annuity on the prescribed basis.");
         benefits.Table(new TableBlock(
             [new TableColumn("Tranche"), new TableColumn("Accrued at leaving", ColumnAlign.Right), new TableColumn("Revaluation", ColumnAlign.Right), new TableColumn("Years", ColumnAlign.Right), new TableColumn("Pension at retirement", ColumnAlign.Right), new TableColumn("Increases in payment", ColumnAlign.Right), new TableColumn("Annuity rate", ColumnAlign.Right), new TableColumn("Cost", ColumnAlign.Right)],
-            [.. tvc.Tranches.Select(x => new List<string> { x.Name + (x.IsGmp ? " (GMP)" : string.Empty), Fmt.Money(x.AccruedAnnualPension), Fmt.Pct(x.RevaluationRatePct), Fmt.Int(x.YearsRevalued), Fmt.Money(x.PensionAtRetirement), Fmt.Pct(x.EscalationInPaymentPct), Fmt.Pct(x.AnnuityInterestRatePct), Fmt.Money(x.AnnuityCost) })],
+            [.. tvc.Tranches.Select(x => new List<string> { x.Name + (x.IsGmp ? " (GMP)" : string.Empty), Fmt.Money(x.AccruedAnnualPension), Fmt.Pct(x.RevaluationRatePct), Fmt.Count(x.YearsRevalued), Fmt.Money(x.PensionAtRetirement), Fmt.Pct(x.EscalationInPaymentPct), Fmt.Pct(x.AnnuityInterestRatePct), Fmt.Money(x.AnnuityCost) })],
             FooterRow: ["Total", string.Empty, string.Empty, string.Empty, Fmt.Money(tvc.PensionAtRetirement), string.Empty, string.Empty, Fmt.Money(tvc.AnnuityCostAtRetirement)]));
 
         SectionBuilder yields = new("Critical yields");
@@ -277,16 +277,16 @@ public static class ReportComposer
         [
             Fmt.Kv("To match the scheme pension by buying an annuity", Fmt.Pct(result.CriticalYields.TypeAAnnuityMatchPct)),
             Fmt.Kv("To match tax-free cash plus the reduced pension", Fmt.Pct(result.CriticalYields.TypeBPclsAndReducedPensionPct)),
-            Fmt.Kv("To sustain the scheme pension as drawdown to age " + Fmt.Int(analysis.PlanEndAge), Fmt.Pct(result.CriticalYields.DrawdownHurdleRatePct)),
+            Fmt.Kv("To sustain the scheme pension as drawdown to age " + Fmt.Count(analysis.PlanEndAge), Fmt.Pct(result.CriticalYields.DrawdownHurdleRatePct)),
             Fmt.Kv("Scheme tax-free cash (at the scheme's commutation factor)", Fmt.Money(result.CriticalYields.SchemePcls)),
             Fmt.Kv("Residual pension after commutation", $"{Fmt.Money(result.CriticalYields.ResidualPensionAfterPcls)} a year"),
         ]);
 
         SectionBuilder income = new("Income comparison", startOnNewPage: true);
-        income.P($"The scheme pension is compared with a sustainable income from the transferred fund, in today's money, assuming growth of {Fmt.Pct(analysis.AptaGrowthPct ?? 0m)} a year before charges and a plan running to age {Fmt.Int(analysis.PlanEndAge)} (COBS 19 Annex 4A).");
+        income.P($"The scheme pension is compared with a sustainable income from the transferred fund, in today's money, assuming growth of {Fmt.Pct(analysis.AptaGrowthPct ?? 0m)} a year before charges and a plan running to age {Fmt.Count(analysis.PlanEndAge)} (COBS 19 Annex 4A).");
         income.Table(new TableBlock(
             [new TableColumn("Age", ColumnAlign.Right), new TableColumn("Scheme pension (then)", ColumnAlign.Right), new TableColumn("Scheme pension (today's money)", ColumnAlign.Right), new TableColumn("Drawdown income (today's money)", ColumnAlign.Right), new TableColumn("Remaining fund", ColumnAlign.Right), new TableColumn("Death benefit", ColumnAlign.Right)],
-            [.. result.IncomeComparison.Select(i => new List<string> { Fmt.Int(i.Age), Fmt.Money(i.SchemeIncomeNominal), Fmt.Money(i.SchemeIncomeReal), Fmt.Money(i.DrawdownIncomeReal), Fmt.Money(i.ResidualFundReal), Fmt.Money(i.SchemeDeathBenefitReal) })]));
+            [.. result.IncomeComparison.Select(i => new List<string> { Fmt.Count(i.Age), Fmt.Money(i.SchemeIncomeNominal), Fmt.Money(i.SchemeIncomeReal), Fmt.Money(i.DrawdownIncomeReal), Fmt.Money(i.ResidualFundReal), Fmt.Money(i.SchemeDeathBenefitReal) })]));
         if (result.IncomeComparison.Count > 1)
         {
             string incomeSvg = SvgCharts.Line(new LineChart("Income in today's money", "Age", "Annual income",
@@ -296,7 +296,7 @@ public static class ReportComposer
             ]));
             income.Chart(new ChartBlock("Scheme pension versus drawdown", incomeSvg, new TableBlock(
                 [new TableColumn("Age", ColumnAlign.Right), new TableColumn("Scheme", ColumnAlign.Right), new TableColumn("Drawdown", ColumnAlign.Right)],
-                [.. result.IncomeComparison.Select(i => new List<string> { Fmt.Int(i.Age), Fmt.Money(i.SchemeIncomeReal), Fmt.Money(i.DrawdownIncomeReal) })])));
+                [.. result.IncomeComparison.Select(i => new List<string> { Fmt.Count(i.Age), Fmt.Money(i.SchemeIncomeReal), Fmt.Money(i.DrawdownIncomeReal) })])));
         }
 
         income.H2("If things do not go to plan");
@@ -313,7 +313,7 @@ public static class ReportComposer
         [
             Fmt.Kv("Cost of initial advice", Fmt.Money(summaryDto.InitialAdviceFee)),
             Fmt.Kv("Revalued monthly income given up", Fmt.Money2(summaryDto.RevaluedMonthlyIncome)),
-            Fmt.Kv("Months of that income needed to pay for the advice", Fmt.Int(summaryDto.PaybackMonths)),
+            Fmt.Kv("Months of that income needed to pay for the advice", Fmt.Count(summaryDto.PaybackMonths)),
             Fmt.Kv("Charges in the first year (proposed plan)", Fmt.Money(summaryDto.FirstYearChargesProposed)),
             Fmt.Kv("Ongoing charges each year (proposed plan)", Fmt.Money(summaryDto.OngoingAnnualChargesProposed)),
             Fmt.Kv("Charges in the ceding arrangement", Fmt.Money(summaryDto.FirstYearChargesCeding)),
@@ -330,7 +330,7 @@ public static class ReportComposer
             onePage.Callout(CalloutKind.Warning, "Points requiring adviser judgement", result.Warnings);
         }
 
-        onePage.P($"Life expectancy at retirement on the mortality basis used is {Fmt.Num(result.LifeExpectancyAtRetirement, 1)} years. The plan models income beyond average life expectancy, to age {Fmt.Int(analysis.PlanEndAge)}.", ParagraphStyle.Quote);
+        onePage.P($"Life expectancy at retirement on the mortality basis used is {Fmt.Num(result.LifeExpectancyAtRetirement, 1)} years. The plan models income beyond average life expectancy, to age {Fmt.Count(analysis.PlanEndAge)}.", ParagraphStyle.Quote);
 
         return [comparator.Build(), ClientSnapshot(r), Assumptions(r), benefits.Build(), yields.Build(), income.Build(), onePage.Build()];
     }
@@ -346,8 +346,8 @@ public static class ReportComposer
         summary.Facts(
         [
             Fmt.Kv("Plan", plan.Title),
-            Fmt.Kv("Runs to age", Fmt.Int(plan.PlanEndAge)),
-            Fmt.Kv("Outcome", result.Succeeds ? "No shortfall on the assumptions used" : $"First shortfall at age {Fmt.Int(result.FirstShortfallAge ?? 0)}"),
+            Fmt.Kv("Runs to age", Fmt.Count(plan.PlanEndAge)),
+            Fmt.Kv("Outcome", result.Succeeds ? "No shortfall on the assumptions used" : $"First shortfall at age {Fmt.Count(result.FirstShortfallAge ?? 0)}"),
             Fmt.Kv("Sustainable level spending (today's money)", Fmt.Money(result.SustainableSpend)),
             Fmt.Kv("Estate at the end of the plan (today's money)", Fmt.Money(result.LegacyAtEndReal)),
             Fmt.Kv("Total income tax over the plan", Fmt.Money(result.TotalIncomeTax)),
@@ -355,7 +355,7 @@ public static class ReportComposer
         ]);
         if (!result.Succeeds)
         {
-            summary.Callout(CalloutKind.Warning, "The plan runs out of money", [$"On these assumptions the plan cannot meet spending from age {Fmt.Int(result.FirstShortfallAge ?? 0)}. The total shortfall over the plan is {Fmt.Money(result.TotalShortfall)}."]);
+            summary.Callout(CalloutKind.Warning, "The plan runs out of money", [$"On these assumptions the plan cannot meet spending from age {Fmt.Count(result.FirstShortfallAge ?? 0)}. The total shortfall over the plan is {Fmt.Money(result.TotalShortfall)}."]);
         }
 
         IReadOnlyList<CashflowRowDto> rows = result.Rows;
@@ -365,7 +365,7 @@ public static class ReportComposer
             [new TableColumn("Age", ColumnAlign.Right), new TableColumn("Earnings", ColumnAlign.Right), new TableColumn("State Pension", ColumnAlign.Right), new TableColumn("Other pensions", ColumnAlign.Right), new TableColumn("Withdrawals", ColumnAlign.Right), new TableColumn("Tax", ColumnAlign.Right), new TableColumn("Net income", ColumnAlign.Right), new TableColumn("Spending", ColumnAlign.Right), new TableColumn("Shortfall", ColumnAlign.Right), new TableColumn("Assets (today's money)", ColumnAlign.Right)],
             [.. rows.Select(x => new List<string>
             {
-                Fmt.Int(x.Age), Fmt.Money(x.EmploymentIncome), Fmt.Money(x.StatePensionIncome), Fmt.Money(x.DbPensionIncome),
+                Fmt.Count(x.Age), Fmt.Money(x.EmploymentIncome), Fmt.Money(x.StatePensionIncome), Fmt.Money(x.DbPensionIncome),
                 Fmt.Money(x.PensionWithdrawalsTaxable + x.TaxFreeCash + x.IsaWithdrawals + x.GiaWithdrawals + x.CashWithdrawals),
                 Fmt.Money(x.IncomeTax + x.NationalInsurance + x.CapitalGainsTax), Fmt.Money(x.NetIncome), Fmt.Money(x.Expenses),
                 x.Shortfall > 0m ? Fmt.Money(x.Shortfall) : "–", Fmt.Money(x.TotalAssetsReal),
@@ -381,7 +381,7 @@ public static class ReportComposer
                 [new TableColumn("Age", ColumnAlign.Right), .. kinds.Select(k => new TableColumn(k, ColumnAlign.Right))],
                 [.. rows.Where((_, i) => i % Math.Max(1, rows.Count / 12) == 0 || i == rows.Count - 1).Select(x =>
                 {
-                    List<string> cells = [Fmt.Int(x.Age)];
+                    List<string> cells = [Fmt.Count(x.Age)];
                     cells.AddRange(kinds.Select(k => Fmt.Money(x.Assets.Where(a => Fmt.Words(a.Kind) == k).Sum(a => a.ValueReal))));
                     return (IReadOnlyList<string>)cells;
                 })])));
@@ -390,12 +390,12 @@ public static class ReportComposer
         if (plan.StochasticResult is { } stochastic)
         {
             SectionBuilder mc = new("If markets do not behave as assumed", startOnNewPage: true);
-            mc.P($"The plan was run {Fmt.Int(stochastic.Paths)} times with randomly varying investment returns (seed {stochastic.Seed}, so the run can be reproduced exactly).");
+            mc.P($"The plan was run {Fmt.Count(stochastic.Paths)} times with randomly varying investment returns (seed {stochastic.Seed}, so the run can be reproduced exactly).");
             mc.Facts(
             [
                 Fmt.Kv("Plans with no shortfall", Fmt.Pct(stochastic.ProbabilityOfSuccess * 100m, 1)),
-                Fmt.Kv("Median shortfall age", stochastic.MedianShortfallAge is { } m ? Fmt.Int(m) : "no shortfall in the median case"),
-                Fmt.Kv("Worst tenth of outcomes: shortfall from age", stochastic.WorstDecileShortfallAge is { } w ? Fmt.Int(w) : "no shortfall"),
+                Fmt.Kv("Median shortfall age", stochastic.MedianShortfallAge is { } m ? Fmt.Count(m) : "no shortfall in the median case"),
+                Fmt.Kv("Worst tenth of outcomes: shortfall from age", stochastic.WorstDecileShortfallAge is { } w ? Fmt.Count(w) : "no shortfall"),
                 Fmt.Kv("Average estate at the end (today's money)", Fmt.Money(stochastic.MeanLegacyReal)),
                 Fmt.Kv("Median no less conservative than the deterministic plan (COBS 19.1.2CR)", Fmt.YesNo(stochastic.Conservativeness.MedianIsNoLessConservative)),
             ]);
@@ -403,7 +403,7 @@ public static class ReportComposer
                 [.. stochastic.TotalAssetsReal.Select(p => new FanPoint(p.Age, p.P10, p.P25, p.P50, p.P75, p.P90))]));
             mc.Chart(new ChartBlock("Range of outcomes", fan, new TableBlock(
                 [new TableColumn("Age", ColumnAlign.Right), new TableColumn("Worst tenth", ColumnAlign.Right), new TableColumn("Lower quarter", ColumnAlign.Right), new TableColumn("Median", ColumnAlign.Right), new TableColumn("Upper quarter", ColumnAlign.Right), new TableColumn("Best tenth", ColumnAlign.Right)],
-                [.. stochastic.TotalAssetsReal.Where((_, i) => i % Math.Max(1, stochastic.TotalAssetsReal.Count / 10) == 0 || i == stochastic.TotalAssetsReal.Count - 1).Select(p => new List<string> { Fmt.Int(p.Age), Fmt.Money(p.P10), Fmt.Money(p.P25), Fmt.Money(p.P50), Fmt.Money(p.P75), Fmt.Money(p.P90) })])));
+                [.. stochastic.TotalAssetsReal.Where((_, i) => i % Math.Max(1, stochastic.TotalAssetsReal.Count / 10) == 0 || i == stochastic.TotalAssetsReal.Count - 1).Select(p => new List<string> { Fmt.Count(p.Age), Fmt.Money(p.P10), Fmt.Money(p.P25), Fmt.Money(p.P50), Fmt.Money(p.P75), Fmt.Money(p.P90) })])));
             return [summary.Build(), ClientSnapshot(r), Assumptions(r), table.Build(), charts.Build(), mc.Build()];
         }
 

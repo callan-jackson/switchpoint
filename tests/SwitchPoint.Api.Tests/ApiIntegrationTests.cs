@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
@@ -13,6 +14,8 @@ using SwitchPoint.Infrastructure.Persistence;
 namespace SwitchPoint.Api.Tests;
 
 [CollectionDefinition("api")]
+[SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix",
+    Justification = "xUnit collection definitions are conventionally named <Name>Collection.")]
 public sealed class ApiCollection : ICollectionFixture<ApiFixture>;
 
 [Collection("api")]

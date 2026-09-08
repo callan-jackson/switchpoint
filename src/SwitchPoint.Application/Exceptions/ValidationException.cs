@@ -23,7 +23,7 @@ public sealed class ValidationException : Exception
 
     public IReadOnlyDictionary<string, string[]> Errors { get; }
 
-    private static IReadOnlyDictionary<string, string[]> ToDictionary(ValidationResult result)
+    private static Dictionary<string, string[]> ToDictionary(ValidationResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
         return result.Errors

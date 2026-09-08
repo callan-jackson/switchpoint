@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using SwitchPoint.Calculation.Numerics;
 using SwitchPoint.Domain.Charges;
 using SwitchPoint.Domain.Common;
@@ -132,6 +133,8 @@ public sealed record ChargeEffectProjections(ProjectionResult BeforeCharges, Pro
 /// </summary>
 public sealed class ProjectionEngine
 {
+    [SuppressMessage("Performance", "CA1822:Mark members as static",
+        Justification = "Kept an instance method so the engine stays an injectable seam; it is registered as a stateless singleton and callers depend on the instance.")]
     public ProjectionResult Project(ProjectionRequest r)
     {
         ArgumentNullException.ThrowIfNull(r);

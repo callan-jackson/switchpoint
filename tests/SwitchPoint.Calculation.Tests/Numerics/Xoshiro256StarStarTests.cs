@@ -31,12 +31,12 @@ public class Xoshiro256StarStarTests
     [Fact]
     public void Stream_is_pinned_so_platform_drift_is_detected()
     {
-        // Golden values: xoshiro256** seeded through SplitMix64(0). These must never change —
-        // a change would silently alter every stochastic result produced with a stored seed.
-        Xoshiro256StarStar rng = new(0);
-        ulong[] first = [rng.NextUInt64(), rng.NextUInt64(), rng.NextUInt64()];
-        Assert.Equal(first, new Xoshiro256StarStar(0).Take(3));
-        Assert.All(first, v => Assert.NotEqual(0UL, v));
+        // Golden values: xoshiro256** seeded through SplitMix64(0), computed from an independent
+        // implementation of the published algorithm rather than from this one. They must never
+        // change — a change would silently alter every stochastic result produced with a stored
+        // seed, so a saved Monte Carlo run would stop reproducing.
+        ulong[] expected = [0x99EC5F36CB75F2B4, 0xBF6E1F784956452A, 0x1A5F849D4933E6E0];
+        Assert.Equal(expected, new Xoshiro256StarStar(0).Take(3));
     }
 
     [Fact]

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace SwitchPoint.Domain.Assumptions;
 
 /// <summary>Broad asset classes used by the stochastic model's capital market assumptions.</summary>
@@ -18,6 +20,8 @@ public enum ProjectionBasis
     Real = 1,
 }
 
+[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores",
+    Justification = "ONS publishes the table as National Life Tables 2020-22; the underscore preserves the published name.")]
 public enum MortalityBasis
 {
     /// <summary>Gompertz–Makeham approximation calibrated to ONS National Life Tables 2020–22 with 1.25% improvements.</summary>

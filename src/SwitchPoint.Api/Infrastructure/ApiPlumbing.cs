@@ -36,7 +36,11 @@ public sealed class ProblemDetailsExceptionHandler(ILogger<ProblemDetailsExcepti
         }
         else
         {
-            logger.LogInformation(exception, "Request failed with {Status} for {Method} {Path}", status, httpContext.Request.Method, httpContext.Request.Path);
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(exception, "Request failed with {Status} for {Method} {Path}", status, httpContext.Request.Method, httpContext.Request.Path);
+            }
+
         }
 
         ProblemDetails problem = new()
@@ -62,7 +66,7 @@ public sealed class ProblemDetailsExceptionHandler(ILogger<ProblemDetailsExcepti
         return true;
     }
 
-    private static IReadOnlyDictionary<string, string[]> ToDictionary(FluentValidation.ValidationException fv) =>
+    private static Dictionary<string, string[]> ToDictionary(FluentValidation.ValidationException fv) =>
         fv.Errors.GroupBy(e => e.PropertyName, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).Distinct(StringComparer.Ordinal).ToArray(), StringComparer.Ordinal);
 }
 

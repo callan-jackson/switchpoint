@@ -240,7 +240,7 @@ public static class Fixtures
 
 public class PdfRenderingTests
 {
-    private static readonly IReportRenderer Renderer = new ReportRenderer();
+    private static readonly ReportRenderer Renderer = new ReportRenderer();
 
     private static string SamplesDirectory()
     {
@@ -291,7 +291,7 @@ public class PdfRenderingTests
 
 public class DocxRenderingTests
 {
-    private static readonly IReportRenderer Renderer = new ReportRenderer();
+    private static readonly ReportRenderer Renderer = new ReportRenderer();
 
     [Theory]
     [InlineData(ReportKind.PensionSwitch)]
@@ -322,7 +322,7 @@ public class DocxRenderingTests
 
 public class JsonRenderingTests
 {
-    private static readonly IReportRenderer Renderer = new ReportRenderer();
+    private static readonly ReportRenderer Renderer = new ReportRenderer();
 
     [Fact]
     public async Task Json_is_deterministic_and_carries_the_result_hash()

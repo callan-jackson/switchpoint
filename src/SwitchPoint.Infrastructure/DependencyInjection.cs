@@ -85,7 +85,9 @@ public static class DependencyInjection
                 o.Password.RequiredLength = 10;
                 o.Password.RequireNonAlphanumeric = true;
                 o.User.RequireUniqueEmail = true;
+                o.Lockout.AllowedForNewUsers = true;
                 o.Lockout.MaxFailedAccessAttempts = 5;
+                o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<SwitchPointDbContext>();
@@ -141,12 +143,20 @@ public static class DependencyInjection
         }
         else
         {
-            logger.LogInformation("Ensuring database schema exists ({Provider})", db.Database.ProviderName);
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Ensuring database schema exists ({Provider})", db.Database.ProviderName);
+            }
+
             await db.Database.EnsureCreatedAsync(ct);
         }
 
         string dataDirectory = ResolveDataDirectory(seed.DataDirectory, contentRootPath);
-        logger.LogInformation("Seeding from {DataDirectory} (demo: {Demo})", dataDirectory, seed.Demo);
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation("Seeding from {DataDirectory} (demo: {Demo})", dataDirectory, seed.Demo);
+        }
+
         DataSeeder seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
         await seeder.SeedAsync(dataDirectory, seed.Demo, ct);
     }

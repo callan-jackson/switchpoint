@@ -1,7 +1,8 @@
 # SwitchPoint
 
-**FCA-compliant pension switching, defined benefit transfer and cashflow analysis platform for UK
-Independent Financial Advisers.** An auditable recommendation engine, built ground-up, that compares
+**Implements the FCA-prescribed pension switching, defined benefit transfer and cashflow analyses
+for UK Independent Financial Advisers** — COBS 13 Annex 2–4, COBS 19.1 Annex 4B/4C/5, and the FSA's
+2009 pension switching review. An auditable recommendation engine, built ground-up, that compares
 pension and investment products across the market, quantifies the effect of charges to the penny,
 runs the analyses the FCA Handbook requires (critical yield, reduction in yield, Transfer Value
 Comparator, APTA, cashflow and stochastic modelling) and produces the suitability report behind a
@@ -69,9 +70,15 @@ Optional full stack with SQL Server: `docker compose up` (see `docker-compose.ym
 
 ## Deployment
 
-`infra/main.bicep` provisions the whole environment on free tiers; `.github/workflows/deploy.yml`
-builds the container, pushes it to GitHub Container Registry and deploys with an OIDC federated
-credential (no stored cloud secrets). One-time setup steps are in `docs/deployment.md`.
+`infra/main.bicep` provisions the whole environment on free tiers. `.github/workflows/deploy.yml`
+builds the container and pushes it to GitHub Container Registry, then deploys with an OIDC federated
+credential so no cloud secrets are stored in GitHub.
+
+**The Azure login step does not currently succeed**, so deployments are run by hand
+(`az deployment group create`, then `az webapp restart`). GitHub issues the OIDC subject claim with
+numeric owner and repository ids embedded, and the registered federated credential uses the
+name-based form, so the two do not match. `docs/deployment.md` has the diagnosis, the exact subject
+to register, and the other two deployment problems this project hit.
 
 ## Repository layout
 

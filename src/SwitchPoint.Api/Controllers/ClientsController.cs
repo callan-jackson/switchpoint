@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using SwitchPoint.Api.Auth;
 using Microsoft.AspNetCore.Mvc;
 using SwitchPoint.Application.Dtos;
 using SwitchPoint.Application.UseCases.Clients;
@@ -31,6 +33,7 @@ public sealed class ClientsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ClientDetail>> Get(Guid id, CancellationToken ct) => Ok(await get.HandleAsync(id, ct));
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpPost]
     [ProducesResponseType<ClientDetail>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -40,10 +43,12 @@ public sealed class ClientsController(
         return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
     }
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType<ClientDetail>(StatusCodes.Status200OK)]
     public async Task<ActionResult<ClientDetail>> Update(Guid id, [FromBody] ClientWrite write, CancellationToken ct) => Ok(await update.HandleAsync(id, write, ct));
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
@@ -56,6 +61,7 @@ public sealed class ClientsController(
     [ProducesResponseType<IReadOnlyList<SchemeDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<SchemeDto>>> Schemes(Guid id, CancellationToken ct) => Ok(await listSchemes.HandleAsync(id, ct));
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpPost("{id:guid}/schemes")]
     [ProducesResponseType<SchemeDto>(StatusCodes.Status201Created)]
     public async Task<ActionResult<SchemeDto>> CreateScheme(Guid id, [FromBody] SchemeWrite write, CancellationToken ct)
@@ -64,10 +70,12 @@ public sealed class ClientsController(
         return CreatedAtAction(nameof(Schemes), new { id }, created);
     }
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpPut("{id:guid}/schemes/{schemeId:guid}")]
     [ProducesResponseType<SchemeDto>(StatusCodes.Status200OK)]
     public async Task<ActionResult<SchemeDto>> UpdateScheme(Guid id, Guid schemeId, [FromBody] SchemeWrite write, CancellationToken ct) => Ok(await updateScheme.HandleAsync(id, schemeId, write, ct));
 
+    [Authorize(Policy = Policies.Adviser)]
     [HttpDelete("{id:guid}/schemes/{schemeId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteScheme(Guid id, Guid schemeId, CancellationToken ct)

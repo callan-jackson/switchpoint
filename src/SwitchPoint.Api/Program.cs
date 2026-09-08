@@ -89,7 +89,7 @@ builder.Services.AddOpenApi("v1", o =>
     {
         doc.Info.Title = "SwitchPoint API";
         doc.Info.Version = "v1";
-        doc.Info.Description = "FCA-compliant pension switching, DB transfer and cashflow analysis for UK IFAs. Authenticate with POST /api/v1/auth/login and send 'Authorization: Bearer <token>'.";
+        doc.Info.Description = "Implements the FCA-prescribed pension switching, DB transfer and cashflow analyses for UK IFAs. Authenticate with POST /api/v1/auth/login and send 'Authorization: Bearer <token>'.";
         return Task.CompletedTask;
     });
 });

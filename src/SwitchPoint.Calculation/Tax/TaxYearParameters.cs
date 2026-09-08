@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 namespace SwitchPoint.Calculation.Tax;
 
 /// <summary>One income tax band: the width of taxable income it covers (null = unbounded) and its rate.</summary>
@@ -59,6 +60,8 @@ public sealed record TaxYearParameters(
 }
 
 /// <summary>Registry of known tax years.</summary>
+[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores",
+    Justification = "Y2026_27 reads as the 2026/27 tax year; the underscore stands in for the slash HMRC uses.")]
 public static class TaxYears
 {
     /// <summary>Tax year 6 April 2026 – 5 April 2027. Sources: gov.uk/income-tax-rates, gov.scot 2026-27 bands, HMRC PTM, DWP benefit rates 2026/27.</summary>

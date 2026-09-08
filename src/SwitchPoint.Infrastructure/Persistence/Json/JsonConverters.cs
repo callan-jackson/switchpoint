@@ -105,7 +105,7 @@ public static class Converters
 
     public static JsonValueConverter<Domain.Clients.ExternalReference> ExternalReference { get; } = new();
 
-    private static IReadOnlyList<IReadOnlyList<decimal>> ToJagged(decimal[,] m)
+    private static List<IReadOnlyList<decimal>> ToJagged(decimal[,] m)
     {
         int n = m.GetLength(0);
         List<IReadOnlyList<decimal>> rows = [];

@@ -87,7 +87,7 @@ public sealed class SqliteFixture : IDisposable
     }
 }
 
-public class PersistenceRoundTripTests : IDisposable
+public sealed class PersistenceRoundTripTests : IDisposable
 {
     private readonly SqliteFixture _fx = new(seedDemo: false);
     private static readonly DateTime Now = new(2026, 9, 6, 12, 0, 0, DateTimeKind.Utc);
@@ -288,7 +288,7 @@ public class PersistenceRoundTripTests : IDisposable
     }
 }
 
-public class AuditLogTests : IDisposable
+public sealed class AuditLogTests : IDisposable
 {
     private readonly SqliteFixture _fx = new(seedDemo: false);
 
@@ -335,7 +335,7 @@ public class AuditLogTests : IDisposable
     }
 }
 
-public class SeedingAndIdentityTests : IDisposable
+public sealed class SeedingAndIdentityTests : IDisposable
 {
     private readonly SqliteFixture _fx = new(seedDemo: true);
 

@@ -90,18 +90,18 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
     /// <summary>Firm id used by the query filters (null disables tenant filtering for system operations).</summary>
     public Guid? CurrentFirmId => _tenant.FirmId;
 
-    protected override void OnModelCreating(ModelBuilder b)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        ArgumentNullException.ThrowIfNull(b);
-        base.OnModelCreating(b);
+        ArgumentNullException.ThrowIfNull(builder);
+        base.OnModelCreating(builder);
 
         foreach (Type entityType in new[] { typeof(Firm), typeof(Client), typeof(Scheme), typeof(Provider), typeof(Product), typeof(Fund), typeof(ModelPortfolio), typeof(AssumptionSet), typeof(AnalysisBase), typeof(Report) })
         {
-            b.Entity(entityType).Property(nameof(Entity.CreatedAtUtc));
-            b.Entity(entityType).Property(nameof(Entity.UpdatedAtUtc));
+            builder.Entity(entityType).Property(nameof(Entity.CreatedAtUtc));
+            builder.Entity(entityType).Property(nameof(Entity.UpdatedAtUtc));
         }
 
-        b.Entity<Firm>(e =>
+        builder.Entity<Firm>(e =>
         {
             e.ToTable("Firms");
             e.HasKey(x => x.Id);
@@ -109,7 +109,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.Property(x => x.FcaFirmReferenceNumber).HasMaxLength(20).IsRequired();
         });
 
-        b.Entity<Client>(e =>
+        builder.Entity<Client>(e =>
         {
             e.ToTable("Clients");
             e.HasKey(x => x.Id);
@@ -129,7 +129,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<Scheme>(e =>
+        builder.Entity<Scheme>(e =>
         {
             e.ToTable("Schemes");
             e.HasKey(x => x.Id);
@@ -152,7 +152,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<DefinedBenefitScheme>(e =>
+        builder.Entity<DefinedBenefitScheme>(e =>
         {
             e.Property(x => x.SpousePensionFraction).HasPrecision(9, 6);
             e.Property(x => x.MaxPclsFraction).HasPrecision(9, 6);
@@ -165,7 +165,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.Ignore(x => x.TotalAccruedPension);
         });
 
-        b.Entity<Provider>(e =>
+        builder.Entity<Provider>(e =>
         {
             e.ToTable("Providers");
             e.HasKey(x => x.Id);
@@ -175,7 +175,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasIndex(x => x.Name).IsUnique();
         });
 
-        b.Entity<Product>(e =>
+        builder.Entity<Product>(e =>
         {
             e.ToTable("Products");
             e.HasKey(x => x.Id);
@@ -189,7 +189,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasIndex(x => new { x.ProviderId, x.Name }).IsUnique();
         });
 
-        b.Entity<Fund>(e =>
+        builder.Entity<Fund>(e =>
         {
             e.ToTable("Funds");
             e.HasKey(x => x.Id);
@@ -212,7 +212,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasIndex(x => x.IaSector);
         });
 
-        b.Entity<ModelPortfolio>(e =>
+        builder.Entity<ModelPortfolio>(e =>
         {
             e.ToTable("ModelPortfolios");
             e.HasKey(x => x.Id);
@@ -226,7 +226,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasIndex(x => new { x.ProviderId, x.Name }).IsUnique();
         });
 
-        b.Entity<AssumptionSet>(e =>
+        builder.Entity<AssumptionSet>(e =>
         {
             e.ToTable("AssumptionSets");
             e.HasKey(x => x.Id);
@@ -245,7 +245,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<AnalysisBase>(e =>
+        builder.Entity<AnalysisBase>(e =>
         {
             e.ToTable("Analyses");
             e.HasKey(x => x.Id);
@@ -261,7 +261,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<PensionSwitchAnalysis>(e =>
+        builder.Entity<PensionSwitchAnalysis>(e =>
         {
             e.Property(x => x.Title).HasMaxLength(200);
             e.Property(x => x.ProposedAdviserCharges).HasConversion(Converters.AdviserCharge, Converters.AdviserCharge.Comparer);
@@ -272,7 +272,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.Ignore(x => x.IsReadyToCalculate);
         });
 
-        b.Entity<DbTransferAnalysis>(e =>
+        builder.Entity<DbTransferAnalysis>(e =>
         {
             e.Property(x => x.DbSchemeId);
             e.Property(x => x.ProposedAdviserCharges).HasConversion(Converters.AdviserCharge, Converters.AdviserCharge.Comparer).HasColumnName("DbProposedAdviserCharges");
@@ -283,7 +283,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.Ignore(x => x.IsReadyToCalculate);
         });
 
-        b.Entity<CashflowPlan>(e =>
+        builder.Entity<CashflowPlan>(e =>
         {
             e.Property(x => x.Title).HasMaxLength(200).HasColumnName("PlanTitle");
             e.Property(x => x.Strategy).HasConversion(Converters.PlanStrategy, Converters.PlanStrategy.Comparer);
@@ -298,7 +298,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.Ignore(x => x.Events);
         });
 
-        b.Entity<Report>(e =>
+        builder.Entity<Report>(e =>
         {
             e.ToTable("Reports");
             e.HasKey(x => x.Id);
@@ -314,7 +314,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<AuditEvent>(e =>
+        builder.Entity<AuditEvent>(e =>
         {
             e.ToTable("AuditEvents");
             e.HasKey(x => x.Id);
@@ -331,7 +331,7 @@ public sealed class SwitchPointDbContext : IdentityDbContext<ApplicationUser, Id
             e.HasQueryFilter(x => _tenant.FirmId == null || x.FirmId == _tenant.FirmId);
         });
 
-        b.Entity<ApplicationUser>(e =>
+        builder.Entity<ApplicationUser>(e =>
         {
             e.Property(x => x.DisplayName).HasMaxLength(200);
             e.HasIndex(x => x.FirmId);

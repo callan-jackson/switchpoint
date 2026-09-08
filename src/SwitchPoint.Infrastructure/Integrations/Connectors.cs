@@ -233,7 +233,7 @@ public sealed class MorningstarFundDataProvider(IHttpClientFactory httpClientFac
         if (Mode == IntegrationMode.Live)
         {
             IReadOnlyList<FundDto> hits = await SearchLiveAsync(isin, 1, ct);
-            return hits.FirstOrDefault();
+            return hits.Count > 0 ? hits[0] : null;
         }
 
         Fund? f = await catalogue.GetByIsinAsync(isin, ct);

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace SwitchPoint.Domain.Clients;
 
 /// <summary>Biological sex as used by annuity pricing bases (PMA16/PFA16).</summary>
@@ -7,6 +9,8 @@ public enum Sex
     Female = 1,
 }
 
+[SuppressMessage("Naming", "CA1720:Identifier contains type name",
+    Justification = "Single is the marital status; the System.Single collision is incidental and renaming would obscure the domain.")]
 public enum MaritalStatus
 {
     Single = 0,

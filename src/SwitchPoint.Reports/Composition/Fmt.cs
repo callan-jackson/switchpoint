@@ -30,9 +30,9 @@ public static class Fmt
     /// <summary>A plain number with thousands separators.</summary>
     public static string Num(decimal value, int decimals = 0) => value.ToString("N" + decimals.ToString(CultureInfo.InvariantCulture), Gb);
 
-    public static string Int(int value) => value.ToString("N0", Gb);
+    public static string Count(int value) => value.ToString("N0", Gb);
 
-    public static string Int(int? value) => value is { } v ? Int(v) : "n/a";
+    public static string Count(int? value) => value is { } v ? Count(v) : "n/a";
 
     /// <summary>6 September 2026.</summary>
     public static string Date(DateOnly date) => date.ToString("d MMMM yyyy", Gb);
