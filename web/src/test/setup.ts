@@ -1,9 +1,15 @@
 import '@testing-library/jest-dom/vitest'
 import { afterAll, afterEach, beforeAll } from 'vitest'
-import { cleanup } from '@testing-library/react'
+import { cleanup, configure } from '@testing-library/react'
 import { server } from '@/mocks/server'
 import { resetMockDb } from '@/mocks/handlers'
 import { setSession } from '@/features/auth/authStore'
+
+// Every page is lazily imported by the router, so a test's first `findBy*` waits on a dynamic import as
+// well as the mock request behind it. Testing Library's 1s default is enough on an idle machine and not on
+// a loaded one: the suite passed serially and failed in parallel purely on that margin. This governs
+// findBy*/waitFor, which `testTimeout` does not.
+configure({ asyncUtilTimeout: 10_000 })
 
 // The mock server answers every request in the test run; an unhandled one is a bug in the test.
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))

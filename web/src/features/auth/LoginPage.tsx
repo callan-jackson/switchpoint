@@ -101,8 +101,9 @@ export default function LoginPage() {
           <div className="mt-5 rounded-lg border border-dashed border-border-strong bg-surface-muted p-3 text-xs text-fg-muted">
             <p className="font-semibold text-fg">Demo credentials</p>
             <p className="mt-1">
-              <code className="font-mono">{DEMO_EMAIL}</code> — also <code className="font-mono">paraplanner@</code>{' '}
-              and <code className="font-mono">compliance@</code>
+              <code className="font-mono">{DEMO_EMAIL}</code> — also <code className="font-mono">paraplanner@</code>,{' '}
+              <code className="font-mono">compliance@</code> (audit trail) and <code className="font-mono">admin@</code>{' '}
+              (assumption sets)
               <br />
               Password <code className="font-mono">{DEMO_PASSWORD}</code>
             </p>
