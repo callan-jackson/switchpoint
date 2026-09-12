@@ -44,6 +44,7 @@ public static class JsonDefaults
         };
         o.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         o.Converters.Add(new NormalisedDecimalConverter());
+        o.Converters.Add(new UtcDateTimeConverter());
         return o;
     }
 
@@ -60,5 +61,29 @@ public sealed class NormalisedDecimalConverter : JsonConverter<decimal>
     {
         ArgumentNullException.ThrowIfNull(writer);
         writer.WriteNumberValue(JsonDefaults.Normalise(value));
+    }
+}
+
+/// <summary>
+/// Writes every <see cref="DateTime"/> with an explicit UTC offset. Every timestamp the API stores is UTC,
+/// but both database providers hand values back with <see cref="DateTimeKind.Unspecified"/>, so a value
+/// written as "…376378Z" came back as "…376378" and a browser parsed it as local time — an hour out through
+/// British Summer Time. Treating an unspecified kind as UTC here fixes reads without touching every entity.
+/// </summary>
+public sealed class UtcDateTimeConverter : JsonConverter<DateTime>
+{
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        reader.GetDateTime().ToUniversalTime();
+
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(writer);
+        DateTime utc = value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc),
+        };
+        writer.WriteStringValue(utc.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", System.Globalization.CultureInfo.InvariantCulture));
     }
 }

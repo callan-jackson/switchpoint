@@ -97,6 +97,31 @@ public sealed class SectionBuilder
 
     public SectionBuilder P(string text, ParagraphStyle style = ParagraphStyle.Normal) => Add(new ParagraphBlock(text, style));
 
+    /// <summary>
+    /// Adds free text the adviser typed, preserving their paragraph breaks. A blank line starts a new
+    /// paragraph; a single newline is a line break within one. Every renderer walks paragraph blocks, so
+    /// splitting here keeps PDF, DOCX and JSON consistent without each renderer parsing whitespace.
+    /// </summary>
+    public SectionBuilder Prose(string? text, ParagraphStyle style = ParagraphStyle.Normal)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return this;
+        }
+
+        string[] paragraphs = text
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n')
+            .Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (string paragraph in paragraphs)
+        {
+            Add(new ParagraphBlock(paragraph, style));
+        }
+
+        return this;
+    }
+
     public SectionBuilder Placeholder(string text) => Add(new ParagraphBlock(text, ParagraphStyle.Placeholder));
 
     public SectionBuilder Quote(string text) => Add(new ParagraphBlock(text, ParagraphStyle.Quote));
