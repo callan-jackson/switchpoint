@@ -97,7 +97,13 @@ public sealed record DbTransferCalcRequest
     public DateOnly? TransferDate { get; init; }
 }
 
-public sealed record RevaluedTrancheDto(string Name, decimal AccruedAnnualPension, decimal RevaluationRatePct, int YearsRevalued, decimal PensionAtRetirement, decimal EscalationInPaymentPct, decimal AnnuityInterestRatePct, decimal AnnuityPricePerPound, decimal AnnuityCost, bool IsGmp);
+/// <summary>
+/// One revalued tranche. <paramref name="EscalationInPaymentPct"/> is the escalation used to PRICE the
+/// annuity, which is deliberately zero for an index-linked tranche because the increases are already inside
+/// the real interest rate. <paramref name="NominalEscalationPct"/> is the rate the pension actually rises by
+/// and is the one to disclose: showing the pricing zero made an inflation-linked pension read as level.
+/// </summary>
+public sealed record RevaluedTrancheDto(string Name, decimal AccruedAnnualPension, decimal RevaluationRatePct, int YearsRevalued, decimal PensionAtRetirement, decimal EscalationInPaymentPct, decimal NominalEscalationPct, decimal AnnuityInterestRatePct, decimal AnnuityPricePerPound, decimal AnnuityCost, bool IsGmp);
 
 public sealed record TvcDto(decimal CashEquivalentTransferValue, decimal EstimatedReplacementCost, decimal Difference, int RetirementAgeUsed, decimal TermYears, decimal GiltYieldUsedPct, decimal DiscountRateUsedPct, decimal AnnuityCostAtRetirement, decimal PensionAtRetirement, string Wording, IReadOnlyList<string> Notes, IReadOnlyList<RevaluedTrancheDto> Tranches);
 

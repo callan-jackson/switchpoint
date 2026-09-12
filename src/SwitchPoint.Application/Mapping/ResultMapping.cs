@@ -61,7 +61,7 @@ public static class ResultMapping
         TransferValueComparator t = r.Tvc;
         return new DbTransferResultDto(
             new TvcDto(t.CashEquivalentTransferValue, t.EstimatedReplacementCost, t.Difference, t.RetirementAgeUsed, t.TermYears, Pct.FromFraction(t.GiltYieldUsed), Pct.FromFraction(t.DiscountRateUsed), t.AnnuityCostAtRetirement, t.PensionAtRetirement, t.Wording, t.Notes,
-                [.. t.Tranches.Select(x => new RevaluedTrancheDto(x.Name, x.AccruedAnnualPension, Pct.FromFraction(x.RevaluationRate), x.YearsRevalued, x.PensionAtRetirement, Pct.FromFraction(x.EscalationInPayment), Pct.FromFraction(x.AnnuityInterestRate), x.AnnuityPricePerPound, x.AnnuityCost, x.IsGmp))]),
+                [.. t.Tranches.Select(x => new RevaluedTrancheDto(x.Name, x.AccruedAnnualPension, Pct.FromFraction(x.RevaluationRate), x.YearsRevalued, x.PensionAtRetirement, Pct.FromFraction(x.EscalationInPayment), Pct.FromFraction(x.NominalEscalation), Pct.FromFraction(x.AnnuityInterestRate), x.AnnuityPricePerPound, x.AnnuityCost, x.IsGmp))]),
             new CriticalYieldsDto(Pct.FromFraction(r.CriticalYields.TypeAAnnuityMatch), Pct.FromFraction(r.CriticalYields.TypeBPclsAndReducedPension), Pct.FromFraction(r.CriticalYields.DrawdownHurdleRate), r.CriticalYields.SchemePcls, r.CriticalYields.ResidualPensionAfterPcls, r.CriticalYields.Converged),
             r.SustainableRealIncomeFromTransfer,
             [.. r.IncomeComparison.Select(i => new IncomeComparisonRowDto(i.Age, i.SchemeIncomeNominal, i.SchemeIncomeReal, i.DrawdownIncomeReal, i.ResidualFundReal, i.SchemeDeathBenefitReal))],

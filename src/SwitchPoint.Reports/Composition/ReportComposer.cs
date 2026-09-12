@@ -211,7 +211,7 @@ public static class ReportComposer
             [.. analysis.ProposedHoldings.Select(h => new List<string> { h.Name, h.Isin ?? "–", Fmt.Pct(h.WeightPct, 1), Fmt.Pct(h.OcfPct) })]));
         if (!string.IsNullOrWhiteSpace(analysis.Rationale))
         {
-            holdings.H2("Adviser rationale").P(analysis.Rationale!);
+            holdings.H2("Adviser rationale").Prose(analysis.Rationale);
         }
 
         return [summary.Build(), ClientSnapshot(r), Assumptions(r, [Fmt.Kv("Retirement age used", Fmt.Count(analysis.RetirementAge))]), verdicts.Build(), rates.Build(), charges.Build(), holdings.Build()];
@@ -268,7 +268,7 @@ public static class ReportComposer
         benefits.P("Each tranche of your pension is revalued to retirement on the basis the Handbook prescribes (COBS 19 Annex 4C 1R(4)) and priced as an annuity on the prescribed basis.");
         benefits.Table(new TableBlock(
             [new TableColumn("Tranche"), new TableColumn("Accrued at leaving", ColumnAlign.Right), new TableColumn("Revaluation", ColumnAlign.Right), new TableColumn("Years", ColumnAlign.Right), new TableColumn("Pension at retirement", ColumnAlign.Right), new TableColumn("Increases in payment", ColumnAlign.Right), new TableColumn("Annuity rate", ColumnAlign.Right), new TableColumn("Cost", ColumnAlign.Right)],
-            [.. tvc.Tranches.Select(x => new List<string> { x.Name + (x.IsGmp ? " (GMP)" : string.Empty), Fmt.Money(x.AccruedAnnualPension), Fmt.Pct(x.RevaluationRatePct), Fmt.Count(x.YearsRevalued), Fmt.Money(x.PensionAtRetirement), Fmt.Pct(x.EscalationInPaymentPct), Fmt.Pct(x.AnnuityInterestRatePct), Fmt.Money(x.AnnuityCost) })],
+            [.. tvc.Tranches.Select(x => new List<string> { x.Name + (x.IsGmp ? " (GMP)" : string.Empty), Fmt.Money(x.AccruedAnnualPension), Fmt.Pct(x.RevaluationRatePct), Fmt.Count(x.YearsRevalued), Fmt.Money(x.PensionAtRetirement), Fmt.Pct(x.NominalEscalationPct), Fmt.Pct(x.AnnuityInterestRatePct), Fmt.Money(x.AnnuityCost) })],
             FooterRow: ["Total", string.Empty, string.Empty, string.Empty, Fmt.Money(tvc.PensionAtRetirement), string.Empty, string.Empty, Fmt.Money(tvc.AnnuityCostAtRetirement)]));
 
         SectionBuilder yields = new("Critical yields");

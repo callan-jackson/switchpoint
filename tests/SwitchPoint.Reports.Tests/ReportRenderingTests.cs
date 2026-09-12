@@ -136,8 +136,17 @@ public static class Fixtures
                     "No allowance has been made for taxation or adviser charges prior to benefits commencing.",
                 ],
                 [
-                    new RevaluedTrancheDto("Pre-97 GMP", 1_850m, 4.75m, 20, 4_670m, 0m, 4m, 16.2m, 75_654m, true),
-                    new RevaluedTrancheDto("Post-2005", 6_100m, 2m, 20, 9_064m, 2.5m, 4m, 21.4m, 193_970m, false),
+                    // A GMP does not escalate in payment: pricing and nominal escalation are both zero.
+                    new RevaluedTrancheDto("Pre-97 GMP", 1_850m, 4.75m, 20, 4_670m, 0m, 0m, 4m, 16.2m, 75_654m, true),
+
+                    // An LPI(CPI) tranche capped at 2.5% is priced at the level rate with a 2.5% escalation,
+                    // so here the pricing and nominal rates coincide.
+                    new RevaluedTrancheDto("Post-2005", 6_100m, 2m, 20, 9_064m, 2.5m, 2.5m, 4m, 21.4m, 193_970m, false),
+
+                    // An index-linked tranche is the case the disclosure column exists for: it is priced with
+                    // a zero escalation inside a reduced real interest rate, but the pension really does rise
+                    // at 2%, and that is the figure the report must show.
+                    new RevaluedTrancheDto("1997–2005", 9_400m, 2m, 20, 13_968m, 0m, 2m, 3m, 17.2m, 240_250m, false),
                 ]),
             new CriticalYieldsDto(3.73m, 3.6m, 5.24m, 118_400m, 24_395m, true),
             20_842m,

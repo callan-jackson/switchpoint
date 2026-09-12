@@ -421,10 +421,27 @@ public sealed class DbTransferCalculator
         return (c * r.PclsCommutationFactor, p - c);
     }
 
-    private static string Annex5Wording(decimal cetv, decimal replacementCost) =>
-        $"You have been offered a cash equivalent transfer value of £{UkFormat.Amount(cetv)} in exchange for you giving up any future claims to a pension from the scheme. " +
-        $"Will I be better or worse off by transferring? It could cost you £{UkFormat.Amount(replacementCost)} to obtain a comparable level of income from an insurer. " +
-        $"This means the same retirement income could cost you £{UkFormat.Amount(replacementCost - cetv)} more by transferring.";
+    /// <summary>
+    /// COBS 19.1 Annex 5 wording. The final sentence turns on the sign of the difference: a transfer value
+    /// below the replacement cost costs the member <em>more</em>, one above it costs <em>less</em>, and an
+    /// exact match costs the same. Interpolating a negative amount into the "more" form produced the
+    /// nonsense "could cost you £-131,637 more", so the amount is always stated unsigned.
+    /// </summary>
+    private static string Annex5Wording(decimal cetv, decimal replacementCost)
+    {
+        decimal difference = replacementCost - cetv;
+        string closing = difference switch
+        {
+            0m => "This means the same retirement income could cost you about the same by transferring.",
+            > 0m => $"This means the same retirement income could cost you £{UkFormat.Amount(difference)} more by transferring.",
+            _ => $"This means the same retirement income could cost you £{UkFormat.Amount(-difference)} less by transferring.",
+        };
+
+        return
+            $"You have been offered a cash equivalent transfer value of £{UkFormat.Amount(cetv)} in exchange for you giving up any future claims to a pension from the scheme. " +
+            $"Will I be better or worse off by transferring? It could cost you £{UkFormat.Amount(replacementCost)} to obtain a comparable level of income from an insurer. " +
+            closing;
+    }
 
     private static IReadOnlyList<string> Annex5Notes() =>
     [

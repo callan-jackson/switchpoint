@@ -120,6 +120,36 @@ public class DbTransferCalculatorTests
     }
 
     [Fact]
+    public void Annex5_wording_says_less_when_the_transfer_value_beats_the_replacement_cost()
+    {
+        // A generous CETV: the scheme is offering more than it would cost to buy the benefits from an
+        // insurer. Interpolating the negative difference into the "more" sentence used to render the
+        // nonsense "could cost you £-131,637 more by transferring".
+        DbTransferResult generous = Calc.Calculate(Request(cetv: 900_000m));
+        Assert.True(generous.Tvc.CashEquivalentTransferValue > generous.Tvc.EstimatedReplacementCost);
+        Assert.Contains(" less by transferring.", generous.Tvc.Wording, StringComparison.Ordinal);
+        Assert.DoesNotContain("£-", generous.Tvc.Wording, StringComparison.Ordinal);
+        Assert.DoesNotContain(" more by transferring.", generous.Tvc.Wording, StringComparison.Ordinal);
+
+        // A mean CETV keeps the original wording.
+        DbTransferResult mean = Calc.Calculate(Request(cetv: 100_000m));
+        Assert.True(mean.Tvc.CashEquivalentTransferValue < mean.Tvc.EstimatedReplacementCost);
+        Assert.Contains(" more by transferring.", mean.Tvc.Wording, StringComparison.Ordinal);
+        Assert.DoesNotContain("£-", mean.Tvc.Wording, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void An_index_linked_tranche_reports_the_increases_it_actually_receives()
+    {
+        // The 1997–2005 tranche is LPI(CPI) capped at 5%, which prices on the CPI-linked annuity rate with a
+        // zero escalation — the increases live inside the real interest rate. Disclosure must still show the
+        // 2% the pension really rises by, or the report reads as though it were a level pension.
+        RevaluedTranche indexLinked = Calc.Calculate(Request()).Tvc.Tranches[1];
+        Assert.Equal(0m, indexLinked.EscalationInPayment);
+        Assert.Equal(0.02m, indexLinked.NominalEscalation);
+    }
+
+    [Fact]
     public void Earliest_unreduced_age_moves_the_tvc_retirement_age()
     {
         DbTransferResult r = Calc.Calculate(Request(earliestUnreduced: 60));
