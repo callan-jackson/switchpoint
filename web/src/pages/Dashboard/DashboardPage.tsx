@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
+import { useDocumentTitle } from '@/lib/hooks'
 import { BarChart3, FileText, LineChart, PiggyBank, Search, Users } from 'lucide-react'
-import { useDashboardSummary } from '@/api/queries'
+import { useClients, useDashboardSummary } from '@/api/queries'
 import { errorMessage } from '@/api/client'
 import type { AnalysisSummary } from '@/api/types'
 import { dateTime, num } from '@/lib/format'
@@ -13,7 +14,12 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { StatTile } from '@/components/ui/StatTile'
 import { StatusBadge } from '@/components/ui/Badge'
 
-const columns: Column<AnalysisSummary>[] = [
+/**
+ * Recent analyses used to show a title, a type and a timestamp but never which client the work belonged
+ * to — so "Consolidate two plans" told an adviser nothing until they opened it. The summary carries a
+ * clientId, so join it against the client list for a name and a way through to the file.
+ */
+const buildColumns = (clientName: (id: string) => string | undefined): Column<AnalysisSummary>[] => [
   {
     id: 'title',
     header: 'Analysis',
@@ -23,6 +29,16 @@ const columns: Column<AnalysisSummary>[] = [
       </Link>
     ),
     sortValue: (row) => row.title,
+  },
+  {
+    id: 'client',
+    header: 'Client',
+    cell: (row) => (
+      <Link to={`/clients/${row.clientId}`} className="text-fg hover:underline">
+        {clientName(row.clientId) ?? 'Open client'}
+      </Link>
+    ),
+    sortValue: (row) => clientName(row.clientId) ?? '',
   },
   {
     id: 'kind',
@@ -50,7 +66,11 @@ const columns: Column<AnalysisSummary>[] = [
 ]
 
 export default function DashboardPage() {
+  useDocumentTitle('Dashboard')
   const { data, isLoading, error } = useDashboardSummary()
+  const { data: clients } = useClients({ pageSize: 100 })
+  const clientName = (id: string) => clients?.items.find((c) => c.id === id)?.fullName
+  const columns = buildColumns(clientName)
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useDocumentTitle } from '@/lib/hooks'
 import { Link } from 'react-router'
 import { Download } from 'lucide-react'
 import { reports as reportsApi } from '@/api/endpoints'
@@ -21,6 +22,7 @@ import { useToast } from '@/components/ui/Toast'
  * attached, then reach the browser as a blob — a plain link would drop the token.
  */
 export default function ReportsPage() {
+  useDocumentTitle('Reports')
   const toast = useToast()
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.reports.all,

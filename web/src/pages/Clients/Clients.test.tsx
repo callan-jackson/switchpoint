@@ -35,12 +35,23 @@ describe('clients', () => {
     expect(screen.getByText(/Employer Group Personal Pension/i)).toBeInTheDocument()
   })
 
-  it('masks the National Insurance number', async () => {
+  it('opens a client on their arrangements rather than their personal details', async () => {
     signIn()
     renderApp('/clients')
     const row = await screen.findByText('Ms Sarah Mitchell')
     row.click()
     await screen.findByRole('heading', { level: 1, name: 'Ms Sarah Mitchell' })
+    // An adviser opening a file wants the money, not the date of birth.
+    expect(await screen.findByText(/Legacy Personal Pension/i)).toBeInTheDocument()
+  })
+
+  it('masks the National Insurance number', async () => {
+    signIn()
+    const { user } = renderApp('/clients')
+    const row = await screen.findByText('Ms Sarah Mitchell')
+    row.click()
+    await screen.findByRole('heading', { level: 1, name: 'Ms Sarah Mitchell' })
+    await user.click(screen.getByRole('tab', { name: /details/i }))
     // The API never returns the number itself to the browser, only the masked form.
     await waitFor(() => expect(screen.getByText(/\*{6}\d{2}[A-D]/)).toBeInTheDocument())
   })

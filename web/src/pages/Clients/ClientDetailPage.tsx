@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { Download, Pencil, Plus, Trash2 } from 'lucide-react'
 import { errorMessage } from '@/api/client'
@@ -39,18 +40,24 @@ import { SchemeDialog } from '@/components/domain/SchemeDialog'
 import { ClientFormDialog } from './ClientFormDialog'
 
 type TabId = 'details' | 'schemes' | 'analyses' | 'reports'
+const TAB_IDS: TabId[] = ['details', 'schemes', 'analyses', 'reports']
 
 export default function ClientDetailPage() {
   const { clientId = '' } = useParams()
   const [params, setParams] = useSearchParams()
   const toast = useToast()
 
-  const tab = (params.get('tab') as TabId | null) ?? 'details'
+  // An adviser opening a client file wants the arrangements — the money, the charges and the guarantees —
+  // not the date of birth. Details is one click away. An unrecognised ?tab (a stale link, a typo) falls back
+  // here rather than rendering a blank page.
+  const requestedTab = params.get('tab')
+  const tab: TabId = TAB_IDS.includes(requestedTab as TabId) ? (requestedTab as TabId) : 'schemes'
   const setTab = (next: TabId) => setParams({ tab: next }, { replace: true })
 
   const { data: client, isLoading, error } = useClient(clientId)
-  const { data: analyses } = useClientAnalyses(clientId)
-  const { data: reports } = useClientReports(clientId)
+  useDocumentTitle(client?.fullName)
+  const { data: analyses, isLoading: analysesLoading, error: analysesError } = useClientAnalyses(clientId)
+  const { data: reports, isLoading: reportsLoading, error: reportsError } = useClientReports(clientId)
 
   const createScheme = useCreateScheme(clientId)
   const updateScheme = useUpdateScheme(clientId)
@@ -90,6 +97,8 @@ export default function ClientDetailPage() {
     }
   }
 
+  const hasDbScheme = (client?.schemes ?? []).some((s) => s.type === 'definedBenefit')
+
   const schemeColumns: Column<SchemeDto>[] = [
     {
       id: 'product',
@@ -110,7 +119,14 @@ export default function ClientDetailPage() {
       id: 'value',
       header: 'Current value',
       align: 'right',
-      cell: (row) => gbp(row.currentValue),
+      // A value with no as-at date cannot be relied on: £184,000 valued last week and £184,000 valued in
+      // 2019 look identical otherwise, and the engine will happily project either.
+      cell: (row) => (
+        <div>
+          <p className="text-fg">{gbp(row.currentValue)}</p>
+          <p className="text-xs text-fg-muted">{row.valuationDate ? `as at ${date(row.valuationDate)}` : 'no valuation date'}</p>
+        </div>
+      ),
       sortValue: (row) => row.currentValue,
     },
     {
@@ -260,6 +276,17 @@ export default function ClientDetailPage() {
             <Button variant="outline" icon={<Pencil />} onClick={() => setEditingClient(true)}>
               Edit client
             </Button>
+            {/* All three analyses accept ?clientId, but only the switch was reachable from a client file,
+                so starting a DB transfer or a cashflow plan meant navigating away and re-picking the
+                client. Offer whichever ones this client's arrangements actually support. */}
+            {hasDbScheme && (
+              <ButtonLink variant="outline" to={`/db-transfer?clientId=${client.id}`}>
+                DB transfer
+              </ButtonLink>
+            )}
+            <ButtonLink variant="outline" to={`/cashflow?clientId=${client.id}`}>
+              Cashflow plan
+            </ButtonLink>
             <ButtonLink to={`/pension-switch?clientId=${client.id}`}>New switch analysis</ButtonLink>
           </>
         }
@@ -353,9 +380,18 @@ export default function ClientDetailPage() {
 
         {tab === 'analyses' && (
           <Card flush title="Analyses" description="Every persisted analysis for this client.">
+            {analysesError && (
+              <div className="px-4 pt-4">
+                <Alert tone="danger" title="Analyses could not be loaded">
+                  {errorMessage(analysesError)} Until this loads, treat the list below as unknown rather than
+                  empty.
+                </Alert>
+              </div>
+            )}
             <DataTable
               columns={analysisColumns}
-              rows={analyses}
+              rows={analysesError ? [] : analyses}
+              isLoading={analysesLoading}
               getRowId={(row) => row.id}
               caption="Analyses"
               initialSort={{ columnId: 'calculated', direction: 'desc' }}
@@ -368,9 +404,18 @@ export default function ClientDetailPage() {
 
         {tab === 'reports' && (
           <Card flush title="Reports" description="Issued documents, each pinned to a locked analysis version.">
+            {reportsError && (
+              <div className="px-4 pt-4">
+                <Alert tone="danger" title="Reports could not be loaded">
+                  {errorMessage(reportsError)} Until this loads, treat the list below as unknown rather than
+                  empty.
+                </Alert>
+              </div>
+            )}
             <DataTable
               columns={reportColumns}
-              rows={reports}
+              rows={reportsError ? [] : reports}
+              isLoading={reportsLoading}
               getRowId={(row) => row.id}
               caption="Reports"
               initialSort={{ columnId: 'generated', direction: 'desc' }}

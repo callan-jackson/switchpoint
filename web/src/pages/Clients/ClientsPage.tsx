@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { UserPlus } from 'lucide-react'
 import { useClients } from '@/api/queries'
@@ -69,6 +70,7 @@ const columns: Column<ClientSummary>[] = [
 ]
 
 export default function ClientsPage() {
+  useDocumentTitle('Clients')
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
   const [adding, setAdding] = useState(false)

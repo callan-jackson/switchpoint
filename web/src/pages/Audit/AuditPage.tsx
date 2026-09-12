@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { useSearchParams } from 'react-router'
 import { ShieldCheck } from 'lucide-react'
 import { audit as auditApi } from '@/api/endpoints'
@@ -43,6 +44,7 @@ function formatPayload(payload: string): string {
  * error the adviser can do anything about.
  */
 export default function AuditPage() {
+  useDocumentTitle('Audit')
   const [params, setParams] = useSearchParams()
   const [verification, setVerification] = useState<AuditVerifyResult | null>(null)
   const [verifyError, setVerifyError] = useState<string | null>(null)
