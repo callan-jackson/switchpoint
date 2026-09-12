@@ -47,7 +47,13 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
 
     private static readonly JsonSerializerOptions FileOptions = new(JsonDefaults.Options) { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
 
-    public async Task SeedAsync(string dataDirectory, bool seedDemo, CancellationToken ct = default)
+    /// <summary>
+    /// The password the demo accounts are created with. It is published in the README, so it is only ever
+    /// acceptable on a deployment whose whole purpose is to be public. <see cref="SeedAsync"/> refuses to use
+    /// it outside Development unless <c>Seed:DemoPassword</c> supplies one, which keeps a real tenant from
+    /// silently acquiring accounts whose password anyone can read.
+    /// </summary>
+    public async Task SeedAsync(string dataDirectory, bool seedDemo, bool isDevelopment = true, string? demoPassword = null, CancellationToken ct = default)
     {
         DateTime now = DateTime.UtcNow;
         await SeedAssumptionSetsAsync(dataDirectory, now, ct);
@@ -59,11 +65,30 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
         await db.SaveChangesAsync(ct);
         await SeedModelPortfoliosAsync(dataDirectory, now, ct);
         await db.SaveChangesAsync(ct);
-        if (seedDemo)
+        if (!seedDemo)
         {
-            await SeedDemoFirmAsync(now, ct);
-            await db.SaveChangesAsync(ct);
+            return;
         }
+
+        string password = demoPassword ?? (isDevelopment ? DemoPassword : string.Empty);
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            logger.LogError(
+                "Seed:Demo is on outside Development but Seed:DemoPassword is not set. Demo accounts have NOT been " +
+                "created: seeding them with the password published in the README would let anyone who has read it " +
+                "sign in. Set Seed:DemoPassword (Key Vault secret DemoPassword) to enable them, or set Seed:Demo=false.");
+            return;
+        }
+
+        if (!isDevelopment)
+        {
+            logger.LogWarning(
+                "Seeding the demo firm on a non-Development environment. This creates four accounts including a firm " +
+                "administrator. Only do this on a deployment intended to be public.");
+        }
+
+        await SeedDemoFirmAsync(now, password, ct);
+        await db.SaveChangesAsync(ct);
     }
 
     private static T? ReadFile<T>(string dataDirectory, string name)
@@ -329,7 +354,7 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
         }
     }
 
-    private async Task SeedDemoFirmAsync(DateTime now, CancellationToken ct)
+    private async Task SeedDemoFirmAsync(DateTime now, string demoPassword, CancellationToken ct)
     {
         Firm? firm = await db.Firms.FirstOrDefaultAsync(f => f.Id == DemoFirmId, ct);
         if (firm is null)
@@ -344,12 +369,16 @@ public sealed class DataSeeder(SwitchPointDbContext db, UserManager<ApplicationU
             ("adviser@demo.switchpoint.local", "Alex Adviser", UserRole.Adviser),
             ("paraplanner@demo.switchpoint.local", "Priya Paraplanner", UserRole.Paraplanner),
             ("compliance@demo.switchpoint.local", "Chris Compliance", UserRole.Compliance),
+
+            // Without a firm admin the assumption-set editor and the Morningstar sync are gated behind a
+            // role no demo account holds, so both return 403 and cannot be shown at all.
+            ("admin@demo.switchpoint.local", "Adaeze Admin", UserRole.FirmAdmin),
         })
         {
             if (await users.FindByEmailAsync(email) is null)
             {
                 ApplicationUser user = new() { Id = Guid.NewGuid(), UserName = email, Email = email, EmailConfirmed = true, FirmId = DemoFirmId, DisplayName = name, Role = role };
-                IdentityResult result = await users.CreateAsync(user, DemoPassword);
+                IdentityResult result = await users.CreateAsync(user, demoPassword);
                 if (!result.Succeeded)
                 {
                     logger.LogWarning("Could not create demo user {Email}: {Errors}", email, string.Join("; ", result.Errors.Select(e => e.Description)));

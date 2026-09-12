@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 using SwitchPoint.Application.Ports;
@@ -28,6 +29,12 @@ public sealed class SeedOptions
 {
     public bool Demo { get; set; }
     public string? DataDirectory { get; set; }
+
+    /// <summary>
+    /// Password for the seeded demo accounts. Required whenever <see cref="Demo"/> is on outside
+    /// Development, because the built-in default is published in the README.
+    /// </summary>
+    public string? DemoPassword { get; set; }
 }
 
 /// <summary>Report storage settings (section Reports).</summary>
@@ -158,7 +165,11 @@ public static class DependencyInjection
         }
 
         DataSeeder seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-        await seeder.SeedAsync(dataDirectory, seed.Demo, ct);
+        // Resolved from the host, not from ASPNETCORE_ENVIRONMENT: WebApplicationFactory sets the
+        // environment on the builder without touching the process variable, so reading the variable reports
+        // Production inside the integration tests and silently skips the demo accounts they sign in with.
+        bool isDevelopment = scope.ServiceProvider.GetService<IHostEnvironment>()?.IsDevelopment() ?? false;
+        await seeder.SeedAsync(dataDirectory, seed.Demo, isDevelopment, seed.DemoPassword, ct);
     }
 
     /// <summary>Finds the repository data/ folder from the content root or its ancestors (works from bin/ and from the repo root).</summary>

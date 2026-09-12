@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,6 +54,15 @@ public sealed class SqliteFixture : IDisposable
         services.AddLogging();
         services.AddSingleton(config);
         services.AddSingleton(user);
+
+        // The seeder only creates the demo accounts with the README's published password on a Development
+        // host, and treats a container with no IHostEnvironment as production. This fixture stands in for
+        // local development, so it has to say so or the demo firm is silently skipped.
+        IHostEnvironment environment = Substitute.For<IHostEnvironment>();
+        environment.EnvironmentName.Returns(Environments.Development);
+        environment.ApplicationName.Returns("SwitchPoint.Infrastructure.Tests");
+        environment.ContentRootPath.Returns(AppContext.BaseDirectory);
+        services.AddSingleton(environment);
         services.AddSwitchPointInfrastructure(config);
         Provider = services.BuildServiceProvider();
         Provider.InitialiseDatabaseAsync(RepoRoot(), CancellationToken.None).GetAwaiter().GetResult();

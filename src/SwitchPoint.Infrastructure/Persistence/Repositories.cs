@@ -322,11 +322,28 @@ public sealed class HashChainAuditLog(SwitchPointDbContext db, IClock clock) : I
 /// <summary>Local credential check backed by ASP.NET Core Identity.</summary>
 public sealed class IdentityService(UserManager<ApplicationUser> users, SwitchPointDbContext db) : IIdentityService
 {
+    /// <summary>
+    /// A user that is never persisted, carrying a real PBKDF2 hash of a random password. Verifying against it
+    /// costs the same as verifying against a genuine account, which is what keeps the unknown-address and
+    /// locked-account paths from answering faster than a live one.
+    /// </summary>
+    private static readonly ApplicationUser EnumerationDecoy = new()
+    {
+        Id = Guid.Empty,
+        UserName = "decoy",
+        Email = "decoy@invalid",
+        PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(new ApplicationUser(), Guid.NewGuid().ToString("N")),
+    };
+
     public async Task<UserDto?> AuthenticateAsync(string email, string password, CancellationToken ct = default)
     {
         ApplicationUser? user = await users.FindByEmailAsync(email);
         if (user is null)
         {
+            // Returning here without hashing makes an unknown address answer measurably faster than a known
+            // one, which turns the endpoint into an account-enumeration oracle. Verify against a dummy hash
+            // so the work done is the same either way, then fail.
+            await users.CheckPasswordAsync(EnumerationDecoy, password);
             return null;
         }
 
@@ -335,6 +352,8 @@ public sealed class IdentityService(UserManager<ApplicationUser> users, SwitchPo
         // only authentication endpoint open to unlimited guessing. Drive the lockout explicitly.
         if (await users.IsLockedOutAsync(user))
         {
+            // Same reasoning: a locked account must not answer faster than a live one.
+            await users.CheckPasswordAsync(EnumerationDecoy, password);
             return null;
         }
 

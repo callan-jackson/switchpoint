@@ -20,7 +20,7 @@ public sealed class AuthController(IIdentityService identity, JwtTokenIssuer iss
     /// <summary>Exchanges email and password for a bearer token.</summary>
     [HttpPost("login")]
     [AllowAnonymous]
-    [EnableRateLimiting("calculations")]
+    [EnableRateLimiting("auth")]
     [ProducesResponseType<LoginResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request, CancellationToken ct)
