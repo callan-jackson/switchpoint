@@ -1,11 +1,18 @@
 # SwitchPoint API contract (v1)
 
 This is the agreed shape between the Application layer, the API host and the React client.
-Base path `/api/v1`. JSON, camelCase. Dates are ISO `yyyy-MM-dd`; timestamps are ISO UTC.
-Money is a decimal number in GBP. **Rates in DTOs are percentages when the field name ends in
-`Pct`** (0.25 means 0.25%); the API converts to fractions (0.0025m) at the boundary. Ids are GUIDs.
-Errors are RFC 9457 problem details (`application/problem+json`); validation errors carry an
-`errors` map of field → messages.
+Base path `/api/v1`. JSON, camelCase. Dates are ISO `yyyy-MM-dd`; timestamps are ISO UTC and always
+carry the `Z` suffix. Money is a decimal number in GBP. **Rates in DTOs are percentages when the field
+name ends in `Pct`** (0.25 means 0.25%, and a 100% holding weight is `100`, not `1`); the API converts
+to fractions (0.0025m) at the boundary.  Ids are GUIDs.
+
+**Enums are camelCase on the wire** — `"draft"`, `"pdf"`, `"pensionSwitch"`, `"adviser"`. Reads are
+case-insensitive, so `"Pdf"` is accepted on input, but every response uses the camelCase form.
+
+Errors are RFC 9457 problem details (`application/problem+json`). FluentValidation failures return
+**400** with an `errors` map of field → messages, and those keys are **PascalCase** (`"FirstName"`)
+even though the rest of the body is camelCase. **422** is reserved for domain and numerical failures
+(`DomainException`, `RootNotBracketedException`, `RootNotConvergedException`).
 
 Authentication: `Authorization: Bearer <JWT>`; claims `sub`, `email`, `name`, `role`, `firm_id`,
 `firm_name`. Roles: Adviser, Paraplanner, Compliance, FirmAdmin, PlatformAdmin. All resources are
@@ -202,12 +209,12 @@ TaxComputationDto { taxYear; regime; adjustedNetIncome; personalAllowance; taxab
 | same five | /analyses/cashflow[...] | `CashflowPlanWrite` / `CashflowPlanDto` (+ `POST /{id}/calculate/stochastic`) |
 
 ```ts
-AnalysisSummary { id; kind: 'PensionSwitch'|'DbTransfer'|'Cashflow'; title; status: 'Draft'|'Calculated'|'Locked'; version; calculatedAtUtc?; updatedAtUtc; createdBy }
+AnalysisSummary { id; kind: 'pensionSwitch'|'dbTransfer'|'cashflow'; title; status: 'draft'|'calculated'|'locked'; version; calculatedAtUtc?; updatedAtUtc; createdBy; clientId }
 PensionSwitchAnalysisWrite { clientId; title; retirementAge; cedingSchemeIds: string[]; proposedProductId?; proposedProductChargeVersion?; proposedHoldings: HoldingDto[];
   proposedModelPortfolioId?; proposedAdviserCharges; assumptionSetId; overrides?; rationale? }
 PensionSwitchAnalysisDto extends PensionSwitchAnalysisWrite { id; firmId; status; version; resultHash?; calculatedAtUtc?; engineVersion?; result?: PensionSwitchResultDto; createdAtUtc; updatedAtUtc; createdBy }
 DbTransferAnalysisWrite { clientId; dbSchemeId; transferDate; planEndAge; proposedProductId?; proposedProductChargeVersion?; proposedHoldings; proposedAdviserCharges; aptaGrowthPct?;
-  chargeBasis: 'NonContingent'|'Contingent'; contingentChargingCarveOut?; workplaceSchemeProductId?; assumptionSetId; overrides? }
+  chargeBasis: 'nonContingent'|'contingent'; contingentChargingCarveOut?; workplaceSchemeProductId?; assumptionSetId; overrides?; initialAdviceFee; workplaceDefaultChargePct? }
 DbTransferAnalysisDto extends DbTransferAnalysisWrite { id; firmId; status; version; resultHash?; calculatedAtUtc?; engineVersion?; result?: DbTransferResultDto; ... }
 CashflowPlanWrite { clientId; partnerClientId?; title; planEndAge; incomes; expenses; assets; events; strategy; stochasticSeed?; stochasticPaths; assumptionSetId; overrides? }
 CashflowPlanDto extends CashflowPlanWrite { id; firmId; status; version; resultHash?; calculatedAtUtc?; engineVersion?; result?: CashflowResultDto; stochasticResult?: StochasticResultDto; ... }
@@ -216,7 +223,7 @@ CashflowPlanDto extends CashflowPlanWrite { id; firmId; status; version; resultH
 ## Reports
 | Method | Path | Body → Response |
 |---|---|---|
-| POST | /reports | `{analysisId; kind: 'Suitability'|'PensionSwitch'|'DbTransfer'|'Cashflow'|'FundComparison'; format: 'Pdf'|'Docx'|'Json'}` → `ReportDto` (201; locks the analysis) |
+| POST | /reports | `{analysisId; kind: 'suitability'|'pensionSwitch'|'dbTransfer'|'cashflow'|'fundComparison'; format: 'pdf'|'docx'|'json'}` → `ReportDto` (201; locks the analysis). The kind must suit the analysis: a `dbTransfer` report on a pension-switch analysis returns 400. Reports may be issued repeatedly after locking. |
 | GET | /reports/{id} | → `ReportDto` |
 | GET | /reports/{id}/download | → file (`application/pdf` etc.) |
 
@@ -227,12 +234,15 @@ ReportDto { id; clientId; analysisId; analysisVersion; analysisResultHash; kind;
 ## Audit, integrations, health
 | Method | Path | → Response |
 |---|---|---|
-| GET | /audit?entityId=&entityType=&page=&pageSize= | `PagedResult<AuditEventDto {id, sequence, userId?, userName?, occurredAtUtc, entityType, entityId?, action, payload, previousHash, hash}>` |
-| GET | /audit/verify | `{isValid; firstBrokenIndex; reason?; eventsChecked}` |
+| GET | /audit?entityId=&entityType=&page=&pageSize= | `PagedResult<AuditEventDto {id, sequence, userId?, occurredAtUtc, entityType, entityId?, action, payload, previousHash, hash}>` |
+| GET | /audit/verify | `{isValid; firstBrokenIndex; reason?; eventsChecked}` (Compliance or FirmAdmin only; 403 for an adviser) |
 | GET | /integrations | `{connector: 'Intelliflo'|'Xplan'|'TruePotential'|'OrigoHub'|'Morningstar'; configured; mode: 'Live'|'Sandbox'|'Disabled'; lastSyncUtc?}[]` |
 | POST | /integrations/{connector}/import | `{externalClientId?}` → `{imported; updated; skipped; messages: string[]}` |
 | POST | /integrations/morningstar/sync | → `{fundsUpdated; messages}` |
-| GET | /healthz | 200 `{status:'Healthy', checks:[...]}` (anonymous) |
+| GET | /healthz | 200 `text/plain` `Healthy` (anonymous) |
+
+There is no collection endpoint for analyses. List them per client with `GET /clients/{id}/analyses`,
+or take the firm-wide recent set from `GET /dashboard/summary`.
 
 ## Seed data files (consumed by the Infrastructure seeder)
 - `data/providers.json`: `{ providers: [{ name, kind, fcaFirmReferenceNumber?, website?, products: [{ name, wrapperTypes: string[], minimumInvestment, allowsFamilyLinking, fundUniverse, effectiveFrom, asAt, sourceUrl, dataQuality, charges: ChargeScheduleDto }] }] }`

@@ -25,7 +25,7 @@ tests/
   SwitchPoint.<Layer>.Tests   xUnit + FsCheck (property tests) + NSubstitute
 web/                          React 19 + TypeScript 6 + Vite 8 SPA
 infra/                        Bicep (App Service, Azure SQL free tier, Key Vault, SWA, App Insights)
-db/                           hand-written T-SQL (views, seed helpers) that complements EF migrations
+db/                           reserved for hand-written T-SQL (views, seed helpers); empty today
 data/                         seed JSON: providers & charge schedules, funds, tax parameters
 docs/                         architecture, methodology notes, ADRs, research brief, OpenAPI export
 .github/workflows/            ci.yml (build/test/lint/bicep), deploy.yml (OIDC to Azure)
@@ -212,9 +212,11 @@ writes an audit event in the same unit of work.
 ## 6. Persistence
 
 EF Core with SQL Server in production and SQLite for tests and local development without Docker
-(provider chosen by `Database:Provider`). Migrations live in Infrastructure and are applied at
-startup only when `Database:MigrateOnStartup=true` (dev) — in production they run from the deploy
-workflow using a migrations bundle. Owned/complex types: `ChargeSchedule`, `TieredCharge`,
+(provider chosen by `Database:Provider`). **No EF migrations have been generated yet**: on both
+providers the schema is created with `EnsureCreated` at startup when `Database:MigrateOnStartup=true`
+(the default). That is fine for a database that is only ever created fresh, but it cannot upgrade one
+in place, so `dotnet ef migrations add InitialCreate` is a prerequisite for the first production
+upgrade. The startup path already prefers `Migrate()` once migrations exist. Owned/complex types: `ChargeSchedule`, `TieredCharge`,
 `AssumptionSet` values are stored as JSON columns (`ToJson()`) to keep the tier structure faithful;
 seed data comes from `data/*.json` through idempotent seeders keyed on natural keys (ISIN,
 provider+product name+effective date).

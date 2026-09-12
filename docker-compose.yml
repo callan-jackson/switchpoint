@@ -4,7 +4,8 @@
 #   docker compose up --build   # http://localhost:5080  (Scalar UI at /scalar)
 #
 # The default `dotnet run` path uses SQLite and needs none of this; compose exists to exercise the
-# SQL Server provider and EF migrations exactly as they run in Azure.
+# SQL Server provider exactly as it runs in Azure. (There are no EF migrations yet — the schema is
+# created with EnsureCreated on both providers.)
 
 services:
   api:

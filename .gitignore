@@ -43,3 +43,7 @@ Thumbs.db
 
 # Throwaway debugging probes
 tests/**/Scratch_*.cs
+
+# Running the API writes generated reports under the project it is launched from, because Reports:Path
+# defaults to ./data/reports. A runtime artefact, not a source.
+src/SwitchPoint.Api/data/

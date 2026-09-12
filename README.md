@@ -56,7 +56,7 @@ analyses they run and how advisers use them — is in `docs/research/`.
 # API (SQLite, demo data seeded, Scalar UI at http://localhost:5080/scalar)
 dotnet run --project src/SwitchPoint.Api
 
-# Web (proxies /api to :5080; or set VITE_USE_MOCKS=true to run without the API)
+# Web (proxies /api to :5080)
 cd web && npm install --legacy-peer-deps && npm run dev
 
 # Tests
@@ -64,9 +64,35 @@ dotnet test
 cd web && npm test
 ```
 
-Demo login: `adviser@demo.switchpoint.local` / `Demo!Pass123`.
+Demo logins, all with the password `Demo!Pass123`:
+
+| Account | Role | What it shows |
+|---|---|---|
+| `adviser@demo.switchpoint.local` | Adviser | Clients, all three analyses, reports |
+| `paraplanner@demo.switchpoint.local` | Paraplanner | The same analysis work, for a support user |
+| `compliance@demo.switchpoint.local` | Compliance | The audit log and chain verification |
+| `admin@demo.switchpoint.local` | Firm admin | Assumption-set editing and the Morningstar sync |
+
+`npm run dev` talks to the API. To run the interface with no API at all — for front-end work, or to
+demo offline — use `npm run dev:mocks`, which serves sample data from an in-browser worker and
+labels the top bar *Sample data*. To change a local setting, put it in `web/.env.development.local`:
+Vite ranks that above the committed `web/.env.development`, whereas `.env.local` ranks *below* it and
+will appear to do nothing.
+
+If port 5080 is taken, run the API elsewhere and point the dev server at it:
+
+```bash
+dotnet run --project src/SwitchPoint.Api --urls http://localhost:5093
+cd web && VITE_API_PROXY=http://localhost:5093 npm run dev
+```
 
 Optional full stack with SQL Server: `docker compose up` (see `docker-compose.yml`).
+
+**Outside Development** two settings become mandatory, which is why running the published DLL
+directly is not the same as `dotnet run`: set `Auth__SigningKey` (the app refuses to start without
+it, and in Azure it comes from the Key Vault secret `JwtSigningKey`), and set `Seed__Demo=true` if
+you want the demo firm and the accounts above — they are seeded only when it is on, and it defaults
+to off everywhere except `appsettings.Development.json`.
 
 ## Deployment
 
@@ -86,7 +112,7 @@ to register, and the other two deployment problems this project hit.
 src/SwitchPoint.Domain          entities, value objects, charge model, audit chain
 src/SwitchPoint.Calculation     projection, RIY, critical yield, tax, State Pension, annuity, DB transfer, cashflow, Monte Carlo
 src/SwitchPoint.Application     ports, DTOs, validators, use-case handlers, calculation orchestration
-src/SwitchPoint.Infrastructure  EF Core, migrations, seeders, integrations, Key Vault, audit log
+src/SwitchPoint.Infrastructure  EF Core, seeders, integrations, Key Vault, audit log
 src/SwitchPoint.Reports         PDF / DOCX / JSON report rendering
 src/SwitchPoint.Api             ASP.NET Core host
 web/                            React SPA

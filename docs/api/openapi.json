@@ -499,7 +499,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": {}
+              "application/json": { }
             }
           }
         }
@@ -700,7 +700,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": {}
+              "application/json": { }
             }
           }
         }
@@ -901,7 +901,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": {}
+              "application/json": { }
             }
           }
         }
@@ -1588,7 +1588,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": {}
+              "application/json": { }
             }
           }
         }
@@ -1761,7 +1761,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": {}
+              "application/json": { }
             }
           }
         }
@@ -7696,6 +7696,7 @@
           "yearsRevalued",
           "pensionAtRetirement",
           "escalationInPaymentPct",
+          "nominalEscalationPct",
           "annuityInterestRatePct",
           "annuityPricePerPound",
           "annuityCost",
@@ -7746,6 +7747,14 @@
             ],
             "format": "double"
           },
+          "nominalEscalationPct": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
           "annuityInterestRatePct": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
@@ -7773,7 +7782,8 @@
           "isGmp": {
             "type": "boolean"
           }
-        }
+        },
+        "description": "One revalued tranche. EscalationInPaymentPct is the escalation used to PRICE the\nannuity, which is deliberately zero for an index-linked tranche because the increases are already inside\nthe real interest rate. NominalEscalationPct is the rate the pension actually rises by\nand is the one to disclose: showing the pricing zero made an inflation-linked pension read as level."
       },
       "RiyCalcRequest": {
         "required": [
