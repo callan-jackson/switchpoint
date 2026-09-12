@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/cn'
 import type { AnalysisStatus, DataQuality, SwitchVerdict } from '@/api/types'
-import { analysisStatusLabels, dataQualityLabels, verdictLabels } from '@/lib/labels'
+import { analysisStatusLabels, dataQualityLabels, verdictLabels, verdictReasons } from '@/lib/labels'
 
 export type BadgeTone = 'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'info'
 
@@ -52,15 +52,34 @@ export function StatusBadge({ status }: { status: AnalysisStatus }) {
   )
 }
 
+// These are outcomes, not marks out of ten. Mapping `retain` to danger and `switchCandidate` to success
+// read as "leaving the client's money alone is a failure and moving it is a win", which is the opposite of
+// the posture a switching tool should take and the opposite of what the FSA's 2009 review was about. So:
+// refer is the one that needs a human (a guarantee is at stake) and is the most prominent; switchCandidate
+// is merely actionable; retain is the quiet no-op; consider sits between.
 const verdictTone: Record<SwitchVerdict, BadgeTone> = {
-  switchCandidate: 'success',
+  switchCandidate: 'info',
   consider: 'warning',
-  retain: 'danger',
-  refer: 'primary',
+  retain: 'neutral',
+  refer: 'accent',
 }
 
-export function VerdictBadge({ verdict }: { verdict: SwitchVerdict }) {
-  return <Badge tone={verdictTone[verdict]}>{verdictLabels[verdict]}</Badge>
+export function VerdictBadge({ verdict, withReason }: { verdict: SwitchVerdict; withReason?: boolean }) {
+  const badge = (
+    <Badge tone={verdictTone[verdict]} title={withReason ? undefined : verdictReasons[verdict]}>
+      {verdictLabels[verdict]}
+    </Badge>
+  )
+  if (!withReason) {
+    return badge
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-1">
+      {badge}
+      <span className="text-muted max-w-[42ch] text-xs leading-snug">{verdictReasons[verdict]}</span>
+    </div>
+  )
 }
 
 const qualityTone: Record<DataQuality, BadgeTone> = {

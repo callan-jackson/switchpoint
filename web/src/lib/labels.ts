@@ -250,3 +250,15 @@ export const DC_SCHEME_TYPES: SchemeType[] = [
 export function optionsFrom<T extends string>(labels: Record<T, string>): { value: T; label: string }[] {
   return (Object.keys(labels) as T[]).map((value) => ({ value, label: labels[value] }))
 }
+
+/** Plain-English reason, matching CriticalYieldCalculator.Verdict. */
+export const verdictReasons: Record<SwitchVerdict, string> = {
+  refer:
+    'This plan has guarantees or protected features that would be given up on transfer, so the engine will not make a cost-based recommendation. Value the guarantee before advising (FSA 2009 switching outcome 2).',
+  switchCandidate:
+    'The proposed plan has a materially lower reduction in yield than this arrangement, and it is projected to be ahead at the assumed growth rate.',
+  retain:
+    'This arrangement is no worse than the proposal once charges are counted, so it is cheaper to leave it where it is. Switching it would need a documented non-cost reason (FSA 2009 switching outcome 1).',
+  consider:
+    'The two are within 0.1% a year of each other on reduction in yield. Cost is not the deciding factor here — judge it on features, service and consolidation.',
+}
