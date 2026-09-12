@@ -57,7 +57,37 @@ export function resetMockDb() {
   db.pensionSwitch.clear()
   db.dbTransfer.clear()
   db.cashflow.clear()
+  seedSavedAnalyses()
 }
+
+/**
+ * A saved, locked pension-switch analysis matching the `an-switch-1` summary.
+ *
+ * Without this the store starts empty, so `GET /analyses/pension-switch/:id` 404s for every id in the
+ * summary list and no test can open a saved analysis — or copy one.
+ */
+function seedSavedAnalyses() {
+  db.pensionSwitch.set('an-switch-1', {
+    id: 'an-switch-1',
+    firmId: FIRM_ID,
+    clientId: 'c-sarah',
+    title: 'Sarah Mitchell — consolidation to Investcentre SIPP',
+    status: 'locked',
+    version: 2,
+    retirementAge: 67,
+    cedingSchemeIds: [],
+    proposedHoldings: [],
+    proposedAdviserCharges: { initialPct: 1, initialAmount: 0, ongoingPct: 0.5, ongoingAmount: 0 },
+    assumptionSetId: db.assumptionSets[0]?.id ?? '',
+    rationale: 'Lower ongoing charges and access to drawdown.',
+    createdAtUtc: '2026-09-05T14:22:00Z',
+    updatedAtUtc: '2026-09-05T14:22:00Z',
+    createdBy: users.adviser.id,
+  } as PensionSwitchAnalysisDto)
+}
+
+
+seedSavedAnalyses()
 
 let idSeed = 1
 const newId = (prefix: string) => `${prefix}-${(idSeed++).toString().padStart(4, '0')}`

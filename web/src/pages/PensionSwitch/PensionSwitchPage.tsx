@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { Check, FileText, Lock, Save } from 'lucide-react'
 import { calculations, reports as reportsApi } from '@/api/endpoints'
@@ -19,6 +20,8 @@ import type {
   PensionSwitchAnalysisWrite,
   PensionSwitchCalcRequest,
   PensionSwitchResultDto,
+  ReportFormat,
+  ReportKind,
   SchemeDto,
 } from '@/api/types'
 import { useLivePreview } from '@/lib/hooks'
@@ -35,12 +38,13 @@ import { StatTile } from '@/components/ui/StatTile'
 import { Tabs } from '@/components/ui/Tabs'
 import { useToast } from '@/components/ui/Toast'
 import { Field } from '@/components/form/Field'
-import { Checkbox, Input, Select } from '@/components/form/Input'
+import { Checkbox, Input, Select, Textarea } from '@/components/form/Input'
 import { IntegerInput } from '@/components/form/NumericInput'
 import { ChartFrame } from '@/components/charts/ChartFrame'
 import { ExistingVsProposedChart } from '@/components/charts/Charts'
 import { AdviserChargeFields, AssumptionFields, ClientPicker, PreviewStatus, StaleWrapper } from '@/components/domain/shared'
 import { HoldingsEditor } from '@/components/domain/HoldingsEditor'
+import { IssueReportDialog } from '@/components/domain/IssueReportDialog'
 import { ChargeBreakdownTable, RiyTable } from '@/components/domain/RiyTable'
 
 interface SwitchState {
@@ -88,12 +92,18 @@ export default function PensionSwitchPage() {
     clientId: params.get('clientId') ?? undefined,
   }))
   const [savedId, setSavedId] = useState<string | undefined>(analysisId)
+  useDocumentTitle(state.title || 'Pension switch')
 
   const { data: client } = useClient(state.clientId)
   const { data: products } = useProducts({ wrapper: 'Sipp' })
   const { data: modelPortfolios } = useModelPortfolios()
   const { data: assumptionSets } = useAssumptionSets()
+  // `?from=<id>` loads an existing analysis's inputs into a brand-new one. Issuing a report locks an
+  // analysis permanently, and the locked banner has always told the adviser to "copy it to a new analysis"
+  // without offering any way to do so — leaving re-keying every input as the only way to explore a variant.
+  const copyFromId = params.get('from') ?? undefined
   const { data: analysis } = usePensionSwitchAnalysis(analysisId)
+  const { data: copySource } = usePensionSwitchAnalysis(analysisId ? undefined : copyFromId)
   const mutations = usePensionSwitchMutations()
   const createReport = useCreateReport()
 
@@ -106,23 +116,27 @@ export default function PensionSwitchPage() {
 
   // Hydrate from a saved analysis when one was opened by id.
   useEffect(() => {
-    if (!analysis) return
-    setSavedId(analysis.id)
+    const source = analysis ?? copySource
+    if (!source) return
+    const isCopy = !analysis && !!copySource
+    setSavedId(isCopy ? undefined : source.id)
     setState({
-      clientId: analysis.clientId,
-      title: analysis.title,
-      cedingSchemeIds: analysis.cedingSchemeIds,
-      proposedProductId: analysis.proposedProductId,
-      proposedModelPortfolioId: analysis.proposedModelPortfolioId,
-      proposedHoldings: analysis.proposedHoldings,
-      proposedAdviserCharges: analysis.proposedAdviserCharges,
-      retirementAge: analysis.retirementAge,
-      assumptionSetId: analysis.assumptionSetId,
-      overrides: analysis.overrides ?? {},
+      clientId: source.clientId,
+      title: isCopy ? `${source.title} (copy)` : source.title,
+      cedingSchemeIds: source.cedingSchemeIds,
+      proposedProductId: source.proposedProductId,
+      proposedModelPortfolioId: source.proposedModelPortfolioId,
+      proposedHoldings: source.proposedHoldings,
+      proposedAdviserCharges: source.proposedAdviserCharges,
+      retirementAge: source.retirementAge,
+      assumptionSetId: source.assumptionSetId,
+      overrides: source.overrides ?? {},
       redirectContributions: true,
-      rationale: analysis.rationale ?? '',
+      // The rationale justified the locked analysis, not this variant; make the adviser write a new one
+      // rather than carry stale reasoning into a different recommendation.
+      rationale: isCopy ? '' : (source.rationale ?? ''),
     })
-  }, [analysis])
+  }, [analysis, copySource])
 
   useEffect(() => {
     if (client && !state.title) {
@@ -168,7 +182,10 @@ export default function PensionSwitchPage() {
     (body, signal) => calculations.pensionSwitch(body, signal),
   )
 
-  const result = analysis?.result ?? preview.data
+  // A locked analysis must show exactly what was reported. Otherwise the live preview wins, because once
+  // the adviser edits a charge the stored result is stale — preferring it left the panel frozen on the last
+  // calculated figures while the inputs said something else.
+  const result = locked ? analysis?.result : (preview.data ?? analysis?.result)
 
   const write = (): PensionSwitchAnalysisWrite => ({
     clientId: state.clientId!,
@@ -217,13 +234,16 @@ export default function PensionSwitchPage() {
     }
   }
 
-  const createAndDownloadReport = async () => {
+  const [reportOpen, setReportOpen] = useState(false)
+
+  const createAndDownloadReport = async (kind: ReportKind, format: ReportFormat) => {
     if (!savedId) return
     try {
-      const report = await createReport.mutateAsync({ analysisId: savedId, kind: 'pensionSwitch', format: 'json' })
+      const report = await createReport.mutateAsync({ analysisId: savedId, kind, format })
       const blob = await reportsApi.download(report.id)
       saveBlob(blob, reportFilename(report))
-      toast.success('Report created', 'The analysis is now locked.')
+      setReportOpen(false)
+      toast.success('Report issued', locked ? 'Saved to your downloads.' : 'The analysis is now locked.')
     } catch (e) {
       toast.error('Report failed', errorMessage(e))
     }
@@ -253,7 +273,7 @@ export default function PensionSwitchPage() {
             <Button variant="outline" icon={<Lock />} onClick={lock} loading={mutations.lock.isPending} disabled={!savedId || locked}>
               Lock
             </Button>
-            <Button icon={<FileText />} onClick={createAndDownloadReport} loading={createReport.isPending} disabled={!savedId}>
+            <Button icon={<FileText />} onClick={() => setReportOpen(true)} loading={createReport.isPending} disabled={!savedId}>
               Create report
             </Button>
           </>
@@ -262,7 +282,15 @@ export default function PensionSwitchPage() {
 
       {locked && (
         <Alert tone="info" title="This analysis is locked" className="mb-4">
-          The inputs and results are fixed. Copy it to a new analysis to explore a different option.
+          <div className="flex flex-wrap items-center gap-3">
+            <span>
+              The inputs and results are fixed, because a report was issued from them. Copy it to carry the
+              same inputs into a new analysis you can edit.
+            </span>
+            <Button size="sm" variant="outline" onClick={() => navigate(`/pension-switch?from=${savedId}`)}>
+              Copy to a new analysis
+            </Button>
+          </div>
         </Alert>
       )}
 
@@ -433,12 +461,22 @@ export default function PensionSwitchPage() {
                 fields={['growthLowerPct', 'growthIntermediatePct', 'growthHigherPct', 'inflationPct']}
                 disabled={locked}
               />
-              <Field label="Rationale" hint="Recorded on the analysis and carried into the suitability report.">
-                <Input
+              <Field
+                label="Rationale"
+                hint="Recorded on the analysis and reproduced word for word in the suitability report. Use separate paragraphs for scope, the charge comparison, the market research and anything requiring further work."
+              >
+                <Textarea
+                  rows={8}
                   value={state.rationale}
                   disabled={locked}
                   onChange={(e) => setState((s) => ({ ...s, rationale: e.target.value }))}
-                  placeholder="Why this switch is being recommended"
+                  placeholder={
+                    'Why this recommendation meets the client’s needs.\n\n' +
+                    'Scope — which arrangements are in and out, and why.\n' +
+                    'Charges — what the client pays now against the proposal.\n' +
+                    'Research — what else was considered and why it was set aside.\n' +
+                    'Outstanding — anything to establish before this becomes advice.'
+                  }
                 />
               </Field>
             </div>
@@ -477,6 +515,8 @@ export default function PensionSwitchPage() {
                 </div>
 
                 <WarningsAlert warnings={result.warnings} title="Engine warnings" />
+
+                <SwitchHeadline result={result} />
 
                 <div className="mt-4 overflow-x-auto">
                   <table className="table">
@@ -605,9 +645,16 @@ export default function PensionSwitchPage() {
                         <td className="num">{gbp(scheme.netTransferValue)}</td>
                         <td className="num">{fmtPct(scheme.criticalYieldAlonePct)}</td>
                         <td className="num">{fmtPct(scheme.riyIfRetained.totalRiyPct)}</td>
-                        <td className="num">{fmtPct(scheme.riyIfSwitched.totalRiyPct)}</td>
+                        <td className="num">
+                          {fmtPct(scheme.riyIfSwitched.totalRiyPct)}
+                          <span className="text-muted block text-xs font-normal">
+                            {scheme.riyIfSwitched.totalRiyPct < scheme.riyIfRetained.totalRiyPct
+                              ? `${fmtPct(scheme.riyIfRetained.totalRiyPct - scheme.riyIfSwitched.totalRiyPct)} cheaper`
+                              : `${fmtPct(scheme.riyIfSwitched.totalRiyPct - scheme.riyIfRetained.totalRiyPct)} dearer`}
+                          </span>
+                        </td>
                         <td>
-                          <VerdictBadge verdict={scheme.verdict} />
+                          <VerdictBadge verdict={scheme.verdict} withReason />
                         </td>
                       </tr>
                     ))}
@@ -620,7 +667,73 @@ export default function PensionSwitchPage() {
           {result && <RiyPanels result={result} />}
         </div>
       </div>
+
+      <IssueReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        alreadyLocked={locked}
+        busy={createReport.isPending}
+        onIssue={createAndDownloadReport}
+        kinds={[
+          {
+            value: 'suitability',
+            label: 'Suitability report',
+            hint: 'The full client-facing document: demands and needs, the recommendation, risks and the analysis.',
+          },
+          {
+            value: 'pensionSwitch',
+            label: 'Pension switch analysis',
+            hint: 'The analysis on its own — critical yield, verdicts and the COBS 13 charge tables.',
+          },
+        ]}
+      />
     </>
+  )
+}
+
+/**
+ * The critical-yield table is fifteen numbers and no answer. An adviser reading it has one question — is
+ * the client better off, and by how much — so state that in a sentence before the table, in the same terms
+ * the suitability report will use. Non-convergence is surfaced here too: the engine returns `converged` on
+ * every rate and a failed root solve otherwise renders as an ordinary-looking percentage.
+ */
+function SwitchHeadline({ result }: { result: PensionSwitchResultDto }) {
+  const mid = result.intermediate
+  const gain = mid.receivingValueAtRetirement - mid.existingValueAtRetirement
+  const better = gain >= 0
+  const unconverged = [result.lower, result.intermediate, result.higher].filter((r) => !r.converged)
+
+  return (
+    <div className="mt-4 flex flex-col gap-3">
+      {unconverged.length > 0 && (
+        <Alert tone="danger" title="These figures are not reliable">
+          The critical yield did not converge at the{' '}
+          {unconverged.map((r) => `${fmtPct(r.growthPct, 1)}`).join(' and ')} growth{' '}
+          {unconverged.length === 1 ? 'rate' : 'rates'}. Do not quote the affected rows: check the charges and
+          the term, then recalculate.
+        </Alert>
+      )}
+      <div className="border-border bg-surface-sunk rounded-lg border p-4">
+        <p className="text-fg text-sm leading-relaxed">
+          At the intermediate {fmtPct(mid.growthPct, 1)} growth rate, the proposed plan is projected to be{' '}
+          <strong className={better ? 'text-success-700' : 'text-danger-700'}>
+            {gbp(Math.abs(gain))} {better ? 'ahead' : 'behind'}
+          </strong>{' '}
+          at retirement in today&rsquo;s money. It must earn{' '}
+          <strong>{fmtPct(mid.criticalYieldPct)}</strong> a year to match the existing arrangements, which is{' '}
+          <strong>{fmtPct(Math.abs(mid.headroomPct), 2)}</strong> {better ? 'less than' : 'more than'} the{' '}
+          {fmtPct(mid.growthPct, 1)} assumed.
+          {mid.breakEvenYear != null
+            ? ` The switch breaks even in year ${mid.breakEvenYear}.`
+            : ' It does not break even within the term.'}
+        </p>
+        {result.schemes.some((s) => s.verdict === 'refer') && (
+          <p className="text-fg-muted mt-2 text-sm">
+            One or more arrangements are referred rather than recommended — see the verdicts below.
+          </p>
+        )}
+      </div>
+    </div>
   )
 }
 
